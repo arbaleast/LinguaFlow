@@ -164,13 +164,6 @@ declare module 'vue-router/auto-routes' {
       { projectId: ParamValue<false> },
       | never
     >,
-    '/prompt-templates': RouteRecordInfo<
-      '/prompt-templates',
-      '/prompt-templates',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/register': RouteRecordInfo<
       '/register',
       '/register',
@@ -418,14 +411,6 @@ declare module 'vue-router/auto-routes' {
         | never
       pathParamNames:
         | 'projectId'
-    }
-    'src/pages/prompt-templates.vue': {
-      routes:
-        | '/prompt-templates'
-      views:
-        | never
-      pathParamNames:
-        | never
     }
     'src/pages/register.vue': {
       routes:

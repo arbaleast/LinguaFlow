@@ -3,7 +3,6 @@ import type { Component } from 'vue'
 import IconCarbonDashboard from '~icons/carbon/dashboard'
 import IconCarbonFolder from '~icons/carbon/folder'
 import IconCarbonServerProxy from '~icons/carbon/server-proxy'
-import IconCarbonPromptTemplate from '~icons/carbon/prompt-template'
 import IconCarbonFlow from '~icons/carbon/flow'
 import IconCarbonTextVerticalAlignment from '~icons/carbon/text-vertical-alignment'
 import IconCarbonSecurity from '~icons/carbon/security'
@@ -38,11 +37,6 @@ export const APP_NAV_SECTIONS: AppNavSection[] = [
     labelKey: 'nav.configGroup',
     items: [
       { path: '/backends', labelKey: 'nav.backends', icon: IconCarbonServerProxy },
-      {
-        path: '/prompt-templates',
-        labelKey: 'nav.promptTemplates',
-        icon: IconCarbonPromptTemplate,
-      },
       { path: '/execution-config', labelKey: 'nav.executionConfig', icon: IconCarbonFlow },
     ],
   },

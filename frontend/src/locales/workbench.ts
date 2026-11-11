@@ -59,9 +59,7 @@ export default {
   },
   home: {
     title: '工作台',
-    subtitle: '开始翻译，或继续最近的项目与任务。',
-    currentTasks: '当前任务',
-    operations: '任务中心',
+    subtitle: '即时多语互译与外贸商务邮件拟写助手。',
     viewAll: '查看全部',
     recentProjects: '最近打开项目',
     recentProjectsHint: '按你在此浏览器的打开时间排序',
@@ -90,10 +88,6 @@ export default {
       cancelled: '已取消',
     },
     failureWindow: '统计窗口：{from} 至 {before}',
-  },
-  tabs: {
-    overview: '概览',
-    usage: '用量',
   },
   stats: {
     usage: '历史用量',

@@ -85,9 +85,9 @@ const paths: Record<(typeof resources)[number], { path: string; query?: Record<s
   {
     projects: { path: '/projects' },
     backends: { path: '/backends' },
-    promptTemplates: { path: '/prompt-templates', query: { tab: 'translation' } },
-    bootstrapPromptTemplates: { path: '/prompt-templates', query: { tab: 'bootstrap' } },
-    prunePromptTemplates: { path: '/prompt-templates', query: { tab: 'prune' } },
+    promptTemplates: { path: '/backends', query: { tab: 'prompts', promptTab: 'translation' } },
+    bootstrapPromptTemplates: { path: '/backends', query: { tab: 'prompts', promptTab: 'bootstrap' } },
+    prunePromptTemplates: { path: '/backends', query: { tab: 'prompts', promptTab: 'prune' } },
     executionProfiles: { path: '/execution-config', query: { tab: 'profiles' } },
     executionPlanTemplates: { path: '/execution-config', query: { tab: 'plans' } },
   }

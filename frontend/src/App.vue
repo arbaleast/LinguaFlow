@@ -149,7 +149,11 @@ const naiveDateLocale = computed(() => {
           <RouterView v-slot="{ Component }">
             <component :is="Component" v-if="isBlank" />
             <AppLayout v-else :key="sessionGeneration">
-              <component :is="Component" />
+              <!-- 只缓存工作台（WorkbenchPage）：路由往返时不丢编辑中的邮件/译文；
+                   其余页面保持正常挂载/销毁语义。 -->
+              <KeepAlive :include="['WorkbenchPage']">
+                <component :is="Component" />
+              </KeepAlive>
             </AppLayout>
           </RouterView>
         </NDialogProvider>

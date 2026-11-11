@@ -132,9 +132,9 @@ test('role downgrade refreshes available controls', async ({ page }) => {
 const scopedResources = [
   { page: '/projects', endpoint: '/orgs/7/projects', query: false },
   { page: '/backends', endpoint: '/orgs/7/backends', query: false },
-  { page: '/prompt-templates', endpoint: '/translation-prompt-templates', query: true },
-  { page: '/bootstrap-prompt-templates', endpoint: '/bootstrap-prompt-templates', query: true },
-  { page: '/prune-prompt-templates', endpoint: '/prune-prompt-templates', query: true },
+  { page: '/backends?tab=prompts&promptTab=translation', endpoint: '/translation-prompt-templates', query: true },
+  { page: '/backends?tab=prompts&promptTab=bootstrap', endpoint: '/bootstrap-prompt-templates', query: true },
+  { page: '/backends?tab=prompts&promptTab=prune', endpoint: '/prune-prompt-templates', query: true },
   { page: '/execution-profiles', endpoint: '/execution-profiles', query: true },
   { page: '/execution-plan-templates', endpoint: '/execution-plan-templates', query: true },
 ] as const

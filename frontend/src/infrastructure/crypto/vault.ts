@@ -146,6 +146,8 @@ export class CredentialVault {
     secret: string
     /** 凭据行 ID（续写既有凭据时传入）。 */
     id?: string
+    /** 规范化后的 base URL（**明文**，不属于机密）。 */
+    endpoint?: string
   }): Promise<{ localId: number; id: string; version: number }> {
     const deviceId = await this.deviceId()
     const envelope = await this.encrypt(options.secret)
@@ -165,6 +167,7 @@ export class CredentialVault {
         ...existing,
         name: options.name,
         provider: options.provider,
+        endpoint: options.endpoint ?? existing.endpoint,
         current_version: version,
         revoked: false,
         versions,
@@ -183,6 +186,7 @@ export class CredentialVault {
       localId,
       name: options.name,
       provider: options.provider,
+      endpoint: options.endpoint ?? '',
       current_version: version,
       revoked: false,
       versions: [{ version, ...envelope, created_at: at, revoked: false }],

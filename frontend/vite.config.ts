@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
+import http from 'node:http'
 
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import VueRouter from 'vue-router/vite'
 import { VueRouterAutoImports } from 'vue-router/unplugin'
 import vue from '@vitejs/plugin-vue'
@@ -14,6 +15,74 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 import ideByebye from 'ide-byebye'
 import { authCallbackMessages } from './src/locales/auth-callback.ts'
+
+// ide-byebye 的 sidecar 只绑定 127.0.0.1 的随机端口（listen(0)），并把 client.js 以绝对地址
+// `http://127.0.0.1:<port>/...` 注入页面。经 SSH 端口转发访问时，浏览器里的 127.0.0.1:<port>
+// 指向用户本机，脚本加载失败，⌘点击的监听器根本挂不上。该插件把注入改写成同源相对路径
+// （客户端对空 apiOrigin 本就按相对 URL 处理），并让 Vite dev server 把 /__intent-inspector/*
+// 代理到 sidecar——SSH 隧道内一条道走通，无需额外转发随机端口。
+function ideByebyeTunnel(): Plugin {
+  // transformIndexHtml（页面加载时）先于首个 /__intent-inspector 请求执行，端口必然已就绪。
+  let sidecarPort: number | null = null
+
+  return {
+    name: 'ide-byebye-tunnel',
+    apply: 'serve',
+    transformIndexHtml: {
+      // 必须排在 ide-byebye（同样是 post）之后：插件数组顺序决定同级先后。
+      order: 'post',
+      handler(html) {
+        const scriptRe =
+          /src="http:\/\/127\.0\.0\.1:(\d+)\/__intent-inspector\/client\.js\?token=([^"]+)"/
+        const match = scriptRe.exec(html)
+        if (!match) return html
+        sidecarPort = Number(match[1])
+        return html
+          .replace(scriptRe, `src="/__intent-inspector/client.js?token=${match[2]}"`)
+          .replace(/"apiOrigin":"http:\/\/127\.0\.0\.1:\d+"/, '"apiOrigin":""')
+      },
+    },
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const url = req.url ?? ''
+        if (!url.startsWith('/__intent-inspector/')) {
+          next()
+          return
+        }
+        if (sidecarPort == null) {
+          res.statusCode = 503
+          res.end('ide-byebye sidecar port unknown; reload the page')
+          return
+        }
+        const upstream = http.request(
+          {
+            host: '127.0.0.1',
+            port: sidecarPort,
+            path: url,
+            method: req.method,
+            headers: { ...req.headers, host: `127.0.0.1:${sidecarPort}` },
+          },
+          (upstreamRes) => {
+            res.statusCode = upstreamRes.statusCode ?? 502
+            for (const [name, value] of Object.entries(upstreamRes.headers)) {
+              if (value != null) res.setHeader(name, value)
+            }
+            upstreamRes.pipe(res)
+          },
+        )
+        upstream.on('error', (err) => {
+          if (res.headersSent) {
+            res.destroy()
+            return
+          }
+          res.statusCode = 502
+          res.end(`ide-byebye tunnel error: ${err.message}`)
+        })
+        req.pipe(upstream)
+      })
+    },
+  }
+}
 
 // 开发服务器把 /api 转发到后端，使浏览器侧保持同源。
 // local 模式的后端只放行自身端口的 CORS 来源，缺少该代理时前端无法自动完成服务探测。
@@ -69,8 +138,12 @@ export default defineConfig({
   },
   plugins: [
     // ide-byebye：⌘/Ctrl + 点击元素即选中源码位置，把「改哪里」直接交给 AI 智能体。
-    // 需放在框架插件之前。
-    ideByebye(),
+    // 需放在框架插件之前。defaultAgent 用 file：深链类 Agent（Claude/Codex App 等）会在
+    // 运行 dev server 的开发机（无桌面的远端容器）上拉起应用，SSH 转发场景下等于没有反应；
+    // file 把 prompt 写进 .intent-inspector/requests/*.md，开发机上的智能体直接读取。
+    ideByebye({ defaultAgent: 'file' }),
+    // 把 ide-byebye 的回环 sidecar 改造成同源访问，SSH 端口转发下才能工作。须排在 ideByebye 之后。
+    ideByebyeTunnel(),
     {
       name: 'auth-completion-headers',
       transformIndexHtml: {

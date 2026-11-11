@@ -34,7 +34,9 @@ func main() {
 		if unicode.SimpleFold(r) == r {
 			continue
 		}
-		orbit := map[rune]bool{}
+		// 折叠环必须包含起点自身：`SimpleFold` 的迭代从下一个伙伴开始，
+		// 若漏掉起点，环会退化成单元素集合，代表元就会退化为「自身」。
+		orbit := map[rune]bool{r: true}
 		for f := unicode.SimpleFold(r); ; f = unicode.SimpleFold(f) {
 			orbit[f] = true
 			if unicode.SimpleFold(f) == r {

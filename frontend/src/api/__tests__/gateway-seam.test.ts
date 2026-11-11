@@ -57,12 +57,12 @@ describe('apiClient 的 Gateway 分发', () => {
     const clientModule = await import('@/api/client-core')
     gatewayModule.setGatewayMode('server')
 
-    await clientModule.apiClient.GET('/activity')
+    await clientModule.apiClient.GET('/storage/capabilities')
 
     expect(fetchSpy).toHaveBeenCalledTimes(1)
     const requested = fetchSpy.mock.calls[0]?.[0]
     const url = requested instanceof Request ? requested.url : String(requested)
-    expect(url).toContain('/activity')
+    expect(url).toContain('/storage/capabilities')
   })
 
   it('browser-local 模式下未接管的端点同样回落到 openapi-fetch', async () => {
@@ -78,7 +78,7 @@ describe('apiClient 的 Gateway 分发', () => {
     const clientModule = await import('@/api/client-core')
     gatewayModule.setGatewayMode('browser-local')
 
-    await clientModule.apiClient.GET('/activity')
+    await clientModule.apiClient.GET('/storage/capabilities')
 
     expect(fetchSpy).toHaveBeenCalledTimes(1)
   })

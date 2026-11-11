@@ -54,6 +54,53 @@ import type {
 export const SCHEMA_VERSION = 1
 
 /**
+ * 全部表名（导出 / 恢复 / 备份的权威清单）。
+ *
+ * 顺序即建库顺序；备份与恢复都以此为准，避免漏表。
+ */
+export const TABLE_NAMES = [
+  // 核心业务域
+  'projects',
+  'resources',
+  'source_revisions',
+  'segments',
+  'segment_revisions',
+  'glossary_entries',
+  'tm_entries',
+  // 配置与凭据域
+  'translation_prompt_templates',
+  'bootstrap_prompt_templates',
+  'prune_prompt_templates',
+  'execution_plan_templates',
+  'execution_profiles',
+  'backends',
+  'credential_vault',
+  // 任务与状态域
+  'jobs',
+  'job_resources',
+  'job_rounds',
+  'job_round_segments',
+  'work_items',
+  'work_candidates',
+  'work_requests',
+  'job_events',
+  // 存储与统计域
+  'storage_tasks',
+  'export_artifacts',
+  'blobs',
+  'usage_records',
+  'activity_logs',
+  // 基础设施表
+  'kv_meta',
+  'preferences',
+  'raw_blobs',
+  'sequences',
+] as const
+
+/** 表名联合类型。 */
+export type TableName = (typeof TABLE_NAMES)[number]
+
+/**
  * 本地数据库。
  *
  * 打开方式统一走 `openDatabase()`（带并发去重的惰性打开），不要直接 `new`。

@@ -8,6 +8,7 @@ export interface ScopedPreferences {
   defaultTaskState: DefaultTaskState
   retainTerminal: boolean
   quickTranslatePlanId: number | null
+  quickTranslateProjectId: number | null
   hiddenTerminalKeys: string[]
   recentProjects: RecentProjectVisit[]
   selectedOrgId: number | null
@@ -18,6 +19,7 @@ export const defaultPreferences = (): ScopedPreferences => ({
   defaultTaskState: 'active',
   retainTerminal: true,
   quickTranslatePlanId: null,
+  quickTranslateProjectId: null,
   hiddenTerminalKeys: [],
   recentProjects: [],
   selectedOrgId: null,
@@ -45,6 +47,7 @@ export const sanitizePreferences = (value: unknown): ScopedPreferences => {
     data.quickTranslatePlanId !== 0
   )
     result.quickTranslatePlanId = data.quickTranslatePlanId
+  if (positiveId(data.quickTranslateProjectId)) result.quickTranslateProjectId = data.quickTranslateProjectId
   if (Array.isArray(data.hiddenTerminalKeys))
     result.hiddenTerminalKeys = [
       ...new Set(

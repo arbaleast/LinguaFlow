@@ -9,15 +9,58 @@
  */
 import type { LocalRoute } from '../router'
 
-import { glossaryRoutes } from './glossary'
+import { activityRoutes, jobRoutes, statsRoutes } from './jobs'
+import { backendRoutes, credentialRoutes } from './credentials'
+import { glossaryImportRoutes, glossaryRoutes } from './glossary'
+import { operationRoutes } from './operations'
 import { projectRoutes } from './projects'
-import { resourceRoutes } from './resources'
+import { resourceDownloadRoutes, resourceRoutes } from './resources'
+import { segmentRoutes } from './segments'
+import { storageRoutes } from './storage'
+import { qaRecheckRoutes } from './qa_recheck'
+import { templateRoutes } from './templates'
+import { userRoutes } from './users'
 
-export { glossaryRoutes, projectRoutes, resourceRoutes }
+export {
+  activityRoutes,
+  backendRoutes,
+  credentialRoutes,
+  glossaryImportRoutes,
+  glossaryRoutes,
+  jobRoutes,
+  operationRoutes,
+  projectRoutes,
+  qaRecheckRoutes,
+  resourceDownloadRoutes,
+  resourceRoutes,
+  segmentRoutes,
+  statsRoutes,
+  storageRoutes,
+  templateRoutes,
+  userRoutes,
+}
 
-/** 全部本地端点（项目 / 资源 / 术语表）。 */
+/**
+ * 全部本地端点。
+ *
+ * 顺序即匹配优先级（路径模板互不重叠，顺序不影响结果），
+ * 与 `frontend/src/api/*.ts` 的调用路径**逐字一致**。
+ */
 export const localRoutes: readonly LocalRoute[] = [
   ...projectRoutes,
   ...resourceRoutes,
+  ...resourceDownloadRoutes,
+  ...segmentRoutes,
   ...glossaryRoutes,
+  ...glossaryImportRoutes,
+  ...qaRecheckRoutes,
+  ...templateRoutes,
+  ...credentialRoutes,
+  ...backendRoutes,
+  ...jobRoutes,
+  ...statsRoutes,
+  ...activityRoutes,
+  ...operationRoutes,
+  ...userRoutes,
+  ...storageRoutes,
 ]

@@ -10,6 +10,8 @@
  *    Store 与组件无需任何改动。
  */
 import { afterEach, describe, expect, it, vi } from 'vitest'
+// `browser-local` 模式下本地网关会打开 IndexedDB，Node 环境需要 polyfill。
+import 'fake-indexeddb/auto'
 import {
   dispatchEventStream,
   dispatchRequest,
@@ -120,8 +122,9 @@ describe('LocalGateway 直接应答服务发现类端点', () => {
 
   it('未接管的端点返回 null（调用方回落远端实现）', () => {
     setGatewayMode(BROWSER_LOCAL_MODE)
-    expect(dispatchRequest({ method: 'GET', path: '/projects' })).toBeNull()
-    expect(dispatchRequest({ method: 'POST', path: '/jobs' })).toBeNull()
+    // 下列端点尚未在本地实现（Phase 2 逐步补齐），必须回落远端。
+    expect(dispatchRequest({ method: 'GET', path: '/storage/capabilities' })).toBeNull()
+    expect(dispatchRequest({ method: 'POST', path: '/quick-translate' })).toBeNull()
     expect(dispatchUpload({ url: '/x', files: [], idempotencyKey: 'k' })).toBeNull()
     expect(
       dispatchEventStream({

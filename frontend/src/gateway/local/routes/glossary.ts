@@ -16,6 +16,8 @@
  */
 import type { ApiSchemas, GatewayResult } from '@/gateway/contracts'
 
+import { loadFile } from '@/domain/glossary/file'
+
 import {
   createGlossaryEntry,
   deleteGlossaryEntry,
@@ -25,6 +27,7 @@ import {
   updateGlossaryEntry,
 } from '../repositories/glossary'
 import { requireProject } from '../repositories/projects'
+import { RepositoryValidationError } from '../repositories/errors'
 import { json, noContent } from '../responses'
 import type { LocalRoute } from '../router'
 import { bodyObject, pathId, route } from './support'
@@ -109,3 +112,78 @@ export const glossaryRoutes: LocalRoute[] = [
       }),
   },
 ]
+
+/**
+ * CSV 导入端点。
+ *
+ * 请求体是 `multipart/form-data`（`file` 字段），与 `api/glossary.ts` 的
+ * `importGlossaryCSV` 一致。为了让本地模式也能用纯文本调试，这里同时接受
+ * `{ content: string }` 形态的 JSON 请求体。
+ *
+ * 解析复用 Phase 1 的 `domain/glossary`（与 Go `glossary.LoadFile` 逐字节等价），
+ * 写入复用本包的 `createGlossaryEntry`（因此条件唯一约束与 409 语义一致）。
+ */
+export const glossaryImportRoutes: LocalRoute[] = [
+  {
+    method: 'POST',
+    path: '/projects/{projectId}/glossary/import',
+    handler: (ctx) =>
+      route(async () => {
+        const projectId = pathId(ctx, 'projectId')
+        const content = await readUploadContent(ctx.body)
+        const parsed = loadFile(content, 'import.csv')
+        if (!parsed.ok) {
+          throw new RepositoryValidationError(parsed.error.message)
+        }
+        const glossary = parsed.value
+
+        const added: number[] = []
+        const skipped: Array<{ line?: number; source?: string; reason?: string }> = []
+        const entries = glossary.snapshotEntries()
+        for (let i = 0; i < entries.length; i++) {
+          const entry = entries[i]
+          if (!entry) continue
+          try {
+            await createGlossaryEntry(ctx.db, projectId, {
+              source: entry.source,
+              target: entry.target,
+              case_sensitive: entry.caseSensitive,
+              forbidden: entry.forbidden,
+              mandatory: entry.mandatory,
+              notes: entry.notes,
+            } as CreateGlossaryEntryRequest)
+            added.push(i)
+          } catch (error) {
+            skipped.push({
+              line: i + 1,
+              source: entry.source,
+              reason: error instanceof Error ? error.message : String(error),
+            })
+          }
+        }
+
+        const result: ApiSchemas['GlossaryImportResult'] = {
+          added: added.length,
+          ...(skipped.length > 0 ? { skipped } : {}),
+        }
+        return json(result)
+      }),
+  },
+]
+
+/** 从 multipart 表单或 JSON 请求体中读出 CSV 文本。 */
+async function readUploadContent(body: unknown): Promise<string> {
+  if (body && typeof body === 'object' && 'get' in body) {
+    const form = body as FormData
+    const file = form.get('file')
+    if (file && typeof file === 'object' && 'text' in file) {
+      return await (file as File).text()
+    }
+    throw new RepositoryValidationError('上传文件缺少 file 字段')
+  }
+  if (body && typeof body === 'object' && !Array.isArray(body)) {
+    const content = (body as Record<string, unknown>).content
+    if (typeof content === 'string') return content
+  }
+  throw new RepositoryValidationError('请求体必须是 multipart 表单或包含 CSV 文本')
+}

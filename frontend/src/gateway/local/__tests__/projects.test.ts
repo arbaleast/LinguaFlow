@@ -205,3 +205,4 @@ describe('projects Repository', () => {
     expect(dto).not.toHaveProperty('config')
   })
 })
+

@@ -7,3 +7,4 @@
 
 # 进程崩溃转储（core.<pid>）
 core.*
+.ms-playwright/

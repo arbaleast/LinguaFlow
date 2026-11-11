@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NAlert, NButton, NIcon, NTabPane, NTabs } from 'naive-ui'
+import { NAlert, NButton, NIcon, NInput, NTabPane, NTabs, useMessage } from 'naive-ui'
 import { ref, computed, watch, onMounted, onBeforeUnmount, provide } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
@@ -33,18 +33,22 @@ import { useJobActions } from '@/composables/useJobActions'
 import { formatDate } from '@/composables/useWorkspaceUtils'
 import { useExecutionPlanTemplatesStore } from '@/stores/executionPlanTemplates'
 import { useGlossaryStore } from '@/stores/glossary'
+import { extractErrorMessage } from '@/utils/errors'
 import { useProjectWorkspaceStore } from '@/stores/projectWorkspace'
+import { useProjectsStore } from '@/stores/projects'
 import { isJobTerminal } from '@/utils/jobPresentation'
 
 type Resource = ApiSchemas['Resource']
 
-type WorkspaceTab = 'resources' | 'jobs' | 'glossary' | 'storage'
+type WorkspaceTab = 'glossary' | 'docs' | 'settings'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const message = useMessage()
 const workspace = useProjectWorkspaceStore()
 const glossary = useGlossaryStore()
+const projects = useProjectsStore()
 const executionPlanTemplatesStore = useExecutionPlanTemplatesStore()
 
 const resourceStorageVisible = ref(false)
@@ -62,7 +66,7 @@ const sourceRecoveryResource = computed(() => {
   }
   return workspace.resourceTree ? find(workspace.resourceTree) : undefined
 })
-const activeTab = ref<WorkspaceTab>('resources')
+const activeTab = ref<WorkspaceTab>('glossary')
 
 // ── 编辑视图态（query: edit=<resourceId>&chapter=<groupKey>）──
 /** 编辑视图激活：query.edit 存在即进入（resourceId 解析由下方 watcher 负责） */
@@ -107,10 +111,8 @@ const loadTabData = async (tab: WorkspaceTab): Promise<void> => {
   if (loadedTabs.has(tab) || !projectId.value) return
 
   switch (tab) {
-    case 'resources':
-      // 资源数据已随资源树加载同步
-      break
-    case 'jobs':
+    case 'docs':
+      // 文档翻译 Tab：资源树已随加载同步，这里补任务列表
       await workspace.loadJobs(projectId.value)
       break
     case 'glossary':
@@ -167,6 +169,51 @@ provide(GlossaryMgmtKey, glossaryMgmt)
 
 const switchToJobsTab = async (): Promise<void> => {
   // 任务已通过全局追踪器自动追踪，用户可留在当前页面继续工作
+}
+
+// ── 背景（客户/产品背景与翻译要求，存于 project.config.background）──
+const readProjectBackground = (project: ApiSchemas['Project'] | null): string => {
+  const value = project?.config?.background
+  return typeof value === 'string' ? value : ''
+}
+
+const backgroundDraft = ref('')
+const backgroundSaving = ref(false)
+const backgroundBaseline = ref('')
+
+watch(
+  () => workspace.project,
+  (project) => {
+    backgroundBaseline.value = readProjectBackground(project)
+    backgroundDraft.value = backgroundBaseline.value
+  },
+  { immediate: true, deep: true },
+)
+
+const backgroundDraftDirty = computed(() => backgroundDraft.value !== backgroundBaseline.value)
+
+/** 保存背景：config 为整体替换语义，必须把当前 config 一并带上（保留其他键） */
+const saveBackground = async (): Promise<void> => {
+  const project = workspace.project
+  if (!project || !backgroundDraftDirty.value) return
+  backgroundSaving.value = true
+  try {
+    await projects.updateProject(project.id, {
+      config: { ...(project.config ?? {}), background: backgroundDraft.value },
+    })
+    backgroundBaseline.value = backgroundDraft.value
+    message.success(t('projects.backgroundSaved'))
+  } catch (error) {
+    message.error(extractErrorMessage(error, t('projects.backgroundSaveFailed')))
+  } finally {
+    backgroundSaving.value = false
+  }
+}
+
+/** 在工作台使用：跳到工作台并挂载本词库（工作台读取 ?project= 预选） */
+const useInWorkbench = (): void => {
+  if (projectId.value == null) return
+  void router.push({ path: '/', query: { project: String(projectId.value) } })
 }
 
 const jobMgmt = useJobActions(projectId, switchToJobsTab)
@@ -417,11 +464,13 @@ const handlePreviewApplied = async (payload: {
 watch(
   () => route.query.tab,
   (tab) => {
-    if (tab === 'jobs' || tab === 'resources' || tab === 'glossary' || tab === 'storage') {
+    // 术语词库为默认首屏；旧 Tab 值兼容映射：resources/jobs/segments → 文档翻译，storage → 背景与设置
+    if (tab === 'glossary' || tab === 'docs' || tab === 'settings') {
       activeTab.value = tab
-    } else if (tab === 'segments') {
-      // 旧链接兼容：段落编辑已从 Tab 拆出为独立编辑视图
-      activeTab.value = 'resources'
+    } else if (tab === 'resources' || tab === 'jobs' || tab === 'segments') {
+      activeTab.value = 'docs'
+    } else if (tab === 'storage') {
+      activeTab.value = 'settings'
     }
   },
   { immediate: true },
@@ -484,7 +533,7 @@ watch(editorActive, (active) => {
 watch(
   () => workspace.jobStatusFilter,
   () => {
-    if (projectId.value && loadedTabs.has('jobs')) {
+    if (projectId.value && loadedTabs.has('docs')) {
       void workspace.loadJobs(projectId.value)
     }
   },
@@ -635,6 +684,17 @@ onMounted(() => {
               <NButton
                 secondary
                 size="small"
+                :disabled="projectId == null"
+                @click="useInWorkbench"
+              >
+                <template #icon>
+                  <NIcon><IconCarbonChat /></NIcon>
+                </template>
+                {{ t('workspace.useInWorkbench') }}
+              </NButton>
+              <NButton
+                secondary
+                size="small"
                 :loading="
                   workspace.loadingProject || workspace.loadingResourceTree || workspace.loadingJobs
                 "
@@ -661,15 +721,6 @@ onMounted(() => {
           {{ workspace.segmentsError }}
         </NAlert>
 
-        <WorkspaceMetricsBar
-          class="shrink-0"
-          :total-resources="workspace.resources.length"
-          :total-segments="workspace.totalSegmentCount"
-          :translated-segments="workspace.totalTranslatedSegments"
-          :approved-segments="workspace.totalApprovedSegments"
-          :running-jobs="workspace.runningJobCount"
-        />
-
         <!-- 定高工作台：Tab 条常驻，Section 区内部滚动 -->
         <div class="lf-panel flex min-h-0 flex-1 flex-col overflow-hidden">
           <NTabs
@@ -678,31 +729,34 @@ onMounted(() => {
             animated
             class="workspace-tabs flex h-full min-h-0 flex-col px-3 pt-1 sm:px-4"
           >
-            <NTabPane name="resources" :tab="t('workspace.tabs.resources')">
+            <!-- 术语词库：词库类项目的默认首屏 -->
+            <NTabPane name="glossary" :tab="t('workspace.tabs.glossary')">
+              <div class="h-full w-full overflow-y-auto pb-3 pt-2">
+                <GlossaryPanel :project-id="projectId" />
+              </div>
+            </NTabPane>
+
+            <!-- 文档翻译：上传 → 任务 → 译文下载；指标条只在本 Tab 内展示 -->
+            <NTabPane name="docs" :tab="t('workspace.tabs.docs')">
               <div
                 :class="[
-                  'h-full w-full overflow-y-auto pb-3 pt-2',
+                  'h-full w-full space-y-3 overflow-y-auto pb-3 pt-2',
                   workspace.uploadTasks.length > 0 ? 'pb-20 sm:pb-0' : '',
                 ]"
               >
+                <WorkspaceMetricsBar
+                  :total-resources="workspace.resources.length"
+                  :total-segments="workspace.totalSegmentCount"
+                  :translated-segments="workspace.totalTranslatedSegments"
+                  :approved-segments="workspace.totalApprovedSegments"
+                  :running-jobs="workspace.runningJobCount"
+                />
                 <ResourceExplorer
                   v-if="projectId"
                   :project-id="projectId"
                   @open-segments="handleExplorerOpenSegments"
                   :before-saved-content="beforeSavedContent"
                 />
-              </div>
-            </NTabPane>
-
-            <NTabPane name="storage" :tab="t('sourceStorage.project')">
-              <ProjectStoragePanel
-                v-if="workspace.project"
-                :project="workspace.project"
-                @changed="projectId && workspace.loadProject(projectId)"
-              />
-            </NTabPane>
-            <NTabPane name="jobs" :tab="t('workspace.tabs.jobs')">
-              <div class="h-full w-full overflow-y-auto pb-3 pt-2">
                 <JobPanel
                   :project-id="projectId"
                   @detail="(job) => jobMgmt.openJobDetail(job)"
@@ -714,9 +768,41 @@ onMounted(() => {
               </div>
             </NTabPane>
 
-            <NTabPane name="glossary" :tab="t('workspace.tabs.glossary')">
-              <div class="h-full w-full overflow-y-auto pb-3 pt-2">
-                <GlossaryPanel :project-id="projectId" />
+            <!-- 背景与设置：客户/产品背景 + 高级存储配置 -->
+            <NTabPane name="settings" :tab="t('workspace.tabs.settings')">
+              <div class="h-full w-full space-y-3 overflow-y-auto pb-3 pt-2">
+                <div class="lf-panel space-y-2 p-3">
+                  <div class="flex items-center justify-between gap-2">
+                    <p class="text-sm font-medium text-lf-text-strong">
+                      {{ t('projects.backgroundTitle') }}
+                    </p>
+                    <NButton
+                      size="small"
+                      type="primary"
+                      secondary
+                      :disabled="!backgroundDraftDirty || backgroundSaving"
+                      :loading="backgroundSaving"
+                      @click="saveBackground"
+                    >
+                      {{ t('common.actions.save') }}
+                    </NButton>
+                  </div>
+                  <p class="text-xs text-lf-text-subtle">
+                    {{ t('projects.backgroundHint') }}
+                  </p>
+                  <NInput
+                    v-model:value="backgroundDraft"
+                    type="textarea"
+                    :rows="4"
+                    :placeholder="t('projects.backgroundPlaceholder')"
+                    :disabled="!workspace.project || backgroundSaving"
+                  />
+                </div>
+                <ProjectStoragePanel
+                  v-if="workspace.project"
+                  :project="workspace.project"
+                  @changed="projectId && workspace.loadProject(projectId)"
+                />
               </div>
             </NTabPane>
           </NTabs>
@@ -849,7 +935,7 @@ onMounted(() => {
 
     <!-- 浮动操作岛 - 资源选择 -->
     <SelectionActionBar
-      v-show="activeTab === 'resources' && !editorActive"
+      v-show="activeTab === 'docs' && !editorActive"
       :count="jobMgmt.selectedResourceIds.value.length"
       :can-translate="jobMgmt.canCreateResourceJob.value"
       show-qa-recheck

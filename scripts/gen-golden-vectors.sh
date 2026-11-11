@@ -45,6 +45,7 @@ ALL_PACKAGES=(
   script
   qa
   prompt
+  service/segmatch
 )
 
 if [ "$#" -gt 0 ]; then
@@ -66,8 +67,14 @@ for pkg in "${PACKAGES[@]}"; do
     continue
   fi
   echo "==> 导出黄金向量: $dir"
-  go test "./$dir/" -run TestGoldenVectors -v 2>&1 | grep -E '黄金向量已导出|FAIL|ok ' || true
+  go test "./$dir/" -run TestGoldenVectors -v 2>&1 | grep -E '黄金向量已导出|已写入|FAIL|ok ' || true
 done
+
+# Go 的 unicode.SimpleFold 折叠环表（前端 domain/search 依赖它做大小写不敏感匹配）。
+if [ "${SKIP_FOLD_TABLE:-0}" != "1" ] && [ -f "cmd/foldtable/main.go" ]; then
+  echo "==> 导出 SimpleFold 折叠环表"
+  go run ./cmd/foldtable -out "$ROOT/frontend/src/domain/search/fold-table.ts"
+fi
 
 echo
 echo "黄金向量输出目录: $OUT_DIR"

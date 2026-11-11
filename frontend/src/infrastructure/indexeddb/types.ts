@@ -198,7 +198,8 @@ export interface TemplateRow extends BaseRow {
   config: Record<string, unknown> | null
   schema_version: number
   profile_id: number | null
-  rounds: Record<string, unknown> | null
+  /** 执行计划模板的轮次列表（`ExecutionRoundConfig[]`；其余模板恒为 `null`）。 */
+  rounds: unknown[] | null
   ruby_retry: Record<string, unknown> | null
   /** 内置模板标识（内置实体的虚拟 ID）。 */
   builtin_id: number | null
@@ -230,6 +231,8 @@ export interface BackendRow extends BaseRow {
 export interface CredentialVaultRow extends BaseRow {
   name: string
   provider: string
+  /** 规范化后的 base URL（**明文**，不属于机密；secret 才是密文）。 */
+  endpoint: string
   /** 当前生效版本号。 */
   current_version: number
   /** 是否已吊销。 */

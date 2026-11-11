@@ -5,6 +5,7 @@ import { t } from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useServiceStore } from '@/stores/service'
 import { safeReturnPath } from '@/auth/return-path'
+import { workbenchUsageRedirect } from '@/router/legacy-redirects'
 
 const PUBLIC_PATHS = new Set(['/login', '/register', '/service', '/auth/complete'])
 const AUTH_ENTRY_PATHS = new Set(['/login', '/register'])
@@ -25,7 +26,6 @@ const ROUTE_TITLES: Record<string, string> = {
   '/projects': 'nav.projects',
   '/projects/[projectId]': 'nav.projects',
   '/profile': 'account.profile.title',
-  '/prompt-templates': 'nav.promptTemplates',
   '/register': 'register.title',
   '/security': 'account.security.title',
   '/service': 'service.title',
@@ -57,6 +57,9 @@ export const installRouterGuards = (router: Router): void => {
       router.push('/login')
     }
   })
+
+  // 旧用量页并入「AI 后端」：/ > /backends（仅当显式携带 tab=usage 时重定向）
+  router.beforeEach(workbenchUsageRedirect)
 
   router.beforeEach((to) => {
     const service = useServiceStore()

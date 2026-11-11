@@ -12,6 +12,8 @@ export const usePreferencesStore = defineStore('preferences', () => {
   const defaultTaskState = ref<DefaultTaskState>('active')
   const retainTerminal = ref(true)
   const quickTranslatePlanId = ref<number | null>(null)
+  /** 工作台最近挂载的词库（项目）；404/403 时由工作台静默清空 */
+  const quickTranslateProjectId = ref<number | null>(null)
   const hiddenTerminalKeys = ref<string[]>([])
   const recentProjects = ref<RecentProjectVisit[]>([])
   const selectedOrgId = ref<number | null>(null)
@@ -25,6 +27,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
       defaultTaskState.value = data.defaultTaskState
       retainTerminal.value = data.retainTerminal
       quickTranslatePlanId.value = data.quickTranslatePlanId
+      quickTranslateProjectId.value = data.quickTranslateProjectId
       hiddenTerminalKeys.value = data.hiddenTerminalKeys
       recentProjects.value = data.recentProjects
       selectedOrgId.value = data.selectedOrgId
@@ -38,6 +41,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
       defaultTaskState,
       retainTerminal,
       quickTranslatePlanId,
+      quickTranslateProjectId,
       hiddenTerminalKeys,
       recentProjects,
       selectedOrgId,
@@ -49,6 +53,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
         defaultTaskState: defaultTaskState.value,
         retainTerminal: retainTerminal.value,
         quickTranslatePlanId: quickTranslatePlanId.value,
+        quickTranslateProjectId: quickTranslateProjectId.value,
         hiddenTerminalKeys: hiddenTerminalKeys.value,
         recentProjects: recentProjects.value,
         selectedOrgId: selectedOrgId.value,
@@ -89,6 +94,7 @@ export const usePreferencesStore = defineStore('preferences', () => {
     defaultTaskState,
     retainTerminal,
     quickTranslatePlanId,
+    quickTranslateProjectId,
     hiddenTerminalKeys,
     recentProjects,
     selectedOrgId,

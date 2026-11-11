@@ -15,7 +15,7 @@ type Write = { method: string; path: string; body: Record<string, unknown> | nul
 const specs = [
   {
     kind: 'prompt',
-    path: '/prompt-templates',
+    path: '/backends?tab=prompts&promptTab=translation',
     api: '/translation-prompt-templates',
     create: '新建模板',
     submit: '创建模板',
@@ -23,7 +23,7 @@ const specs = [
   },
   {
     kind: 'bootstrap',
-    path: '/bootstrap-prompt-templates',
+    path: '/backends?tab=prompts&promptTab=bootstrap',
     api: '/bootstrap-prompt-templates',
     create: '新建模板',
     submit: '创建模板',
@@ -31,27 +31,11 @@ const specs = [
   },
   {
     kind: 'prune',
-    path: '/prune-prompt-templates',
+    path: '/backends?tab=prompts&promptTab=prune',
     api: '/prune-prompt-templates',
     create: '新建模板',
     submit: '创建模板',
     field: 'content',
-  },
-  {
-    kind: 'profile',
-    path: '/execution-profiles',
-    api: '/execution-profiles',
-    create: '新建策略',
-    submit: '创建策略',
-    field: 'config',
-  },
-  {
-    kind: 'plan',
-    path: '/execution-plan-templates',
-    api: '/execution-plan-templates',
-    create: '新建计划',
-    submit: '创建计划',
-    field: 'rounds',
   },
 ] as const
 const profileConfig = {

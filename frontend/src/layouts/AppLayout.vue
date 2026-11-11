@@ -1,28 +1,28 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { NButton, NIcon, useMessage, type DropdownOption } from 'naive-ui'
+import { NButton, NIcon, type DropdownOption } from 'naive-ui'
 import IconCarbonMoon from '~icons/carbon/moon'
 import IconCarbonScreen from '~icons/carbon/screen'
 import IconCarbonSun from '~icons/carbon/sun'
 
 import TaskHistoryDeleteDialog from '@/components/operations/TaskHistoryDeleteDialog.vue'
+import AppModeMenu from '@/components/layout/AppModeMenu.vue'
 import AppNavList from '@/components/layout/AppNavList.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
+import AppUserMenu from '@/components/layout/AppUserMenu.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLocaleStore } from '@/stores/locale'
-import { useServiceStore } from '@/stores/service'
 import { useThemeStore, type ThemeMode } from '@/stores/theme'
 import { getDefaultTokenStorage } from '@/api/token-storage'
 import { invalidateSessionViews } from '@/api/session-context'
 import { onOrganizationInvalidated } from '@/utils/organization-scope'
+import { readAppPageHeaderMeta } from '@/router/page-header'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const locale = useLocaleStore()
-const service = useServiceStore()
 const theme = useThemeStore()
-const message = useMessage()
 const { t } = useI18n()
 onOrganizationInvalidated(() => {
   invalidateSessionViews()
@@ -40,69 +40,6 @@ const sidebarCollapsed = ref(getDefaultTokenStorage().getItem(SIDEBAR_STORAGE_KE
 
 watch(sidebarCollapsed, (collapsed) => {
   getDefaultTokenStorage().setItem(SIDEBAR_STORAGE_KEY, collapsed ? '1' : '0')
-})
-
-const displayName = computed(() => {
-  if (!auth.user) {
-    return ''
-  }
-  return auth.user.display_name?.trim() || auth.user.username
-})
-
-const initial = computed(() => {
-  const name = displayName.value
-  return name ? name.charAt(0).toUpperCase() : '?'
-})
-
-const serviceSummary = computed(() => {
-  if (service.isLocal) {
-    return t('layout.localModeBadge')
-  }
-  return service.displayName.trim() || service.baseUrl
-})
-
-const userOptions = computed<DropdownOption[]>(() => {
-  const items: DropdownOption[] = [
-    {
-      key: 'user-info',
-      type: 'render',
-      render: () =>
-        h('div', { class: 'px-3 py-2 min-w-[180px]' }, [
-          h('div', { class: 'text-sm font-medium text-lf-text-strong' }, displayName.value),
-          auth.user?.email
-            ? h('div', { class: 'mt-0.5 text-xs text-lf-text-muted' }, auth.user.email)
-            : null,
-          h(
-            'div',
-            {
-              class: 'mt-1.5 truncate text-[11px] font-mono text-lf-text-subtle',
-              title: service.baseUrl,
-            },
-            serviceSummary.value,
-          ),
-        ]),
-    },
-    { type: 'divider', key: 'divider-1' },
-    { label: t('layout.userMenu.profile'), key: 'profile' },
-    { label: t('layout.userMenu.security'), key: 'security' },
-    { label: t('workbench.settings.preferences'), key: 'preferences' },
-    ...(!service.isLocal ? [{ label: t('workbench.settings.team'), key: 'team' }] : []),
-    { type: 'divider', key: 'divider-2' },
-    { label: t('nav.changelog'), key: 'changelog' },
-    { label: t('nav.about'), key: 'about' },
-    { type: 'divider', key: 'divider-3' },
-  ]
-
-  if (service.isLocal) {
-    items.push({ label: t('layout.userMenu.connectRemoteService'), key: 'switch-service' })
-  } else {
-    items.push(
-      { label: t('layout.userMenu.switchService'), key: 'switch-service' },
-      { label: t('layout.userMenu.logout'), key: 'logout' },
-    )
-  }
-
-  return items
 })
 
 const localeOptions = computed<DropdownOption[]>(() =>
@@ -130,35 +67,6 @@ const themeOptions = computed<DropdownOption[]>(() => [
   },
 ])
 
-const onSelectUserAction = async (key: string | number) => {
-  if (key === 'logout') {
-    try {
-      await auth.logout()
-      message.success(t('layout.messages.logoutSuccess'))
-      await router.push({ path: '/login' })
-    } catch (error) {
-      console.error(error)
-      message.warning(t('operations.logoutUnconfirmed'))
-      await router.push({ path: '/login' })
-    }
-  } else if (key === 'switch-service') {
-    const query = service.isLocal ? { force: '1' } : {}
-    await router.push({ path: '/service', query })
-  } else if (key === 'changelog') {
-    await router.push({ path: '/changelog' })
-  } else if (key === 'about') {
-    await router.push({ path: '/about' })
-  } else if (key === 'profile') {
-    await router.push({ path: '/settings/profile' })
-  } else if (key === 'security') {
-    await router.push({ path: '/settings/security' })
-  } else if (key === 'preferences') {
-    await router.push({ path: '/settings/preferences' })
-  } else if (key === 'team') {
-    await router.push({ path: '/settings/team' })
-  }
-}
-
 const onSelectTheme = (key: string | number): void => {
   theme.setMode(String(key) as ThemeMode)
 }
@@ -168,6 +76,20 @@ const onSelectLocale = (key: string | number): void => {
 }
 
 const mobileNavOpen = ref(false)
+
+// 顶栏左侧的页面标题：仅由通过路由 meta 声明 pageHeader 的页面渲染，
+// 其余页面顶栏左侧保持留白，避免与页面内自带 PageHeader 重复。
+const appPageHeader = computed(() => readAppPageHeaderMeta(route.meta))
+const appPageHeaderTitle = computed(() => {
+  const header = appPageHeader.value
+  return header ? t(header.title) : ''
+})
+const appPageHeaderSubtitle = computed(() => {
+  const header = appPageHeader.value
+  return header?.subtitle ? t(header.subtitle) : ''
+})
+// 沉浸式页面：页面不再渲染页内页头，主区收紧顶部内边距让内容上移
+const isImmersivePage = computed(() => appPageHeader.value?.immersive === true)
 
 // 视口跨过 lg 断点（桌面侧边栏接管导航）时自动收起移动端抽屉，避免两套导航并存
 const desktopNavQuery = window.matchMedia('(min-width: 64rem)')
@@ -204,9 +126,22 @@ onUnmounted(() => desktopNavQuery.removeEventListener('change', onDesktopNavChan
           </template>
         </NButton>
 
-        <div class="min-w-0 flex-1 overflow-hidden" />
+        <!-- 顶栏左侧：当前页面标题（仅沉浸式页面声明时渲染）+ 单行紧凑副标题 -->
+        <div v-if="appPageHeaderTitle" class="min-w-0 flex-1 overflow-hidden">
+          <div class="flex min-w-0 items-baseline gap-2">
+            <h1 class="truncate text-[15px] leading-5 font-semibold tracking-tight text-lf-text-strong">
+              {{ appPageHeaderTitle }}
+            </h1>
+            <span
+              v-if="appPageHeaderSubtitle"
+              class="hidden min-w-0 truncate text-xs leading-5 text-lf-text-subtle md:inline"
+              >{{ appPageHeaderSubtitle }}</span
+            >
+          </div>
+        </div>
+        <div v-else class="min-w-0 flex-1" />
 
-        <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div class="flex shrink-0 items-center gap-3 sm:gap-4">
           <NDropdown
             v-if="locale.hasMultipleLocales"
             trigger="click"
@@ -238,42 +173,21 @@ onUnmounted(() => desktopNavQuery.removeEventListener('change', onDesktopNavChan
               </template>
             </NButton>
           </NDropdown>
-          <span
-            v-if="service.isLocal"
-            class="flex shrink-0 items-center text-lf-success"
-            :title="t('layout.localModeBadge')"
-            :aria-label="t('layout.localModeBadge')"
-            role="img"
-          >
-            <IconCarbonLaptop class="text-lg sm:hidden" aria-hidden="true" />
-            <span class="hidden sm:inline-flex"
-              ><NTag size="small" type="success" :bordered="false">{{
-                t('layout.localModeBadge')
-              }}</NTag></span
-            >
-          </span>
+          <AppModeMenu />
           <GlobalJobTrackerWidget />
-          <NDropdown
-            v-if="auth.user"
-            trigger="click"
-            :options="userOptions"
-            placement="bottom-end"
-            @select="onSelectUserAction"
-          >
-            <button
-              type="button"
-              class="lf-grad-bg flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-xs font-semibold text-white"
-              :aria-label="displayName"
-            >
-              {{ initial }}
-            </button>
-          </NDropdown>
+          <AppUserMenu />
         </div>
       </header>
 
       <!-- 宽度治理下放页面：普通页面根部用 .lf-content-narrow 保持居中窄栏；
-           需要全宽的页面（如项目工作台）自行铺满 -->
-      <main class="flex-1 px-5 py-7 sm:px-8">
+           沉浸式页面（如工作台）收紧顶部内边距并纵向撑满视口剩余高度 -->
+      <main
+        :class="
+          isImmersivePage
+            ? 'flex min-h-0 flex-1 flex-col px-5 pt-4 pb-7 sm:px-8'
+            : 'flex min-h-0 flex-1 flex-col px-5 py-7 sm:px-8'
+        "
+      >
         <NAlert v-if="auth.initializationError" type="warning" :bordered="false" class="mb-5">
           {{ auth.initializationError }}
           <NButton text class="ml-3" @click="auth.fetchCurrentUser().catch(() => undefined)">{{

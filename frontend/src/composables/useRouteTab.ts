@@ -23,16 +23,29 @@ export interface RouteTabState<T extends string = string> {
   setTab: (tab: T) => void
 }
 
+/**
+ * Query 同步选项。
+ *
+ * 默认写 `?tab=`；同一页面存在多层 Tab（如「AI 配置」的一级 Tab 与
+ * 「提示词模板」内部的三分类 Tab）时，内层用独立的 Query Key（如 `promptTab`）
+ * 避免两层互相覆盖。
+ */
+export interface RouteTabSyncOptions {
+  queryKey?: string
+}
+
 export function useRouteTab<T extends string>(
   options: readonly RouteTabOption<T>[],
   defaultTab: T,
+  sync: RouteTabSyncOptions = {},
 ): RouteTabState<T> {
   const route = useRoute()
   const router = useRouter()
   const allowed = new Set<string>(options.map((option) => option.value))
+  const queryKey = sync.queryKey ?? 'tab'
 
   const activeTab = computed<T>(() => {
-    const raw = route.query.tab
+    const raw = route.query[queryKey]
     const value = Array.isArray(raw) ? raw[0] : raw
     return typeof value === 'string' && allowed.has(value) ? (value as T) : defaultTab
   })
@@ -40,7 +53,7 @@ export function useRouteTab<T extends string>(
   const setTab = (tab: T): void => {
     if (tab === activeTab.value) return
     // push 而非 replace：浏览器前进/后退需要能回到上一个 Tab。
-    void router.push({ path: route.path, query: { ...route.query, tab } })
+    void router.push({ path: route.path, query: { ...route.query, [queryKey]: tab } })
   }
 
   return { activeTab, setTab }

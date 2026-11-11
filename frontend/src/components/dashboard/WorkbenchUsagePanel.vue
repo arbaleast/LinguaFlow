@@ -1,18 +1,16 @@
 <script setup lang="ts">
 /**
- * 工作台「用量」面板。
+ * 用量统计面板（挂在「AI 后端」页面的「用量统计」Tab 下）。
  *
- * 由原「用量概览」页面迁移而来：API 调用、Token 消耗、任务数量统计、活动记录与
- * 时间范围相关的展示全部保留；页面标题与刷新操作改由外层工作台页面提供。
+ * 只保留 AI 调用量监控本身：历史用量 4 项核心指标（API 调用、输入/输出 Token、
+ * 任务段数）与「最近活动」列表；任务状态卡片、保留的翻译任务记录等属于
+ * 「任务中心」的重复模块已移除，活动列表扩展为全宽展示。
  */
 import { useI18n } from 'vue-i18n'
 
 import ActivityFeed from '@/components/dashboard/ActivityFeed.vue'
-import JobStatusOverview from '@/components/dashboard/JobStatusOverview.vue'
 import StatsCard from '@/components/dashboard/StatsCard.vue'
 import { useStatsStore } from '@/stores/stats'
-import { useOperationsStore } from '@/stores/operations'
-import OperationCounts from '@/components/operations/OperationCounts.vue'
 import { parseOrganizationId } from '@/utils/organization-scope'
 import { sessionGeneration } from '@/api/session-context'
 
@@ -22,7 +20,6 @@ const stats = useStatsStore()
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-const operations = useOperationsStore()
 watch(
   () => stats.revision,
   () => {
@@ -31,10 +28,10 @@ watch(
 )
 const orgId = computed(() => parseOrganizationId(route.query.org_id))
 const refresh = async (): Promise<void> => {
-  await Promise.all([stats.loadAll(), operations.ensureSummary(true)])
+  await stats.loadAll()
 }
 
-// 外层工作台页面的「刷新」按钮：用量统计接口仅在用量 Tab 激活时才会被触发
+// 外层「AI 后端」页面的「刷新」按钮：用量统计接口仅在用量 Tab 激活时才会被触发
 watch(
   () => props.refreshKey,
   (value, previous) => {
@@ -47,7 +44,6 @@ watch(
   () => {
     stats.setActivityOrganization(orgId.value)
     void stats.loadAll()
-    void operations.ensureSummary()
   },
   { immediate: true },
 )
@@ -60,21 +56,6 @@ const clearOrganizationScope = (): void => {
 
 <template>
   <div class="lf-page">
-    <section class="space-y-3">
-      <div class="flex items-center justify-between gap-3">
-        <h2 class="text-sm font-semibold text-lf-text-strong">
-          {{ t('workbench.home.currentTasks') }}
-        </h2>
-        <RouterLink to="/operations" class="text-xs text-brand-600 no-underline hover:underline">{{
-          t('workbench.home.operations')
-        }}</RouterLink>
-      </div>
-      <OperationCounts
-        :summary="operations.summary"
-        :loading="operations.summaryLoading"
-        :error="operations.summaryError"
-      />
-    </section>
     <h2 class="text-sm font-semibold text-lf-text-strong">{{ t('workbench.stats.usage') }}</h2>
     <NAlert v-if="stats.statsError && stats.stats" type="warning"
       >{{ t('workbench.stats.stale') }} · {{ stats.statsUpdatedAt }}</NAlert
@@ -115,19 +96,14 @@ const clearOrganizationScope = (): void => {
       />
     </div>
 
-    <div class="grid grid-cols-1 gap-4 xl:grid-cols-5">
-      <div class="xl:col-span-2">
-        <JobStatusOverview />
+    <div>
+      <div v-if="orgId" class="mb-3 flex items-center justify-between gap-3 text-sm">
+        <span>{{ t('workbench.stats.organizationActivity') }} #{{ orgId }}</span
+        ><NButton text @click="clearOrganizationScope">{{
+          t('workbench.stats.clearScope')
+        }}</NButton>
       </div>
-      <div class="xl:col-span-3">
-        <div v-if="orgId" class="mb-3 flex items-center justify-between gap-3 text-sm">
-          <span>{{ t('workbench.stats.organizationActivity') }} #{{ orgId }}</span
-          ><NButton text @click="clearOrganizationScope">{{
-            t('workbench.stats.clearScope')
-          }}</NButton>
-        </div>
-        <ActivityFeed />
-      </div>
+      <ActivityFeed />
     </div>
   </div>
 </template>

@@ -170,7 +170,7 @@ test('T32a fresh browsers, reload, sole pausing counts and real SSE reconnect co
   const item = await pausingJob(backend, flow, 'T32 sole pausing')
   const page = await product.freshPage()
   // No task ID, cached job, or SSE subscription is supplied to global discovery.
-  for (const route of ['/operations?status=pausing', '/', '/stats']) {
+  for (const route of ['/operations?status=pausing']) {
     await page.goto(`${product.origin}${route}`)
     await counts(page, 0, 1, 0, 1)
   }

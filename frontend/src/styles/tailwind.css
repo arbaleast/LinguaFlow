@@ -698,3 +698,66 @@ html[data-theme='dark'] .quality-span--active.quality-span--dismissed.search-hit
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* ── 工作台 AI 加载态：流光骨架 + 打字机光标 ───────────────────────
+   请求在途时右侧渲染骨架行，避免“死寂等待”；流式输出时末尾显示闪烁光标。 */
+
+@keyframes lf-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.lf-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--lf-surface-muted) 25%,
+    var(--lf-surface-elevated) 37%,
+    var(--lf-surface-muted) 63%
+  );
+  background-size: 400% 100%;
+  animation: lf-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes lf-caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.lf-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--lf-brand-500);
+  animation: lf-caret-blink 1s step-end infinite;
+}
+
+/* 减少动态效果：关闭流光扫光与光标闪烁（骨架仍可见，只是静态） */
+@media (prefers-reduced-motion: reduce) {
+  .lf-shimmer {
+    animation: none;
+    background-image: none;
+    background-color: var(--lf-surface-muted);
+  }
+
+  .lf-caret {
+    animation: none;
+    opacity: 1;
+  }
+
+  /* 旋转指示器同样停止：静态圆环仍然可见，不影响可用性 */
+  .animate-spin {
+    animation: none;
+  }
+}

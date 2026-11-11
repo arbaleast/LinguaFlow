@@ -1,10 +1,12 @@
 <script setup lang="ts">
 /**
- * 提示词管理（统一入口）：翻译 / 术语抽取 / 术语精简三类提示词合并到同一页面。
+ * 提示词模板面板（AI 配置 → 提示词模板 Tab）。
  *
- * - Tab 与路由 Query 双向同步（?tab=translation|bootstrap|prune，默认 translation）；
- * - 各 Tab 继续使用各自原有的 Store 与 API，底层数据模型与接口契约保持不变；
- * - 面板按需挂载并由 KeepAlive 保活，切换 Tab 不丢搜索条件与未保存的表单。
+ * 承接原「提示词管理」页面的三个分类：翻译 / 术语抽取 / 术语精简。
+ *
+ * - 内层分类 Tab 与 `?promptTab=` 双向同步（一级 Tab 用 `?tab=`，互不冲突）；
+ * - 各分类继续使用各自原有的 Store 与 API，数据模型与接口契约不变；
+ * - 面板按需挂载并由 KeepAlive 保活，切换分类不丢搜索条件与未保存的表单。
  */
 import { useI18n } from 'vue-i18n'
 
@@ -40,16 +42,10 @@ const tabs = computed<SectionTabItem<PromptTemplateTab>[]>(() => [
 const { activeTab, setTab } = useRouteTab<PromptTemplateTab>(
   [{ value: 'translation' }, { value: 'bootstrap' }, { value: 'prune' }],
   'translation',
+  { queryKey: 'promptTab' },
 )
 </script>
 
 <template>
-  <div class="lf-page lf-content-narrow">
-    <PageHeader
-      :title="t('promptTemplateManagement.title')"
-      :subtitle="t('promptTemplateManagement.subtitle')"
-    />
-
-    <SectionTabs :tabs="tabs" :model-value="activeTab" @update:model-value="setTab" />
-  </div>
+  <SectionTabs :tabs="tabs" :model-value="activeTab" @update:model-value="setTab" />
 </template>

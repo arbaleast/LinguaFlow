@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 const modelValue = defineModel<string>('value', { default: '' })
 
 const {
@@ -12,16 +12,7 @@ const {
 }>()
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
-const backdropInnerRef = ref<HTMLDivElement | null>(null)
-
-let resizeObserver: ResizeObserver | null = null
-
-/** 同步背景层高度为 textarea 的实际高度 */
-function syncHeight() {
-  if (!textareaRef.value) return
-  const height = textareaRef.value.offsetHeight
-  backdropInnerRef.value?.parentElement?.style.setProperty('height', height + 'px')
-}
+const backdropRef = ref<HTMLDivElement | null>(null)
 
 // --- Go Template 分词高亮 ---
 
@@ -180,31 +171,29 @@ const highlightedHtml = computed(() => {
   const text = modelValue.value || ''
   if (!text) return ''
 
-  const highlighted = highlightGoTemplate(text)
-
-  // 将换行符转为 <br>，与背景层保持一致的换行行为
-  return highlighted.replace(/\r\n/g, '\n').replace(/\n/g, '<br>')
+  // 换行交给 CSS 的 white-space: pre-wrap 处理：两层排版规则一致，
+  // 不能再把 \n 换成 <br>，否则末尾换行会少渲染一行，与 textarea 对不齐。
+  return highlightGoTemplate(text.replace(/\r\n/g, '\n'))
 })
 
 // --- 滚动同步 ---
 
-/** 滚动同步：通过 transform 平移内层，避免 scrollHeight 不一致导致的偏移 */
-let rafId: number | null = null
-
+/**
+ * 滚动同步：把 textarea 的滚动偏移直接写给背景层。
+ * 背景层 overflow:hidden 仍可被程序化滚动，且与 textarea 共用同一套盒模型，
+ * 因此 scrollTop/scrollLeft 就是最精确的映射；用 transform 反而多一层偏移状态。
+ */
 function syncScroll() {
-  if (rafId) return
-  rafId = requestAnimationFrame(() => {
-    if (textareaRef.value && backdropInnerRef.value) {
-      const left = textareaRef.value.scrollLeft
-      const top = textareaRef.value.scrollTop
-      backdropInnerRef.value.style.transform = `translate(-${left}px, -${top}px)`
-    }
-    rafId = null
-  })
+  const textarea = textareaRef.value
+  const backdrop = backdropRef.value
+  if (!textarea || !backdrop) return
+  if (backdrop.scrollTop !== textarea.scrollTop) backdrop.scrollTop = textarea.scrollTop
+  if (backdrop.scrollLeft !== textarea.scrollLeft) backdrop.scrollLeft = textarea.scrollLeft
 }
 
 /** 将模板变量插入到光标位置 */
 function insertAtCursor(placeholder: string): void {
+  if (disabled) return
   const el = textareaRef.value
   if (!el) {
     modelValue.value += placeholder
@@ -224,32 +213,16 @@ function insertAtCursor(placeholder: string): void {
   })
 }
 
-// 内容变化时同步滚动位置
+// 内容变化后补一次同步（textarea 可能因光标移出视口而自行滚动）
 watch(modelValue, () => {
   nextTick(() => {
     syncScroll()
   })
 })
 
-// 生命周期
-onMounted(() => {
-  nextTick(() => {
-    syncHeight()
-    if (textareaRef.value) {
-      resizeObserver = new ResizeObserver(() => {
-        syncHeight()
-        syncScroll()
-      })
-      resizeObserver.observe(textareaRef.value)
-    }
-  })
-})
-
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect()
-  resizeObserver = null
-  if (rafId) cancelAnimationFrame(rafId)
-})
+// 只读态也要能滚动阅读：disabled 的 textarea 在浏览器里既不响应滚轮也无法选中，
+// 因此编辑能力用 readonly 关闭，滚动与复制保持可用。
+const readOnly = computed(() => disabled)
 
 defineExpose({ insertAtCursor })
 </script>
@@ -258,24 +231,23 @@ defineExpose({ insertAtCursor })
   <div
     class="prompt-editor relative overflow-hidden rounded-lf-ctl border border-lf-border bg-lf-surface"
   >
-    <!-- 背景高亮容器：通过 CSS left/right 与 textarea 完全对齐，无需 JS 计算宽度 -->
+    <!-- 背景高亮容器：inset-0 让高亮层与输入层共享同一个盒子，无需 JS 量高 -->
     <div
-      class="prompt-editor-backdrop pointer-events-none absolute top-0 left-0 right-0 text-lf-text bg-lf-surface"
+      ref="backdropRef"
+      class="prompt-editor-backdrop pointer-events-none absolute inset-0 bg-lf-surface text-lf-text"
       aria-hidden="true"
     >
-      <!-- 内层平移层，通过 transform 同步滚动 -->
-      <div ref="backdropInnerRef" class="prompt-editor-backdrop-inner">
-        <span v-html="highlightedHtml"></span>
-      </div>
+      <span v-html="highlightedHtml"></span>
     </div>
-    <!-- 输入层：透明文本 -->
+    <!-- 输入层：透明文本，负责光标、选择与滚动 -->
     <textarea
       ref="textareaRef"
       :value="modelValue"
       :placeholder="placeholder"
       :rows="rows"
-      :disabled="disabled"
-      class="prompt-editor-textarea relative z-2 w-full bg-transparent p-3 text-sm leading-6 text-transparent caret-lf-text outline-none disabled:cursor-not-allowed disabled:opacity-50"
+      :readonly="readOnly"
+      :aria-disabled="disabled"
+      class="prompt-editor-textarea relative z-2 block w-full bg-transparent p-3 text-sm leading-6 text-transparent caret-lf-text outline-none disabled:cursor-not-allowed disabled:opacity-50"
       @input="modelValue = ($event.target as HTMLTextAreaElement).value"
       @scroll="syncScroll"
     />
@@ -333,43 +305,47 @@ defineExpose({ insertAtCursor })
   box-shadow: 0 0 0 2px var(--lf-brand-soft);
 }
 
+/*
+  两层共用同一套排版度量：字体、字号、行高、内边距、换行与断词规则必须逐项一致，
+  任何一项不同都会让高亮文字与光标错位。这里集中定义一次，避免两边漂移。
+*/
 .prompt-editor-backdrop,
 .prompt-editor-textarea {
+  box-sizing: border-box;
+  padding: 12px; /* p-3 */
   font-family:
     'Cascadia Code', 'Fira Code', 'JetBrains Mono', Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', 'Source Han Mono SC', 'Noto Sans Mono CJK SC', 'WenQuanYi Micro Hei Mono',
     monospace;
-  font-variant-ligatures: none;
-  tab-size: 4;
-  min-height: 6rem;
-}
-
-/* 背景高亮层：与 textarea 完全一致的排版样式 */
-.prompt-editor-backdrop {
-  box-sizing: border-box;
-  border-radius: inherit;
-  padding: 12px; /* p-3 */
   font-size: 0.875rem; /* text-sm */
   line-height: 1.5rem; /* leading-6 */
+  font-variant-ligatures: none;
   white-space: pre-wrap;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
+  tab-size: 4;
+}
+
+/* 背景高亮层：只负责显示，滚动由 textarea 驱动后写回 scrollTop/scrollLeft */
+.prompt-editor-backdrop {
+  border-radius: inherit;
   overflow: hidden;
   z-index: 1;
 }
 
-/* 内层平移层：保持与 textarea 内容区完全一样的排版 */
-.prompt-editor-backdrop-inner {
-  width: 100%;
-  height: fit-content;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-/* 重置 textarea 的浏览器 UA 默认样式，确保与背景层像素级对齐 */
+/* 重置 textarea 的浏览器 UA 默认样式（含 inline-block 带来的基线间隙） */
 .prompt-editor-textarea {
+  display: block;
+  min-height: 6rem;
   margin: 0;
   border: none;
   resize: vertical;
+}
+
+/* 只读（查看系统模板）时保留阅读能力：可滚动、可选中、可复制，但不能改 */
+.prompt-editor-textarea[readonly] {
+  resize: none;
+  cursor: default;
 }
 
 .prompt-editor-textarea::placeholder {

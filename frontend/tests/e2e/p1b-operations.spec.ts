@@ -129,26 +129,16 @@ async function expectColumns(page: Page, columns: number) {
 }
 
 for (const theme of ['light', 'dark'] as const) {
-  test(`sole pausing task is independently counted on home, stats and task center in ${theme}`, async ({
+  test(`sole pausing task is independently counted on the task center in ${theme}`, async ({
     page,
   }, testInfo) => {
     const state = await pausingApp(page, theme)
-    for (const path of ['/', '/stats', '/operations?status=pausing']) {
+    for (const path of ['/operations?status=pausing']) {
       await page.goto(path)
       await expectPausingCounts(page)
       await expectColumns(page, testInfo.project.name === 'mobile' ? 2 : 7)
-      if (path === '/') {
-        const recovery = page
-          .locator('section')
-          .filter({ has: page.getByRole('heading', { name: '暂停待继续', exact: true }) })
-        await expect(recovery).toContainText('没有暂停待继续的任务')
-        await expect(recovery).not.toContainText(projectName)
-        expect(state.queries.some((url) => url.searchParams.get('status') === 'paused')).toBe(true)
-      }
       await page.screenshot({
-        path: testInfo.outputPath(
-          `${theme}-${path === '/' ? 'home' : path.startsWith('/stats') ? 'stats' : 'operations'}.png`,
-        ),
+        path: testInfo.outputPath(`${theme}-operations.png`),
         fullPage: true,
       })
     }
@@ -294,7 +284,7 @@ test('pausing count cards reflow at real 200 percent browser zoom in both themes
         return api.tabs.getZoom(tab!.id)
       })
       expect(zoom).toBe(2)
-      for (const path of ['/operations?status=pausing', '/', '/stats']) {
+      for (const path of ['/operations?status=pausing']) {
         await page.goto(path)
         await page.waitForFunction(() => innerWidth === 720 && devicePixelRatio === 2)
         await expectPausingCounts(page)
@@ -304,9 +294,7 @@ test('pausing count cards reflow at real 200 percent browser zoom in both themes
           page.getByTestId('global-job-tracker-list').getByRole('button', { name: /P1b.*暂停中/ }),
         ).toBeVisible()
         await page.screenshot({
-          path: testInfo.outputPath(
-            `200pct-${theme}-${path === '/' ? 'home' : path.startsWith('/stats') ? 'stats' : 'operations'}.png`,
-          ),
+          path: testInfo.outputPath(`200pct-${theme}-operations.png`),
         })
       }
       expect(state.errors).toEqual([])
