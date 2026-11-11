@@ -81,15 +81,16 @@ const resources = [
   'executionProfiles',
   'executionPlanTemplates',
 ] as const
-const paths = {
-  projects: '/projects',
-  backends: '/backends',
-  promptTemplates: '/prompt-templates',
-  bootstrapPromptTemplates: '/bootstrap-prompt-templates',
-  prunePromptTemplates: '/prune-prompt-templates',
-  executionProfiles: '/execution-profiles',
-  executionPlanTemplates: '/execution-plan-templates',
-}
+const paths: Record<(typeof resources)[number], { path: string; query?: Record<string, string> }> =
+  {
+    projects: { path: '/projects' },
+    backends: { path: '/backends' },
+    promptTemplates: { path: '/prompt-templates', query: { tab: 'translation' } },
+    bootstrapPromptTemplates: { path: '/prompt-templates', query: { tab: 'bootstrap' } },
+    prunePromptTemplates: { path: '/prompt-templates', query: { tab: 'prune' } },
+    executionProfiles: { path: '/execution-config', query: { tab: 'profiles' } },
+    executionPlanTemplates: { path: '/execution-config', query: { tab: 'plans' } },
+  }
 
 async function select(id: number | null) {
   preferences.setSelectedOrg(id)
@@ -331,7 +332,12 @@ onUnmounted(() => {
             v-for="resource in resources"
             :key="resource"
             secondary
-            @click="router.push({ path: paths[resource], query: { org_id: String(orgId) } })"
+            @click="
+              router.push({
+                path: paths[resource].path,
+                query: { ...paths[resource].query, org_id: String(orgId) },
+              })
+            "
             >{{ t(`team.${resource}`) }}</NButton
           >
         </div></NCard

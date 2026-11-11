@@ -44,3 +44,6 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# ide-byebye：元素选取的截图与交接文件
+/.intent-inspector/

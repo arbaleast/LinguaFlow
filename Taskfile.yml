@@ -21,6 +21,26 @@ tasks:
     cmds:
       - task --list
 
+  dev:
+    desc: 一键启动本地开发环境（后端 18080 + 前端 Vite 5173）
+    cmds:
+      - bash scripts/dev.sh start {{.CLI_ARGS}}
+
+  dev:stop:
+    desc: 停止本地开发环境
+    cmds:
+      - bash scripts/dev.sh stop
+
+  dev:status:
+    desc: 查看本地开发环境运行状态
+    cmds:
+      - bash scripts/dev.sh status
+
+  dev:logs:
+    desc: 跟踪本地开发环境日志
+    cmds:
+      - bash scripts/dev.sh logs
+
   ci:lint:
     desc: 检查 GitHub Actions 工作流语法和表达式
     cmds:

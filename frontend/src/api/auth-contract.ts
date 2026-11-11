@@ -65,7 +65,8 @@ export const isLocalAccountCapabilities = (
 
 export const isAuthCapabilities = (value: unknown): value is ApiSchemas['AuthCapabilities'] =>
   object(value) &&
-  (value.mode === 'local' || value.mode === 'server') &&
+  // 'browser-local' 由浏览器内的 LocalGateway 直接应答（纯浏览器本地运行模式）。
+  (value.mode === 'local' || value.mode === 'server' || value.mode === 'browser-local') &&
   isLocalAccountCapabilities(value.local_account) &&
   value.email_verification_enabled === false &&
   value.password_reset_enabled === false &&

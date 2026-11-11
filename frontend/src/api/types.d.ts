@@ -5453,11 +5453,19 @@ export interface components {
              */
             target_lang?: string;
             /**
-             * @description 执行计划模板 ID。执行计划模板统一为用户/org 级(ExecutionPlanTemplate
+             * @description 执行计划模板 ID(可选)。省略或为 0 时后端回退到当前账号可用的默认 AI
+             *     后端与内置翻译提示词模板,直接完成本次文本处理,不再因缺少执行计划而阻断。
+             *     提供时:执行计划模板统一为用户/org 级(ExecutionPlanTemplate
              *     无 project 关联),无论是否提供 project_id,用的都是同一套模板;
              *     后端用 ExecutionPlanService.checkAccess 对 actor 做用户/org 级授权。
              */
-            execution_plan_id: number;
+            execution_plan_id?: number;
+            /**
+             * @description 可选的补充指令(场景/语气/格式意图),追加到翻译轮次的系统提示词末尾。
+             *     用于「标准商务 / 报盘议价 / 礼貌催款 / WhatsApp 简短」等外贸沟通场景的
+             *     快捷切换;省略时按提示词模板的默认行为输出。
+             */
+            instructions?: string;
             /**
              * @description 可选项目 ID。提供时复用项目的语言配置(若请求未显式覆盖),
              *     术语应用与抽取遵守项目 glossary_enabled 总开关；关闭时也不应用请求中的临时术语表。

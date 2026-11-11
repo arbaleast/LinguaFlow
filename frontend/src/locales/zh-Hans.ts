@@ -84,21 +84,19 @@ const messages = {
   nav: {
     main: '主导航',
     menu: '菜单',
+    mainGroup: '常用功能',
+    configGroup: '配置',
     dashboard: '工作台',
     projects: '项目',
     backends: 'AI 后端',
-    executionConfig: '模板与配置',
-    promptTemplates: '翻译提示词',
-    bootstrapPromptTemplates: '术语抽取提示词',
-    prunePromptTemplates: '术语精简提示词',
-    executionProfiles: '执行策略',
-    executionPlanTemplates: '执行计划',
+    executionConfig: '执行配置',
+    promptTemplates: '提示词管理',
     tools: '工具',
     epubRotate: 'EPUB 横竖排转换',
-    stats: '用量概览',
     changelog: '更新日志',
     about: '关于',
     admin: '管理后台',
+    adminGroup: '管理',
     adminDashboard: '系统概览',
     adminUsers: '用户管理',
     adminAuditLogs: '审计日志',
@@ -194,6 +192,55 @@ const messages = {
     validation: {
       sourceRequired: '请输入原文',
       planRequired: '请选择执行计划',
+    },
+    assistant: {
+      title: '外贸邮件与翻译助手',
+      subtitle: '粘贴客户原邮件或中文回复要点，一键得到可直接发送的英文邮件',
+      modeLabel: '助手模式',
+      modeTranslate: '智能互译',
+      modeEmail: '外贸邮件回复',
+      sceneLabel: '场景',
+      inputTitle: '原文 / 回复要点',
+      inputPlaceholder: '粘贴需要翻译的文本…',
+      inputPlaceholderEmail: '粘贴客户原邮件，或写下你要回复的中文要点…',
+      resultTitle: '翻译结果',
+      resultTitleEmail: '商务英文邮件预览',
+      resultPlaceholder: '结果会显示在这里，可直接复制到邮件或聊天客户端',
+      detailsTitle: '处理详情',
+      copyResult: '一键复制',
+      copyBilingual: '双语对照复制',
+      copyBilingualSuccess: '已复制原文与译文对照内容',
+      bilingualSourceLabel: '【原文】',
+      bilingualTargetLabel: '【译文】',
+      generateTranslate: '翻译',
+      generateEmail: '生成邮件',
+      fallbackBadge: '默认后端',
+      fallbackPlaceholder: '默认后端（未配置执行计划）',
+      fallbackNotice: '未配置可用执行计划，已自动回退到默认 AI 后端直接处理。',
+      emailInstruction:
+        '按可直接发送的商务邮件输出：保持礼貌克制的专业语气，不编造原文没有的事实、数字与承诺；原文是客户来信时先致谢或确认，再回应其中的要点，最后给出明确的下一步。',
+      scenes: {
+        standard: {
+          label: '标准商务',
+          instruction:
+            '使用标准商务英语：正式但不生硬，结构清晰，先结论后细节，保持敬语与专业措辞，不使用俚语与夸张表达。',
+        },
+        quote: {
+          label: '报盘议价',
+          instruction:
+            '按外贸报盘与议价场景输出：明确给出或复述价格、起订量、有效期与交期等关键商务条件；涉及让步时保留可谈判余地，不擅自承诺未给出的折扣与账期。',
+        },
+        dunning: {
+          label: '礼貌催款',
+          instruction:
+            '按催款场景输出：语气礼貌但立场明确，点明未结金额与账单信息，给出明确的付款期限与逾期后果，同时给对方留有体面的回应余地，不使用指责性措辞。',
+        },
+        whatsapp: {
+          label: 'WhatsApp 简短',
+          instruction:
+            '按即时通讯场景输出：控制在三句以内，短句、直接、友好，去掉敬套话与冗余修饰，保留关键信息（金额、日期、动作），不做长段落排版。',
+        },
+      },
     },
   },
   termExtraction: {
@@ -321,7 +368,8 @@ const messages = {
     messages: {
       connected: '已连接到 {name}',
       connectFailed: '连接失败，请检查服务器地址',
-      corsOrUnreachable: '无法连接本机服务：请检查地址与端口，或配置开发代理以避免跨域限制',
+      corsOrUnreachable:
+        '无法连接本机服务：请检查地址与端口。开发服务器请保留默认的相对地址 /api/v1，填绝对地址会被跨域拦截',
     },
     hints: {
       prefix: '留空或填写',
@@ -429,7 +477,6 @@ const messages = {
     },
   },
   stats: {
-    title: '用量概览',
     subtitle: '查看调用量、Token 消耗与最近活动',
     loadFailed: '加载失败',
   },
@@ -1750,6 +1797,15 @@ const messages = {
       deleteFailed: '后端删除失败，请稍后重试',
     },
   },
+  promptTemplateManagement: {
+    title: '提示词管理',
+    subtitle: '统一管理翻译、术语抽取与术语精简三类提示词，各自独立存储与启停',
+    tabs: {
+      translation: '翻译提示词',
+      bootstrap: '术语抽取提示词',
+      prune: '术语精简提示词',
+    },
+  },
   promptTemplates: {
     title: '翻译提示词',
     subtitle: '定义 AI 翻译的行为指令与输出规则，翻译任务执行时套用',
@@ -1936,6 +1992,14 @@ const messages = {
     },
     delete: {
       confirm: '确定要删除术语精简提示词「{name}」吗？此操作无法撤销。',
+    },
+  },
+  executionConfiguration: {
+    title: '执行配置',
+    subtitle: '统一管理执行策略与执行计划：策略定义处理规则，计划组合后端与提示词完成翻译',
+    tabs: {
+      profiles: '执行策略',
+      plans: '执行计划',
     },
   },
   executionProfiles: {

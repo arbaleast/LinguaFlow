@@ -1,0 +1,1259 @@
+{
+  "package": "batch",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "batch/aware/batch-size-split",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 1,
+        "enabled": true,
+        "max_segments": 2,
+        "max_words": 0,
+        "pending": [1, 3, 5, 7, 9],
+        "sources": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1, 3], [5, 7], [9]]
+      }
+    },
+    {
+      "id": "batch/aware/cjk-word-constraint",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 0,
+        "enabled": false,
+        "max_segments": 0,
+        "max_words": 5,
+        "pending": [0, 1, 2],
+        "sources": ["你好世界", "hello", "世界"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[0, 1], [2]]
+      }
+    },
+    {
+      "id": "batch/aware/disabled",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 1,
+        "enabled": false,
+        "max_segments": 5,
+        "max_words": 0,
+        "pending": [1, 3],
+        "sources": ["seg-0", "seg-1", "seg-2", "seg-3", "seg-4"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1], [3]]
+      }
+    },
+    {
+      "id": "batch/aware/dual-segments-first",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 0,
+        "enabled": false,
+        "max_segments": 2,
+        "max_words": 100,
+        "pending": [0, 1, 2, 3, 4],
+        "sources": ["a", "b", "c", "d", "e"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[0, 1], [2, 3], [4]]
+      }
+    },
+    {
+      "id": "batch/aware/dual-words-first",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 0,
+        "enabled": false,
+        "max_segments": 100,
+        "max_words": 3,
+        "pending": [0, 1, 2, 3],
+        "sources": ["hello world", "foo bar", "x", "y"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[0], [1, 2], [3]]
+      }
+    },
+    {
+      "id": "batch/aware/empty",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 1,
+        "enabled": true,
+        "max_segments": 5,
+        "max_words": 0,
+        "pending": null,
+        "sources": ["s0"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": []
+      }
+    },
+    {
+      "id": "batch/aware/estimator-disabled",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 1,
+        "enabled": true,
+        "max_segments": 0,
+        "max_words": 7,
+        "pending": [1, 3],
+        "sources": ["alpha beta gamma", "a", "delta echo foxtrot", "b", "golf hotel india"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1, 3]]
+      }
+    },
+    {
+      "id": "batch/aware/no-overlap",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 1,
+        "enabled": true,
+        "max_segments": 10,
+        "max_words": 0,
+        "pending": [1, 7],
+        "sources": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1], [7]]
+      }
+    },
+    {
+      "id": "batch/aware/overlap",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 1,
+        "enabled": true,
+        "max_segments": 10,
+        "max_words": 0,
+        "pending": [1, 3],
+        "sources": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1, 3]]
+      }
+    },
+    {
+      "id": "batch/aware/window-zero",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 0,
+        "enabled": true,
+        "max_segments": 5,
+        "max_words": 0,
+        "pending": [1, 3],
+        "sources": ["seg-0", "seg-1", "seg-2", "seg-3", "seg-4"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1], [3]]
+      }
+    },
+    {
+      "id": "batch/aware/window2-merge",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 2,
+        "enabled": true,
+        "max_segments": 10,
+        "max_words": 0,
+        "pending": [1, 5],
+        "sources": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1, 5]]
+      }
+    },
+    {
+      "id": "batch/aware/window2-separate",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 2,
+        "enabled": true,
+        "max_segments": 10,
+        "max_words": 0,
+        "pending": [1, 7],
+        "sources": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[1], [7]]
+      }
+    },
+    {
+      "id": "batch/aware/with-estimator",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 1,
+        "enabled": true,
+        "max_segments": 0,
+        "max_words": 7,
+        "pending": [1, 3],
+        "sources": ["alpha beta gamma", "a", "delta echo foxtrot", "b", "golf hotel india"],
+        "use_estimator": true
+      },
+      "expect": {
+        "batches": [[1], [3]]
+      }
+    },
+    {
+      "id": "batch/aware/word-constraint",
+      "op": "batch.build_context_aware",
+      "args": {
+        "ctx_window": 0,
+        "enabled": false,
+        "max_segments": 0,
+        "max_words": 4,
+        "pending": [0, 1, 2, 3, 4],
+        "sources": ["a", "bb", "ccc", "dddd", "eeeee"],
+        "use_estimator": false
+      },
+      "expect": {
+        "batches": [[0, 1, 2, 3], [4]]
+      }
+    },
+    {
+      "id": "batch/context-set/basic",
+      "op": "batch.build_context_set",
+      "args": {
+        "batch": [1, 2],
+        "expanded": [0, 1, 2, 3]
+      },
+      "expect": {
+        "context": [0, 3],
+        "pending": [1, 2]
+      }
+    },
+    {
+      "id": "batch/continuous/discontinuous",
+      "op": "batch.build_continuous",
+      "args": {
+        "max_segments": 0,
+        "max_words": 2,
+        "pending": [0, 1, 2, 4],
+        "sources": ["a", "b", "c", "x", "y"]
+      },
+      "expect": {
+        "batches": [[0, 1], [2], [4]]
+      }
+    },
+    {
+      "id": "batch/continuous/empty",
+      "op": "batch.build_continuous",
+      "args": {
+        "max_segments": 5,
+        "max_words": 0,
+        "pending": null,
+        "sources": ["s0"]
+      },
+      "expect": {
+        "batches": []
+      }
+    },
+    {
+      "id": "batch/continuous/segment-limit",
+      "op": "batch.build_continuous",
+      "args": {
+        "max_segments": 3,
+        "max_words": 0,
+        "pending": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        "sources": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"]
+      },
+      "expect": {
+        "batches": [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]]
+      }
+    },
+    {
+      "id": "batch/continuous/single",
+      "op": "batch.build_continuous",
+      "args": {
+        "max_segments": 1,
+        "max_words": 0,
+        "pending": [0],
+        "sources": ["s0"]
+      },
+      "expect": {
+        "batches": [[0]]
+      }
+    },
+    {
+      "id": "batch/continuous/unconstrained",
+      "op": "batch.build_continuous",
+      "args": {
+        "max_segments": 0,
+        "max_words": 0,
+        "pending": [0, 1, 2],
+        "sources": ["s0", "s1", "s2"]
+      },
+      "expect": {
+        "batches": [[0, 1, 2]]
+      }
+    },
+    {
+      "id": "batch/continuous/word-constraint",
+      "op": "batch.build_continuous",
+      "args": {
+        "max_segments": 0,
+        "max_words": 2,
+        "pending": [0, 1, 2, 3, 4],
+        "sources": ["a", "b", "c", "x", "y"]
+      },
+      "expect": {
+        "batches": [[0, 1], [2, 3], [4]]
+      }
+    },
+    {
+      "id": "batch/estimate/empty-w1",
+      "op": "batch.estimate_context_words",
+      "args": {
+        "batch": [],
+        "ctx_window": 1,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words here"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          },
+          {
+            "source": "seven words here now"
+          }
+        ]
+      },
+      "expect": {
+        "prefixWords": 0,
+        "words": 0
+      }
+    },
+    {
+      "id": "batch/estimate/pair-w1",
+      "op": "batch.estimate_context_words",
+      "args": {
+        "batch": [1, 3],
+        "ctx_window": 1,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words here"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          },
+          {
+            "source": "seven words here now"
+          }
+        ]
+      },
+      "expect": {
+        "prefixWords": 6,
+        "words": 6
+      }
+    },
+    {
+      "id": "batch/estimate/pair-w2",
+      "op": "batch.estimate_context_words",
+      "args": {
+        "batch": [3, 6],
+        "ctx_window": 2,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words here"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          },
+          {
+            "source": "seven words here now"
+          }
+        ]
+      },
+      "expect": {
+        "prefixWords": 9,
+        "words": 9
+      }
+    },
+    {
+      "id": "batch/estimate/single-edge-w5",
+      "op": "batch.estimate_context_words",
+      "args": {
+        "batch": [0],
+        "ctx_window": 5,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words here"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          },
+          {
+            "source": "seven words here now"
+          }
+        ]
+      },
+      "expect": {
+        "prefixWords": 6,
+        "words": 6
+      }
+    },
+    {
+      "id": "batch/estimate/single-mid-w1",
+      "op": "batch.estimate_context_words",
+      "args": {
+        "batch": [3],
+        "ctx_window": 1,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words here"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          },
+          {
+            "source": "seven words here now"
+          }
+        ]
+      },
+      "expect": {
+        "prefixWords": 5,
+        "words": 5
+      }
+    },
+    {
+      "id": "batch/estimate/single-mid-w3",
+      "op": "batch.estimate_context_words",
+      "args": {
+        "batch": [3],
+        "ctx_window": 3,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words here"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          },
+          {
+            "source": "seven words here now"
+          }
+        ]
+      },
+      "expect": {
+        "prefixWords": 7,
+        "words": 7
+      }
+    },
+    {
+      "id": "batch/estimate/triple-w0",
+      "op": "batch.estimate_context_words",
+      "args": {
+        "batch": [0, 3, 7],
+        "ctx_window": 0,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words here"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          },
+          {
+            "source": "seven words here now"
+          }
+        ]
+      },
+      "expect": {
+        "prefixWords": 0,
+        "words": 0
+      }
+    },
+    {
+      "id": "batch/expand/batch-segment-never-truncated",
+      "op": "batch.expand_context",
+      "args": {
+        "ctx_window": 1,
+        "idxs": [1],
+        "max_chars": 5,
+        "segments": [
+          {
+            "source": "contextlong1"
+          },
+          {
+            "source": "verylongbatchsegment"
+          },
+          {
+            "source": "contextlong2"
+          }
+        ],
+        "total_segments": 3
+      },
+      "expect": {
+        "idxs": [0, 1, 2],
+        "truncated": {
+          "0": "conte…",
+          "2": "conte…"
+        }
+      }
+    },
+    {
+      "id": "batch/expand/eligibility",
+      "op": "batch.expand_context",
+      "args": {
+        "ctx_window": 3,
+        "idxs": [3],
+        "max_chars": 0,
+        "segments": [
+          {
+            "source": "ctx0"
+          },
+          {
+            "source": "◇ ◇",
+            "skip": true
+          },
+          {
+            "source": "ctx2",
+            "original_source": "context two words"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "ctx4"
+          },
+          {
+            "source": "[PH]",
+            "structural_only": true
+          },
+          {
+            "source": "ctx6"
+          }
+        ],
+        "total_segments": 7
+      },
+      "expect": {
+        "idxs": [0, 2, 3, 4, 6],
+        "truncated": {}
+      }
+    },
+    {
+      "id": "batch/expand/max-chars-truncates",
+      "op": "batch.expand_context",
+      "args": {
+        "ctx_window": 1,
+        "idxs": [1],
+        "max_chars": 5,
+        "segments": [
+          {
+            "source": "0123456789"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "abcdefghij"
+          }
+        ],
+        "total_segments": 3
+      },
+      "expect": {
+        "idxs": [0, 1, 2],
+        "truncated": {
+          "0": "01234…",
+          "2": "abcde…"
+        }
+      }
+    },
+    {
+      "id": "batch/expand/max-chars-zero",
+      "op": "batch.expand_context",
+      "args": {
+        "ctx_window": 1,
+        "idxs": [1],
+        "max_chars": 0,
+        "segments": [
+          {
+            "source": "0123456789"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "abcdefghij"
+          }
+        ],
+        "total_segments": 3
+      },
+      "expect": {
+        "idxs": [0, 1, 2],
+        "truncated": {}
+      }
+    },
+    {
+      "id": "batch/expand/rune-truncation-unicode",
+      "op": "batch.expand_context",
+      "args": {
+        "ctx_window": 1,
+        "idxs": [1],
+        "max_chars": 3,
+        "segments": [
+          {
+            "source": "你好世界朋友"
+          },
+          {
+            "source": "batch"
+          },
+          {
+            "source": "🎉🎉🎉🎉🎉"
+          }
+        ],
+        "total_segments": 3
+      },
+      "expect": {
+        "idxs": [0, 1, 2],
+        "truncated": {
+          "0": "你好世…",
+          "2": "🎉🎉🎉…"
+        }
+      }
+    },
+    {
+      "id": "batch/expand/zero-window",
+      "op": "batch.expand_context",
+      "args": {
+        "ctx_window": 0,
+        "idxs": [0],
+        "max_chars": 0,
+        "segments": [
+          {
+            "source": "a"
+          },
+          {
+            "source": "b"
+          }
+        ],
+        "total_segments": 2
+      },
+      "expect": {
+        "idxs": [0],
+        "truncated": {}
+      }
+    },
+    {
+      "id": "batch/packed/discontinuous-fills",
+      "op": "batch.build_packed",
+      "args": {
+        "max_index_span": 0,
+        "max_segments": 0,
+        "max_words": 2,
+        "pending": [0, 1, 2, 4],
+        "sources": ["a", "b", "c", "x", "y"]
+      },
+      "expect": {
+        "batches": [
+          [0, 1],
+          [2, 4]
+        ]
+      }
+    },
+    {
+      "id": "batch/packed/empty",
+      "op": "batch.build_packed",
+      "args": {
+        "max_index_span": 0,
+        "max_segments": 5,
+        "max_words": 0,
+        "pending": null,
+        "sources": ["s0"]
+      },
+      "expect": {
+        "batches": []
+      }
+    },
+    {
+      "id": "batch/packed/max-index-span",
+      "op": "batch.build_packed",
+      "args": {
+        "max_index_span": 3,
+        "max_segments": 10,
+        "max_words": 0,
+        "pending": [0, 1, 5, 6, 10],
+        "sources": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "s5",
+          "s6",
+          "s7",
+          "s8",
+          "s9",
+          "s10",
+          "s11",
+          "s12",
+          "s13",
+          "s14",
+          "s15",
+          "s16",
+          "s17",
+          "s18",
+          "s19"
+        ]
+      },
+      "expect": {
+        "batches": [[0, 1], [5, 6], [10]]
+      }
+    },
+    {
+      "id": "batch/packed/segment-limit",
+      "op": "batch.build_packed",
+      "args": {
+        "max_index_span": 0,
+        "max_segments": 2,
+        "max_words": 0,
+        "pending": [0, 2, 5, 7, 9],
+        "sources": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"]
+      },
+      "expect": {
+        "batches": [[0, 2], [5, 7], [9]]
+      }
+    },
+    {
+      "id": "batch/packed/span-disabled",
+      "op": "batch.build_packed",
+      "args": {
+        "max_index_span": 0,
+        "max_segments": 3,
+        "max_words": 0,
+        "pending": [0, 10, 19],
+        "sources": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "s5",
+          "s6",
+          "s7",
+          "s8",
+          "s9",
+          "s10",
+          "s11",
+          "s12",
+          "s13",
+          "s14",
+          "s15",
+          "s16",
+          "s17",
+          "s18",
+          "s19"
+        ]
+      },
+      "expect": {
+        "batches": [[0, 10, 19]]
+      }
+    },
+    {
+      "id": "batch/packed/span-negative",
+      "op": "batch.build_packed",
+      "args": {
+        "max_index_span": -1,
+        "max_segments": 3,
+        "max_words": 0,
+        "pending": [0, 10, 19],
+        "sources": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "s5",
+          "s6",
+          "s7",
+          "s8",
+          "s9",
+          "s10",
+          "s11",
+          "s12",
+          "s13",
+          "s14",
+          "s15",
+          "s16",
+          "s17",
+          "s18",
+          "s19"
+        ]
+      },
+      "expect": {
+        "batches": [[0, 10, 19]]
+      }
+    },
+    {
+      "id": "batch/shrink/negative-pool",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 10,
+        "max_words": 100,
+        "pool": -1,
+        "shrink": 0.5
+      },
+      "expect": {
+        "max_segments": 10,
+        "max_words": 100
+      }
+    },
+    {
+      "id": "batch/shrink/one",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 10,
+        "max_words": 100,
+        "pool": 3,
+        "shrink": 1
+      },
+      "expect": {
+        "max_segments": 10,
+        "max_words": 100
+      }
+    },
+    {
+      "id": "batch/shrink/pool0",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 10,
+        "max_words": 100,
+        "pool": 0,
+        "shrink": 0.5
+      },
+      "expect": {
+        "max_segments": 10,
+        "max_words": 100
+      }
+    },
+    {
+      "id": "batch/shrink/pool1",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 10,
+        "max_words": 100,
+        "pool": 1,
+        "shrink": 0.5
+      },
+      "expect": {
+        "max_segments": 5,
+        "max_words": 50
+      }
+    },
+    {
+      "id": "batch/shrink/pool2",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 10,
+        "max_words": 100,
+        "pool": 2,
+        "shrink": 0.5
+      },
+      "expect": {
+        "max_segments": 2,
+        "max_words": 25
+      }
+    },
+    {
+      "id": "batch/shrink/pool3",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 10,
+        "max_words": 100,
+        "pool": 3,
+        "shrink": 0.5
+      },
+      "expect": {
+        "max_segments": 1,
+        "max_words": 12
+      }
+    },
+    {
+      "id": "batch/shrink/segment-only",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 7,
+        "max_words": 0,
+        "pool": 2,
+        "shrink": 0.25
+      },
+      "expect": {
+        "max_segments": 1,
+        "max_words": 0
+      }
+    },
+    {
+      "id": "batch/shrink/tiny",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 3,
+        "max_words": 3,
+        "pool": 2,
+        "shrink": 0.1
+      },
+      "expect": {
+        "max_segments": 1,
+        "max_words": 1
+      }
+    },
+    {
+      "id": "batch/shrink/words-only",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 0,
+        "max_words": 33,
+        "pool": 2,
+        "shrink": 0.5
+      },
+      "expect": {
+        "max_segments": 0,
+        "max_words": 8
+      }
+    },
+    {
+      "id": "batch/shrink/zero",
+      "op": "batch.shrink_constraint",
+      "args": {
+        "max_segments": 10,
+        "max_words": 100,
+        "pool": 2,
+        "shrink": 0
+      },
+      "expect": {
+        "max_segments": 10,
+        "max_words": 100
+      }
+    },
+    {
+      "id": "words/count/%20",
+      "op": "words.count",
+      "args": {
+        "text": " "
+      },
+      "expect": {
+        "count": 0
+      }
+    },
+    {
+      "id": "words/count/%20%20leading%20and%20trailing%20%20",
+      "op": "words.count",
+      "args": {
+        "text": "  leading and trailing  "
+      },
+      "expect": {
+        "count": 3
+      }
+    },
+    {
+      "id": "words/count/%e3%81%93%e3%82%93%e3%81%ab%e3%81%a1%e3%81%af%e4%b8%96%e7%95%8c",
+      "op": "words.count",
+      "args": {
+        "text": "こんにちは世界"
+      },
+      "expect": {
+        "count": 7
+      }
+    },
+    {
+      "id": "words/count/%e3%82%ab%e3%82%bf%e3%82%ab%e3%83%8a",
+      "op": "words.count",
+      "args": {
+        "text": "カタカナ"
+      },
+      "expect": {
+        "count": 4
+      }
+    },
+    {
+      "id": "words/count/%e4%bd%a0%e5%a5%bd%e4%b8%96%e7%95%8c",
+      "op": "words.count",
+      "args": {
+        "text": "你好世界"
+      },
+      "expect": {
+        "count": 4
+      }
+    },
+    {
+      "id": "words/count/%e6%b7%b7%e5%90%88%20mixed%20%e6%96%87%e6%9c%ac%20123%20456",
+      "op": "words.count",
+      "args": {
+        "text": "混合 mixed 文本 123 456"
+      },
+      "expect": {
+        "count": 7
+      }
+    },
+    {
+      "id": "words/count/%ed%95%9c%ea%b8%80%20%ed%85%8d%ec%8a%a4%ed%8a%b8",
+      "op": "words.count",
+      "args": {
+        "text": "한글 텍스트"
+      },
+      "expect": {
+        "count": 5
+      }
+    },
+    {
+      "id": "words/count/%f0%a0%80%80%f0%a0%80%81%20CJK%20Ext%20B",
+      "op": "words.count",
+      "args": {
+        "text": "𠀀𠀁 CJK Ext B"
+      },
+      "expect": {
+        "count": 5
+      }
+    },
+    {
+      "id": "words/count/a%09b%0ac%0dd",
+      "op": "words.count",
+      "args": {
+        "text": "a\tb\nc\rd"
+      },
+      "expect": {
+        "count": 4
+      }
+    },
+    {
+      "id": "words/count/emoji%20%f0%9f%8e%89%20%e4%bb%a3%e7%90%86%e5%af%b9",
+      "op": "words.count",
+      "args": {
+        "text": "emoji 🎉 代理对"
+      },
+      "expect": {
+        "count": 5
+      }
+    },
+    {
+      "id": "words/count/empty",
+      "op": "words.count",
+      "args": {
+        "text": ""
+      },
+      "expect": {
+        "count": 0
+      }
+    },
+    {
+      "id": "words/count/hello%20%e4%b8%96%e7%95%8c",
+      "op": "words.count",
+      "args": {
+        "text": "hello 世界"
+      },
+      "expect": {
+        "count": 3
+      }
+    },
+    {
+      "id": "words/count/hello%20world",
+      "op": "words.count",
+      "args": {
+        "text": "hello world"
+      },
+      "expect": {
+        "count": 2
+      }
+    },
+    {
+      "id": "words/count/ideographic%e3%80%80space",
+      "op": "words.count",
+      "args": {
+        "text": "ideographic　space"
+      },
+      "expect": {
+        "count": 2
+      }
+    },
+    {
+      "id": "words/count/line%e2%80%a8separator",
+      "op": "words.count",
+      "args": {
+        "text": "line\u2028separator"
+      },
+      "expect": {
+        "count": 2
+      }
+    },
+    {
+      "id": "words/count/nbsp%c2%a0space",
+      "op": "words.count",
+      "args": {
+        "text": "nbsp space"
+      },
+      "expect": {
+        "count": 2
+      }
+    },
+    {
+      "id": "words/count/one",
+      "op": "words.count",
+      "args": {
+        "text": "one"
+      },
+      "expect": {
+        "count": 1
+      }
+    },
+    {
+      "id": "words/count/punctuation%21%21%21%20%3f%3f%3f",
+      "op": "words.count",
+      "args": {
+        "text": "punctuation!!! ???"
+      },
+      "expect": {
+        "count": 2
+      }
+    },
+    {
+      "id": "words/count/vertical%0btab",
+      "op": "words.count",
+      "args": {
+        "text": "vertical\u000btab"
+      },
+      "expect": {
+        "count": 2
+      }
+    }
+  ]
+}

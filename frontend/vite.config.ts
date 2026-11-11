@@ -12,10 +12,40 @@ import IconsResolver from 'unplugin-icons/resolver'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
+import ideByebye from 'ide-byebye'
 import { authCallbackMessages } from './src/locales/auth-callback.ts'
+
+// 开发服务器把 /api 转发到后端，使浏览器侧保持同源。
+// local 模式的后端只放行自身端口的 CORS 来源，缺少该代理时前端无法自动完成服务探测。
+// 可用 LINGUAFLOW_API_TARGET 覆盖后端地址。
+const apiProxyTarget = process.env.LINGUAFLOW_API_TARGET ?? 'http://127.0.0.1:18080'
+
+// Vite 默认只放行 localhost 与 IP 直连（防 DNS rebinding）。
+// 经 SSH 端口转发用自定义主机名访问时，用 LINGUAFLOW_DEV_HOSTS 放行，逗号分隔。
+const devAllowedHosts = (process.env.LINGUAFLOW_DEV_HOSTS ?? '')
+  .split(',')
+  .map((host) => host.trim())
+  .filter(Boolean)
+
+// devframe 实例注册表默认写在 $HOME/.devframe/instances，开发沙箱不允许写 HOME。
+// 改写到项目内的 .tooling 目录（已被 git 忽略），让 `vue-devtools-agent connect` 能自动发现本实例。
+process.env.DEVFRAME_INSTANCES_DIR ??= fileURLToPath(
+  new URL('../.tooling/devframe/instances', import.meta.url),
+)
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 启用 Vite DevTools 宿主（仅开发期）。Vue DevTools v9 与其 MCP 端点（/__devtools/__mcp）
+  // 都由该宿主提供，AI 智能体据此读取运行中应用的组件树、状态、Pinia 与路由。
+  devtools: {
+    apply: 'serve',
+  },
+  server: {
+    ...(devAllowedHosts.length > 0 ? { allowedHosts: devAllowedHosts } : {}),
+    proxy: {
+      '/api': { target: apiProxyTarget },
+    },
+  },
   build: {
     manifest: true,
     rolldownOptions: {
@@ -38,6 +68,9 @@ export default defineConfig({
     },
   },
   plugins: [
+    // ide-byebye：⌘/Ctrl + 点击元素即选中源码位置，把「改哪里」直接交给 AI 智能体。
+    // 需放在框架插件之前。
+    ideByebye(),
     {
       name: 'auth-completion-headers',
       transformIndexHtml: {

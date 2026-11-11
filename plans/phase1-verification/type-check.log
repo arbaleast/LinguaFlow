@@ -1,0 +1,5 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.auditConfig", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> frontend@0.0.0 type-check /data/dsh/home/workspace/projects/linguaflow/frontend
+> vue-tsc --build
+

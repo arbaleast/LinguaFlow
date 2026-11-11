@@ -1,5 +1,6 @@
 import createClient, { type Client, type ClientOptions, type Middleware } from 'openapi-fetch'
 import { t } from '@/i18n-runtime'
+import { dispatchRequest, type GatewayRequestOptions, type HttpMethod } from '@/gateway'
 import type { components, paths } from './types'
 import {
   clearAuthTokens,
@@ -50,6 +51,8 @@ export const isLocalMode = (): boolean => _isLocalMode
 export const setLocalMode = (value: boolean): void => {
   _isLocalMode = value
 }
+/** openapi-fetch 支持的 HTTP 方法（Gateway 接缝只拦截这些方法）。 */
+const HTTP_METHODS = new Set<string>(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
 let unauthorized: (() => void) | null = null
 let unauthorizedGeneration = -1
 export const setUnauthorizedHandler = (handler: (() => void) | null): void => {
@@ -435,6 +438,23 @@ export const pingService = async (baseUrl: string): Promise<ApiSchemas['HealthRe
   return data
 }
 export const apiClient = new Proxy({} as ApiClient, {
-  get: (_target, prop) => Reflect.get(_client as object, prop),
+  get: (_target, prop) => {
+    const original = Reflect.get(_client as object, prop)
+    if (typeof prop !== 'string' || !HTTP_METHODS.has(prop) || typeof original !== 'function') {
+      return original
+    }
+    // Gateway 接缝：运行模式为 'browser-local' 时，纯浏览器本地网关可接管部分端点；
+    // 网关不接管（返回 null）时原样回落到 openapi-fetch —— 'local' / 'server'
+    // 两种模式因此保持零回归，且 30 个 Store 与全部组件无需任何改动。
+    return (path: string, options?: unknown) => {
+      const handled = dispatchRequest({
+        method: prop as HttpMethod,
+        path,
+        options: options as GatewayRequestOptions | undefined,
+      })
+      if (handled) return handled
+      return original(path, options)
+    }
+  },
   has: (_target, prop) => Reflect.has(_client as object, prop),
 }) as ApiClient

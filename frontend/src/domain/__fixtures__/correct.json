@@ -1,0 +1,1781 @@
+{
+  "package": "correct",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "engine/all-noop",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "punctuation_wrap_loss_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          }
+        ],
+        "issues": [],
+        "protected": {},
+        "source": "普通",
+        "target": "普通"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no width_mix issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "engine/config-order-ignored",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          },
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          }
+        ],
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          },
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「对话!」",
+        "op": "punctuation_missing.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_missing"]
+      }
+    },
+    {
+      "id": "engine/disabled-empty",
+      "op": "correct.engine",
+      "args": {
+        "config": [],
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "engine/disabled-rule-skipped",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": false,
+            "name": "punctuation_missing_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          }
+        ],
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          },
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "对话！",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "engine/disabled-unknown-enabled",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "bogus"
+          }
+        ],
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "engine/disabled-unknown-name",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": false,
+            "name": "bogus"
+          }
+        ],
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "engine/duplicate-config-last-wins",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": false,
+            "name": "width_mix_normalize"
+          },
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          }
+        ],
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "source": "",
+        "target": "好!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "好！",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "engine/first-changed-stops",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "punctuation_wrap_loss_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          }
+        ],
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          },
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「对话!」",
+        "op": "punctuation_missing.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_missing"]
+      }
+    },
+    {
+      "id": "engine/last-noop-returned",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          }
+        ],
+        "issues": [],
+        "protected": {},
+        "source": "对话",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no width_mix issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "engine/single-pm",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          }
+        ],
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「对话」",
+        "op": "punctuation_missing.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_missing"]
+      }
+    },
+    {
+      "id": "engine/single-wd",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          }
+        ],
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "source": "",
+        "target": "好!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "好！",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "engine/single-wl",
+      "op": "correct.engine",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "punctuation_wrap_loss_wrap"
+          }
+        ],
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「对话」",
+        "op": "punctuation_wrap_loss.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_wrap_loss"]
+      }
+    },
+    {
+      "id": "meta/all-rule-names",
+      "op": "correct.all_rule_names",
+      "args": {},
+      "expect": {
+        "names": ["punctuation_missing_wrap", "punctuation_wrap_loss_wrap", "width_mix_normalize"]
+      }
+    },
+    {
+      "id": "meta/engine-0",
+      "op": "correct.engine_meta",
+      "args": {
+        "config": []
+      },
+      "expect": {
+        "codes": null,
+        "enabled": false
+      }
+    },
+    {
+      "id": "meta/engine-1",
+      "op": "correct.engine_meta",
+      "args": {
+        "config": [
+          {
+            "enabled": false,
+            "name": "bogus"
+          }
+        ]
+      },
+      "expect": {
+        "codes": null,
+        "enabled": false
+      }
+    },
+    {
+      "id": "meta/engine-2",
+      "op": "correct.engine_meta",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          }
+        ]
+      },
+      "expect": {
+        "codes": ["punctuation_missing"],
+        "enabled": true
+      }
+    },
+    {
+      "id": "meta/engine-3",
+      "op": "correct.engine_meta",
+      "args": {
+        "config": [
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "punctuation_wrap_loss_wrap"
+          },
+          {
+            "enabled": true,
+            "name": "width_mix_normalize"
+          }
+        ]
+      },
+      "expect": {
+        "codes": ["punctuation_missing", "punctuation_wrap_loss", "width_mix"],
+        "enabled": true
+      }
+    },
+    {
+      "id": "meta/engine-4",
+      "op": "correct.engine_meta",
+      "args": {
+        "config": [
+          {
+            "enabled": false,
+            "name": "width_mix_normalize"
+          },
+          {
+            "enabled": true,
+            "name": "punctuation_missing_wrap"
+          }
+        ]
+      },
+      "expect": {
+        "codes": ["punctuation_missing"],
+        "enabled": true
+      }
+    },
+    {
+      "id": "pm/defensive-target-runes",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「对话」",
+        "target": "对话「"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "target already contains the quote runes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/dismissed-invisible",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing",
+            "disposition": "dismissed"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no punctuation_missing issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/empty-source",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "empty source",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/idempotent-second-apply",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「对话」",
+        "target": "「对话」"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "target already contains the quote runes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/mismatched-close",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「对话”",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source does not end with the matching closing quote",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/mixed-dispositions-triggers",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          },
+          {
+            "code": "punctuation_missing",
+            "disposition": "dismissed",
+            "span": {
+              "matched_text": "（）"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「（对话）」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「对话」",
+        "op": "punctuation_missing.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_missing"]
+      }
+    },
+    {
+      "id": "pm/multi-span",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「你好」「再见」",
+        "target": "你好 再见"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "multi-span source, cannot safely whole-wrap",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/no-content-between",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「」",
+        "target": ""
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source has no content between the quotes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/no-issue",
+      "op": "correct.rule",
+      "args": {
+        "issues": [],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no punctuation_missing issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/not-paired-open",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "对话！",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source does not start with a paired opening quote",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/placeholder-stays-inside",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {
+          "__LF_1__": "ABC"
+        },
+        "rule": "punctuation_missing_wrap",
+        "source": "「你好 __LF_1__」",
+        "target": "你好 __LF_1__"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「你好 __LF_1__」",
+        "op": "punctuation_missing.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_missing"]
+      }
+    },
+    {
+      "id": "pm/quote-not-at-edges",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "这是一条“测试”消息",
+        "target": "这是一条测试消息"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source does not start with a paired opening quote",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "pm/safe",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「对话」",
+        "op": "punctuation_missing.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_missing"]
+      }
+    },
+    {
+      "id": "pm/source-quotes-inside-markup",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_missing"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_missing_wrap",
+        "source": "\u003cb\u003e「你好」\u003c/b\u003e",
+        "target": "\u003cb\u003eこんにちは\u003c/b\u003e"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source quotes sit inside protected markup; skip to avoid inverting structure",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/cjk-colon-after-cjk",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": ":"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "他说:你好"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "他说：你好",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/cjk-comma-after-digit-before-letter",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": ","
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "3,但是"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "3，但是",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/cjk-digit-flanked-colon",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": ":"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "12:30"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no convertible width char outside protected regions",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/cjk-digit-flanked-comma",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": ","
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "1,000"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no convertible width char outside protected regions",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/cjk-digit-prefixed-bang",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "5!"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no convertible width char outside protected regions",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/cjk-digit-prefixed-mixed-run",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "100!?"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no convertible width char outside protected regions",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/cjk-double-bang",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "好!好!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "好！好！",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/cjk-idempotent",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "那是什么！？"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no convertible width char outside protected regions",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/cjk-mixed-run",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "什么?!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "什么？！",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/cjk-parens-no-guard",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "("
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "100(约)"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "100（约）",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/cjk-positive",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "那是什么!?"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "那是什么！？",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/cjk-semicolon-no-guard",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": ";"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "对;错"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "对；错",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/dismissed-invisible",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "disposition": "dismissed",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "那是什么!?"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no width_mix issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/latin-digits",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "０"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "０１"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "01",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/latin-direction-from-punct",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "！"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "ＡＢ！"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "AB!",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/latin-idempotent",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "Ａ"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "AB!"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no convertible width char outside protected regions",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/latin-letters",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "Ａ"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "ＡＢ！"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "AB!",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/mixed-dispositions-triggers",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "disposition": "dismissed",
+            "span": {
+              "matched_text": "@"
+            }
+          },
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "好!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "好！",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/no-issue",
+      "op": "correct.rule",
+      "args": {
+        "issues": [],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "那是什么!?"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no width_mix issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/protected-map",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "!"
+            }
+          }
+        ],
+        "protected": {
+          "(a,b)": "(a,b)"
+        },
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "(a,b) ok!"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "(a,b) ok！",
+        "op": "width_mix.normalize",
+        "reason": "",
+        "resolved_codes": ["width_mix"]
+      }
+    },
+    {
+      "id": "wd/protected-ruby-region",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix"
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "漢字（かんじ）!",
+        "target": "\u003cruby\u003e1\u003crt\u003eone\u003c/rt\u003e\u003c/ruby\u003e!"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "width_mix issue span unreadable, cannot infer direction",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/unreadable-char",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": "@"
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "那是什么!?"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "width_mix issue span unreadable, cannot infer direction",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/unreadable-empty-text",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix",
+            "span": {
+              "matched_text": ""
+            }
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "那是什么!?"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "width_mix issue span unreadable, cannot infer direction",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wd/unreadable-nil-span",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "width_mix"
+          }
+        ],
+        "protected": {},
+        "rule": "width_mix_normalize",
+        "source": "",
+        "target": "那是什么!?"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "width_mix issue span unreadable, cannot infer direction",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/balanced-interior-still-wraps",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "他「说」了"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「他「说」了」",
+        "op": "punctuation_wrap_loss.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_wrap_loss"]
+      }
+    },
+    {
+      "id": "wl/dismissed-invisible",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss",
+            "disposition": "dismissed"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no punctuation_wrap_loss issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/edge-quote-blocks",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "“对话”"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "target edge already has quote runes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/empty-source",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source does not start with a paired opening quote",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/idempotent-second-apply",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "「对话」"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "target edge already has quote runes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/inner-quotes-still-wrapped",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「彼は“行く”と言った」",
+        "target": "他说“要去”"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「他说“要去”」",
+        "op": "punctuation_wrap_loss.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_wrap_loss"]
+      }
+    },
+    {
+      "id": "wl/mismatched-close",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话”",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source does not end with the matching closing quote",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/multi-span",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「你好」「再见」",
+        "target": "你好 再见"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "multi-span source, cannot safely whole-wrap",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/no-content-between",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「」",
+        "target": "x"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source has no content between the quotes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/no-issue",
+      "op": "correct.rule",
+      "args": {
+        "issues": [],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "no punctuation_wrap_loss issue",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/not-paired-open",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "对话！",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source does not start with a paired opening quote",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/placeholder-stays-inside",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {
+          "__LF_1__": "ABC"
+        },
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「你好 __LF_1__」",
+        "target": "你好 __LF_1__"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「你好 __LF_1__」",
+        "op": "punctuation_wrap_loss.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_wrap_loss"]
+      }
+    },
+    {
+      "id": "wl/safe",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "对话"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「对话」",
+        "op": "punctuation_wrap_loss.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_wrap_loss"]
+      }
+    },
+    {
+      "id": "wl/single-sided-edge-blocks",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "「对话"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "target edge already has quote runes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/source-quotes-inside-markup",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {
+          "__LF_1__": "\u003cb\u003e",
+          "__LF_2__": "\u003c/b\u003e"
+        },
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "__LF_1__「你好」__LF_2__",
+        "target": "__LF_1__你好__LF_2__"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "source quotes sit inside protected markup; skip to avoid inverting structure",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/source-quotes-outside-markup-wraps",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {
+          "__LF_1__": "\u003cb\u003e",
+          "__LF_2__": "\u003c/b\u003e"
+        },
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「__LF_1__你好__LF_2__」",
+        "target": "__LF_1__你好__LF_2__"
+      },
+      "expect": {
+        "changed": true,
+        "new_target": "「__LF_1__你好__LF_2__」",
+        "op": "punctuation_wrap_loss.wrap",
+        "reason": "",
+        "resolved_codes": ["punctuation_wrap_loss"]
+      }
+    },
+    {
+      "id": "wl/unbalanced-interior-other-pair",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「彼はこう言った」",
+        "target": "她说“这样"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "target has unbalanced interior quotes",
+        "resolved_codes": []
+      }
+    },
+    {
+      "id": "wl/unbalanced-interior-same-pair",
+      "op": "correct.rule",
+      "args": {
+        "issues": [
+          {
+            "code": "punctuation_wrap_loss"
+          }
+        ],
+        "protected": {},
+        "rule": "punctuation_wrap_loss_wrap",
+        "source": "「对话」",
+        "target": "他「说"
+      },
+      "expect": {
+        "changed": false,
+        "new_target": "",
+        "op": "",
+        "reason": "target has unbalanced interior quotes",
+        "resolved_codes": []
+      }
+    }
+  ]
+}

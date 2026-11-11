@@ -1,0 +1,4549 @@
+{
+  "package": "repair",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "json/escape-quotes/already-escaped",
+      "op": "json.escape_unescaped_quotes",
+      "args": {
+        "text": "{\"a\":\"x \\\"quoted\\\" y\"}"
+      },
+      "expect": {
+        "text": "{\"a\":\"x \\\"quoted\\\" y\"}"
+      }
+    },
+    {
+      "id": "json/escape-quotes/key-value-boundary",
+      "op": "json.escape_unescaped_quotes",
+      "args": {
+        "text": "{\"key\":\"value\",\"list\":[\"a\",\"b\"]}"
+      },
+      "expect": {
+        "text": "{\"key\":\"value\",\"list\":[\"a\",\"b\"]}"
+      }
+    },
+    {
+      "id": "json/escape-quotes/trailing-value-eof",
+      "op": "json.escape_unescaped_quotes",
+      "args": {
+        "text": "{\"a\":\"b\""
+      },
+      "expect": {
+        "text": "{\"a\":\"b\""
+      }
+    },
+    {
+      "id": "json/escape-quotes/valid-nop",
+      "op": "json.escape_unescaped_quotes",
+      "args": {
+        "text": "{\"a\":\"x\\\"y\",\"b\":\"plain\",\"c\":[\"1\",\"2\"],\"d\":{\"e\":\"f\"},\"g\":\"h\"}"
+      },
+      "expect": {
+        "text": "{\"a\":\"x\\\"y\",\"b\":\"plain\",\"c\":[\"1\",\"2\"],\"d\":{\"e\":\"f\"},\"g\":\"h\"}"
+      }
+    },
+    {
+      "id": "json/escape-quotes/value-inner",
+      "op": "json.escape_unescaped_quotes",
+      "args": {
+        "text": "{\"verdicts\":[{\"id\":\"1\",\"reason\":\"\"英国\"是中文标准用词。\"}]}"
+      },
+      "expect": {
+        "text": "{\"verdicts\":[{\"id\":\"1\",\"reason\":\"\\\"英国\\\"是中文标准用词。\"}]}"
+      }
+    },
+    {
+      "id": "json/escape-quotes/whitespace-before-comma",
+      "op": "json.escape_unescaped_quotes",
+      "args": {
+        "text": "{\n  \"a\" : \"value\" ,\n  \"b\" : [ \"x\" , \"y\" ]\n}"
+      },
+      "expect": {
+        "text": "{\n  \"a\" : \"value\" ,\n  \"b\" : [ \"x\" , \"y\" ]\n}"
+      }
+    },
+    {
+      "id": "json/escape-quotes/whitespace-inner-quote",
+      "op": "json.escape_unescaped_quotes",
+      "args": {
+        "text": "{\"a\":\"say \" hi\"}"
+      },
+      "expect": {
+        "text": "{\"a\":\"say \\\" hi\"}"
+      }
+    },
+    {
+      "id": "json/truncate/container-closure",
+      "op": "json.truncate_to_last_complete_value",
+      "args": {
+        "text": "{\"translations\":{\"1\":\"甲\"},\"glossary\":[{\"source\":\"a\",\"target\":\"b\"},{\"source\":\"c"
+      },
+      "expect": {
+        "cut": "{\"translations\":{\"1\":\"甲\"},\"glossary\":[{\"source\":\"a\",\"target\":\"b\"}",
+        "ok": true
+      }
+    },
+    {
+      "id": "json/truncate/cut-at-end-noop",
+      "op": "json.truncate_to_last_complete_value",
+      "args": {
+        "text": "{\"translations\":{\"1\":\"甲\"}"
+      },
+      "expect": {
+        "cut": "{\"translations\":{\"1\":\"甲\"}",
+        "ok": false
+      }
+    },
+    {
+      "id": "json/truncate/dangling-key-colon",
+      "op": "json.truncate_to_last_complete_value",
+      "args": {
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3\":"
+      },
+      "expect": {
+        "cut": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\"",
+        "ok": true
+      }
+    },
+    {
+      "id": "json/truncate/key-mid-cut",
+      "op": "json.truncate_to_last_complete_value",
+      "args": {
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3"
+      },
+      "expect": {
+        "cut": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\"",
+        "ok": true
+      }
+    },
+    {
+      "id": "json/truncate/no-complete-value",
+      "op": "json.truncate_to_last_complete_value",
+      "args": {
+        "text": "{\"translations\":{\"1\":\"hello"
+      },
+      "expect": {
+        "cut": "{\"translations\":{\"1\":\"hello",
+        "ok": false
+      }
+    },
+    {
+      "id": "json/truncate/value-mid-cut",
+      "op": "json.truncate_to_last_complete_value",
+      "args": {
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3\":\"瑞贝卡学姐一问"
+      },
+      "expect": {
+        "cut": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\"",
+        "ok": true
+      }
+    },
+    {
+      "id": "repair/adjudication.mode/non-text-json-repair",
+      "op": "repair.adjudication.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":{ \"verdicts\": []}"
+      },
+      "expect": {
+        "error": "",
+        "items": [],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/adjudication.mode/text-empty-falls-back",
+      "op": "repair.adjudication.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":{ \"verdicts\": []}"
+      },
+      "expect": {
+        "error": "",
+        "items": [],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/adjudication.mode/text-verdicts",
+      "op": "repair.adjudication.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[verdicts]\n3 | source_residual | test | real | 残留\n"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "3",
+            "issue_code": "source_residual",
+            "matched_text": "test",
+            "reason": "残留",
+            "verdict": "real"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/bare-array",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[{\"id\":\"3\",\"issue_code\":\"source_residual\",\"matched_text\":\"test\",\"verdict\":\"real\",\"reason\":\"残留\"}]"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "3",
+            "issue_code": "source_residual",
+            "matched_text": "test",
+            "reason": "残留",
+            "verdict": "real"
+          }
+        ],
+        "ok": true,
+        "repaired": ["json.bare-array"]
+      }
+    },
+    {
+      "id": "repair/adjudication/bare-array-echo-rejected",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[{\"id\":\"3\",\"issue_code\":\"source_residual\",\"snippet\":\"test\"}]"
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/boundary-truncation-gating",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":[{\"id\":\"3\",\"issue_code\":\"source_residual\",\"matched_text\":\"t\",\"verdict\":\"real\",\"reason\":\"残留\"}"
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/code-fence",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "```json\n{\"verdicts\":[{\"id\":\"1\",\"issue_code\":\"source_residual\",\"matched_text\":\"t\",\"verdict\":\"real\",\"reason\":\"x\"}]}\n```"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "1",
+            "issue_code": "source_residual",
+            "matched_text": "t",
+            "reason": "x",
+            "verdict": "real"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/empty-truncated",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":{ \"verdicts\": []}"
+      },
+      "expect": {
+        "error": "",
+        "items": [],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/adjudication/fatal-not-json",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "totally not json"
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/filters-missing-id",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":[{\"id\":\"\",\"issue_code\":\"source_residual\",\"matched_text\":\"t\",\"verdict\":\"real\",\"reason\":\"x\"},{\"id\":\"2\",\"issue_code\":\"source_residual\",\"matched_text\":\"t\",\"verdict\":\"real\",\"reason\":\"y\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "2",
+            "issue_code": "source_residual",
+            "matched_text": "t",
+            "reason": "y",
+            "verdict": "real"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/happy-path",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":[{\"id\":\"3\",\"issue_code\":\"source_residual\",\"matched_text\":\"test\",\"verdict\":\"real\",\"reason\":\"残留\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "3",
+            "issue_code": "source_residual",
+            "matched_text": "test",
+            "reason": "残留",
+            "verdict": "real"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/stuttered-prefix",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts{\"verdicts\":[{\"id\":\"3\",\"issue_code\":\"source_residual\",\"matched_text\":\"t\",\"verdict\":\"false_positive\",\"reason\":\"误报\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "3",
+            "issue_code": "source_residual",
+            "matched_text": "t",
+            "reason": "误报",
+            "verdict": "false_positive"
+          }
+        ],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/adjudication/trailing-comma",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":[{\"id\":\"1\",\"issue_code\":\"source_residual\",\"matched_text\":\"t\",\"verdict\":\"real\",\"reason\":\"x\",}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "1",
+            "issue_code": "source_residual",
+            "matched_text": "t",
+            "reason": "x",
+            "verdict": "real"
+          }
+        ],
+        "ok": true,
+        "repaired": ["json.trailing-comma"]
+      }
+    },
+    {
+      "id": "repair/adjudication/truncated-with-content",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":[{\"id\":\"3\",\"issue_code\":\"source_residual\",\"matched_text\":\"test\",\"verdict\":\"real\",\"reason\":\"残留\""
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/truncation-salvage-declined",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":[{\"id\":\"3\",\"issue_code\":\"source_residual\",\"matched_text\":\"t\",\"verdict\":\"real\",\"reason\":\"残留\"},{\"i"
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/adjudication/unescaped-quotes-in-reason",
+      "op": "repair.adjudication",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"verdicts\":[{\"id\":\"241\",\"issue_code\":\"source_residual\",\"matched_text\":\"英国\",\"verdict\":\"false_positive\",\"reason\":\"\"英国\"是中文标准用词，与日语同形，属合理使用。\"},{\"id\":\"245\",\"issue_code\":\"length_ratio\",\"matched_text\":\"\",\"verdict\":\"false_positive\",\"reason\":\"译文因补充修饰语略长，属合理扩展，无漏译或填充。\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "id": "241",
+            "issue_code": "source_residual",
+            "matched_text": "英国",
+            "reason": "\"英国\"是中文标准用词，与日语同形，属合理使用。",
+            "verdict": "false_positive"
+          },
+          {
+            "id": "245",
+            "issue_code": "length_ratio",
+            "matched_text": "",
+            "reason": "译文因补充修饰语略长，属合理扩展，无漏译或填充。",
+            "verdict": "false_positive"
+          }
+        ],
+        "ok": true,
+        "repaired": ["json.escape-quotes"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.mode/explicit-empty-ok",
+      "op": "repair.bootstrap.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "requireHeaderForEmpty": true,
+        "text": "[glossary]\n"
+      },
+      "expect": {
+        "entries": [],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.strip-code-fence"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.mode/extract-loose-empty",
+      "op": "repair.bootstrap.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "requireHeaderForEmpty": false,
+        "text": "not a glossary at all"
+      },
+      "expect": {
+        "entries": [],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap.mode/json-fallback",
+      "op": "repair.bootstrap.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "requireHeaderForEmpty": true,
+        "text": "{\"glossary\":[{\"source\":\"x\",\"target\":\"y\",\"notes\":\"\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "x",
+            "target": "y"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.fallback-json"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.mode/prune-strict-empty",
+      "op": "repair.bootstrap.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "requireHeaderForEmpty": true,
+        "text": "not a glossary at all"
+      },
+      "expect": {
+        "entries": [],
+        "error": "empty",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap.text/code-fence",
+      "op": "repair.bootstrap.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "```\n[glossary]\nA | B | note\n```"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "note",
+            "source": "A",
+            "target": "B"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.strip-code-fence"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.text/dedup",
+      "op": "repair.bootstrap.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[glossary]\nA | B | note1\nA | C | note2\n"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "note1",
+            "source": "A",
+            "target": "B"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.strip-code-fence"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.text/empty-list",
+      "op": "repair.bootstrap.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[glossary]\n"
+      },
+      "expect": {
+        "entries": [],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.strip-code-fence"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.text/empty-string",
+      "op": "repair.bootstrap.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": ""
+      },
+      "expect": {
+        "entries": [],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap.text/ignores-other-sections",
+      "op": "repair.bootstrap.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[glossary]\nA | B | note\n[other]\nC | D | note\n"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "note",
+            "source": "A",
+            "target": "B"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.strip-code-fence"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.text/no-header",
+      "op": "repair.bootstrap.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "Gemini | 哈基米 | company\nAPI | 接口\n"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "company",
+            "source": "Gemini",
+            "target": "哈基米"
+          },
+          {
+            "notes": "",
+            "source": "API",
+            "target": "接口"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.strip-code-fence"]
+      }
+    },
+    {
+      "id": "repair/bootstrap.text/with-header",
+      "op": "repair.bootstrap.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[glossary]\nGemini | 哈基米 | company\nAPI | 接口\n"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "company",
+            "source": "Gemini",
+            "target": "哈基米"
+          },
+          {
+            "notes": "",
+            "source": "API",
+            "target": "接口"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["text.strip-code-fence"]
+      }
+    },
+    {
+      "id": "repair/bootstrap/code-fence",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "Sure:\n```json\n{\"glossary\":[{\"source\":\"x\",\"target\":\"y\",\"notes\":\"\"}]}\n```"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "x",
+            "target": "y"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap/field-alias",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"terms\":[{\"source\":\"x\",\"target\":\"y\",\"notes\":\"\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "x",
+            "target": "y"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["schema.alias"]
+      }
+    },
+    {
+      "id": "repair/bootstrap/filters-and-dedup",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"glossary\":[\n\t\t{\"source\":\" hello \",\"target\":\" hi \",\"notes\":\"\"},\n\t\t{\"source\":\"hello\",\"target\":\"hi-dup\",\"notes\":\"\"},\n\t\t{\"source\":\"\",\"target\":\"y\",\"notes\":\"\"}\n\t]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "hello",
+            "target": "hi"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap/happy-path",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"glossary\":[{\"source\":\"x\",\"target\":\"y\",\"notes\":\"\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "x",
+            "target": "y"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap/salvage/broken-body",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"glossary\":[{\"source\":\"a\",\"target\":\"b\"},{\"source\":\"x\",\"target\":\"y\\q\" garbage"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "a",
+            "target": "b"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": [
+          "json.close-braces",
+          "json.escape-quotes",
+          "json.truncation-salvage",
+          "json.close-braces"
+        ]
+      }
+    },
+    {
+      "id": "repair/bootstrap/salvage/close-braces-form",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"glossary\":[{\"source\":\"x\",\"target\":\"y\"},{\"source\":\"a\",\"target\":\"b\""
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "x",
+            "target": "y"
+          },
+          {
+            "notes": "",
+            "source": "a",
+            "target": "b"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.close-braces"]
+      }
+    },
+    {
+      "id": "repair/bootstrap/salvage/close-braces-form-declined",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": true
+        },
+        "text": "{\"glossary\":[{\"source\":\"x\",\"target\":\"y\"},{\"source\":\"a\",\"target\":\"b\""
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap/salvage/declined",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": true
+        },
+        "text": "{\"glossary\":[{\"source\":\"x\",\"target\":\"y\",\"notes\":\"\"},{\"sour"
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/bootstrap/salvage/key-mid-cut",
+      "op": "repair.bootstrap",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"glossary\":[{\"source\":\"x\",\"target\":\"y\",\"notes\":\"\"},{\"sour"
+      },
+      "expect": {
+        "entries": [
+          {
+            "notes": "",
+            "source": "x",
+            "target": "y"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.truncation-salvage", "json.close-braces"]
+      }
+    },
+    {
+      "id": "repair/envelope/boundary-truncation-direct",
+      "op": "repair.envelope",
+      "args": {
+        "key": "ruby_output",
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\"}"
+      },
+      "expect": {
+        "count": 1,
+        "error": "",
+        "ok": true,
+        "repaired": ["json.close-braces"],
+        "valueKind": "array"
+      }
+    },
+    {
+      "id": "repair/placeholder/already-standard",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000001__": "X"
+        },
+        "text": "__LF_000001__"
+      },
+      "expect": {
+        "normalized": [],
+        "text": "__LF_000001__"
+      }
+    },
+    {
+      "id": "repair/placeholder/empty-known-keys",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": null,
+        "text": "__lf_000001__"
+      },
+      "expect": {
+        "normalized": [],
+        "text": "__lf_000001__"
+      }
+    },
+    {
+      "id": "repair/placeholder/lowercase-to-known",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000001__": "X"
+        },
+        "text": "hello __lf_000001__ world"
+      },
+      "expect": {
+        "normalized": ["__LF_000001__"],
+        "text": "hello __LF_000001__ world"
+      }
+    },
+    {
+      "id": "repair/placeholder/missing-underscore",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000001__": "X"
+        },
+        "text": "__LF000001__"
+      },
+      "expect": {
+        "normalized": ["__LF_000001__"],
+        "text": "__LF_000001__"
+      }
+    },
+    {
+      "id": "repair/placeholder/pads-short-digits",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000005__": "X"
+        },
+        "text": "__LF_5__"
+      },
+      "expect": {
+        "normalized": ["__LF_000005__"],
+        "text": "__LF_000005__"
+      }
+    },
+    {
+      "id": "repair/placeholder/single-trailing-underscore",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000003__": "\u003c/rt\u003e"
+        },
+        "text": "hello__LF_000003_world"
+      },
+      "expect": {
+        "normalized": ["__LF_000003__"],
+        "text": "hello__LF_000003__world"
+      }
+    },
+    {
+      "id": "repair/placeholder/unknown-variant-unchanged",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000001__": "X"
+        },
+        "text": "this mentions __lf_999999__ which we never created"
+      },
+      "expect": {
+        "normalized": [],
+        "text": "this mentions __lf_999999__ which we never created"
+      }
+    },
+    {
+      "id": "repair/placeholder/zero-trailing-underscores",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000001__": "\u003c/span\u003e",
+          "__LF_000002__": "\u003cruby\u003e"
+        },
+        "text": "text__LF_000001\u003cruby\u003e椎名__LF_000002"
+      },
+      "expect": {
+        "normalized": ["__LF_000001__", "__LF_000002__"],
+        "text": "text__LF_000001__\u003cruby\u003e椎名__LF_000002__"
+      }
+    },
+    {
+      "id": "repair/placeholder/zero-trailing-unknown-key",
+      "op": "repair.placeholder",
+      "args": {
+        "knownKeys": {
+          "__LF_000001__": "X"
+        },
+        "text": "text__LF_999999"
+      },
+      "expect": {
+        "normalized": [],
+        "text": "text__LF_999999"
+      }
+    },
+    {
+      "id": "repair/reminder/build/all-fields",
+      "op": "repair.build.retry.reminder",
+      "args": {
+        "missingIds": ["3", "5"],
+        "parseErr": "bad json",
+        "prevHead": "ABC..."
+      },
+      "expect": {
+        "text": "\n\nIMPORTANT: your previous response could not be processed. Reason: bad json. Missing IDs: 3, 5. The previous response started with: \"ABC...\". Reply with EXACTLY the JSON envelope schema described above: {\"translations\":{\"\u003cid\u003e\":\"\u003ctext\u003e\",...}}. Do not include markdown fences, prose, or any other fields."
+      }
+    },
+    {
+      "id": "repair/reminder/build/truncates-long-prev-head",
+      "op": "repair.build.retry.reminder",
+      "args": {
+        "missingIds": null,
+        "parseErr": null,
+        "prevHead": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "expect": {
+        "text": "\n\nIMPORTANT: your previous response could not be processed. The previous response started with: \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…\". Reply with EXACTLY the JSON envelope schema described above: {\"translations\":{\"\u003cid\u003e\":\"\u003ctext\u003e\",...}}. Do not include markdown fences, prose, or any other fields."
+      }
+    },
+    {
+      "id": "repair/reminder/render/empty-template",
+      "op": "repair.retry.reminder",
+      "args": {
+        "content": "",
+        "missingIds": null,
+        "parseErr": null,
+        "prevHead": ""
+      },
+      "expect": {
+        "ok": false,
+        "text": ""
+      }
+    },
+    {
+      "id": "repair/reminder/render/frozen-content",
+      "op": "repair.retry.reminder",
+      "args": {
+        "content": "saved {{.MissingIDs}} {{.Reason}} {{.PreviousHead}}",
+        "missingIds": ["1", "3"],
+        "parseErr": "bad JSON",
+        "prevHead": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "expect": {
+        "ok": true,
+        "text": "saved 1, 3 bad JSON xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…"
+      }
+    },
+    {
+      "id": "repair/reminder/render/unclosed-action",
+      "op": "repair.retry.reminder",
+      "args": {
+        "content": "{{",
+        "missingIds": null,
+        "parseErr": null,
+        "prevHead": ""
+      },
+      "expect": {
+        "ok": false,
+        "text": ""
+      }
+    },
+    {
+      "id": "repair/reminder/render/unknown-field",
+      "op": "repair.retry.reminder",
+      "args": {
+        "content": "{{.Unsupported}}",
+        "missingIds": null,
+        "parseErr": null,
+        "prevHead": ""
+      },
+      "expect": {
+        "ok": false,
+        "text": ""
+      }
+    },
+    {
+      "id": "repair/revise/code-fence",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "```json\n{\"revisions\":[{\"id\":\"1\",\"target\":\"修订后\"}]}\n```"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订后"
+          }
+        ],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/revise/fatal-not-json",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "totally not json"
+      },
+      "expect": {
+        "error": "other",
+        "ok": false,
+        "repaired": [],
+        "revisions": [],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/revise/happy-path",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\"1\",\"target\":\"修订后\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订后"
+          }
+        ],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/revise/json-with-ruby-output",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\"1\",\"target\":\"修订后\"}],\"ruby_output\":{\"1\":[{\"base\":\"呪\",\"text\":\"じゅ\",\"kind\":\"phonetic\",\"id\":\"1\"}]}}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订后"
+          }
+        ],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "呪",
+              "id": "1",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "じゅ"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "repair/revise/normalizes-and-deduplicates",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\" 1 \",\"target\":\" first \"},{\"id\":\"1\",\"target\":\"second\"},{\"id\":\"2\",\"target\":\"\"},{\"id\":\"3\",\"target\":\" third \"}]}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "first"
+          },
+          {
+            "id": "3",
+            "target": "third"
+          }
+        ],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/revise/text-fenced-with-ruby-section",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "```\n[revisions]\n1 | 修订後\n\n[ruby]\n1: 呪 | じゅ | phonetic | 1\n```"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订後"
+          }
+        ],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "呪",
+              "id": "1",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "じゅ"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "repair/revise/text-json-falls-back",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\"1\",\"target\":\"修订后\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订后"
+          }
+        ],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/revise/text-revision",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[revisions]\n1 | 修订后 | 含竖线\n"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订后 | 含竖线"
+          }
+        ],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/revise/text-with-ruby-section",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[revisions]\n1 | 修订後\n\n[ruby]\n1: 呪 | じゅ | phonetic | 1\n2: 微笑 | ほほえ | semantic\n"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订後"
+          }
+        ],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "呪",
+              "id": "1",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "じゅ"
+            }
+          ],
+          "2": [
+            {
+              "base": "微笑",
+              "id": "",
+              "invalid": false,
+              "kind": "semantic",
+              "occurrence": 0,
+              "text": "ほほえ"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "repair/revise/text-without-ruby-section",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[revisions]\n1 | 修订后\n"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订后"
+          }
+        ],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/revise/truncated-and-trailing-comma",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\"1\",\"target\":\"修订后\",}]}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": ["json.trailing-comma"],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "修订后"
+          }
+        ],
+        "rubyOutput": {}
+      }
+    },
+    {
+      "id": "repair/ruby.bare-array",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[\n  {\n    \"id\": \"1\",\n    \"base\": \"白银之风\",\n    \"text\": \"アルジェント・ビアブレッザ\",\n    \"kind\": \"phonetic\"\n  }\n]"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "白银之风",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "アルジェント・ビアブレッザ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.bare-array"]
+      }
+    },
+    {
+      "id": "repair/ruby.bare-array-echo-rejected",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[{\"id\":\"1\",\"source_base\":\"白银之风\",\"source_text\":\"アルジェント・ビアブレッザ\"}]"
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.bare-array-empty-rejected",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "示例：[]"
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.bare-array-requires-opts",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": false,
+          "placeholderNormalize": false,
+          "promptUpgrade": false,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[{\"id\":\"1\",\"base\":\"白银之风\",\"text\":\"アルジェント・ビアブレッザ\",\"kind\":\"phonetic\"}]"
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.bare-array-scalar-rejected",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[\"噪声\", \"示例\"]"
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.bare-array-truncated",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[{\"id\":\"1\",\"base\":\"白银之风\",\"text\":\"アルジェント・ビアブレッザ\",\"kind\":\"phonetic\""
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "白银之风",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "アルジェント・ビアブレッザ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.bare-array"]
+      }
+    },
+    {
+      "id": "repair/ruby.bare-array-wrong-shape-rejected",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[{\"id\":\"1\",\"kind\":\"phonetic\"}]"
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": ["json.bare-array"]
+      }
+    },
+    {
+      "id": "repair/ruby.boundary-truncation-gating",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\"}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "漢字",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "かんじ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.close-braces"]
+      }
+    },
+    {
+      "id": "repair/ruby.empty-truncated",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":{ \"ruby_output\": []}"
+      },
+      "expect": {
+        "entries": [],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/ruby.fatal-not-json",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "totally not json"
+      },
+      "expect": {
+        "entries": [],
+        "error": "other",
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.filters-empty-base",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"base\":\"\",\"text\":\"かんじ\",\"kind\":\"phonetic\"},{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "漢字",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "かんじ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.happy-path",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "漢字",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "かんじ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.legal-empty-envelope",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[]}"
+      },
+      "expect": {
+        "entries": [],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.preserves-id",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"id\":\"1\",\"base\":\"I\",\"text\":\"aɪ\",\"kind\":\"phonetic\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "I",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby.salvage-key-mid-cut",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\"},{\"bas"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "漢字",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "かんじ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.truncation-salvage", "json.close-braces"]
+      }
+    },
+    {
+      "id": "repair/ruby.stuttered-prefix",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output{\"ruby_output\":[{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "漢字",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "かんじ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/ruby.trailing-comma",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\",}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "漢字",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "かんじ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.trailing-comma"]
+      }
+    },
+    {
+      "id": "repair/ruby.truncated-with-content",
+      "op": "repair.ruby.alignment",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"base\":\"漢字\",\"text\":\"かんじ\",\"kind\":\"phonetic\""
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "漢字",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "かんじ"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.close-braces"]
+      }
+    },
+    {
+      "id": "repair/ruby_partial_rows/main",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\" a b \"},\"ruby_output\":{\"1\":[{\"id\":\"a\",\"base\":\" a \",\"text\":\" x \",\"kind\":\"creative\"},{\"id\":\"b\",\"base\":\"b\",\"text\":\"y\",\"kind\":\"phonetic\",\"occurrence\":\"invalid\"}]}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": " a ",
+              "id": "a",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": " x "
+            },
+            {
+              "base": "b",
+              "id": "b",
+              "invalid": true,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "y"
+            }
+          ]
+        },
+        "trans": {
+          "1": " a b "
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_partial_rows/revise",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\"1\",\"target\":\"valid\"}],\"ruby_output\":{\"1\":[{\"id\":\"a\",\"base\":\" a \",\"text\":\" x \",\"kind\":\"creative\"},{\"id\":\"b\",\"base\":\"b\",\"text\":\"y\",\"kind\":\"phonetic\",\"occurrence\":\"invalid\"}]}}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "valid"
+          }
+        ],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": " a ",
+              "id": "a",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": " x "
+            },
+            {
+              "base": "b",
+              "id": "b",
+              "invalid": true,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "y"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/legacy/legacy",
+      "op": "repair.ruby.alignment.state",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/ruby_raw/legacy/legacy_bare",
+      "op": "repair.ruby.alignment.state",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.bare-array"]
+      }
+    },
+    {
+      "id": "repair/ruby_raw/legacy/legacy_robust",
+      "op": "repair.ruby.alignment.state",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"{\"ruby_output\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/ruby_raw/legacy/legacy_truncated",
+      "op": "repair.ruby.alignment.state",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": ["json.close-braces"]
+      }
+    },
+    {
+      "id": "repair/ruby_raw/main/main",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"alpha beta\"},\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        },
+        "trans": {
+          "1": "alpha beta"
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/main/main_merge",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"alpha beta\"},\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}{\"translations\":{\"2\":\"gamma\"}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.merge-objects"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        },
+        "trans": {
+          "1": "alpha beta",
+          "2": "gamma"
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/main/main_nested",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":{\"translation\":\"alpha beta\",\"ruby_output\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["schema.ruby-nested-extract"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        },
+        "trans": {
+          "1": "alpha beta"
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/main/main_robust",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"{\"translations\":{\"1\":\"alpha beta\"},\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.robust-extract"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        },
+        "trans": {
+          "1": "alpha beta"
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/main/main_trailing",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"alpha beta\"},\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]},}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.trailing-comma"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        },
+        "trans": {
+          "1": "alpha beta"
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/optional-duplicate/envelope",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"alpha\",\"2\":\"alpha\"},\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]},\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {
+          "1": "alpha",
+          "2": "alpha"
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/optional-duplicate/segment",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"alpha\",\"2\":\"alpha\"},\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}],\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}],\"2\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {
+          "2": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        },
+        "trans": {
+          "1": "alpha",
+          "2": "alpha"
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/revision/revision",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\"1\",\"target\":\"alpha beta\"}],\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": [],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "alpha beta"
+          }
+        ],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/revision/revision_robust",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"{\"revisions\":[{\"id\":\"1\",\"target\":\"alpha beta\"}],\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": ["json.robust-extract"],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "alpha beta"
+          }
+        ],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_raw/revision/revision_trailing",
+      "op": "repair.revise.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"revisions\":[{\"id\":\"1\",\"target\":\"alpha beta\"}],\"ruby_output\":{\"1\":[{\"id\":\"other\",\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]},}"
+      },
+      "expect": {
+        "error": "",
+        "ok": true,
+        "repaired": ["json.trailing-comma"],
+        "revisions": [
+          {
+            "id": "1",
+            "target": "alpha beta"
+          }
+        ],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "repair/ruby_state/rejects-malformed-duplicate-group",
+      "op": "repair.ruby.alignment.state",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"ruby_output\":[{\"id\":\"6\",\"base\":\"alpha\",\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"6\",\"base\":false,\"text\":\"a\",\"kind\":\"creative\"},{\"id\":\"9\",\"base\":\"beta\",\"text\":\"b\",\"kind\":\"creative\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ],
+        "error": "",
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic.mode/non-text-json-repair",
+      "op": "repair.semantic.qa.mode",
+      "args": {
+        "isTextMode": false,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":{ \"issues\": []}"
+      },
+      "expect": {
+        "error": "",
+        "items": [],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/semantic.mode/text-empty-falls-back",
+      "op": "repair.semantic.qa.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":{ \"issues\": []}"
+      },
+      "expect": {
+        "error": "",
+        "items": [],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/semantic.mode/text-issues",
+      "op": "repair.semantic.qa.mode",
+      "args": {
+        "isTextMode": true,
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "[issues]\n1 | term_fidelity | ル | 音译错误\n"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "term_fidelity",
+            "id": "1",
+            "message": "音译错误",
+            "snippet": "ル"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic/code-fence",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "```json\n{\"issues\":[{\"id\":\"1\",\"code\":\"term_fidelity\",\"message\":\"x\",\"snippet\":\"y\"}]}\n```"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "term_fidelity",
+            "id": "1",
+            "message": "x",
+            "snippet": "y"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic/empty-issues",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":{ \"issues\": []}"
+      },
+      "expect": {
+        "error": "",
+        "items": [],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/semantic/fatal-not-json",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "totally not json"
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic/filters-illegal-code",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":[{\"id\":\"1\",\"code\":\"term_fidelity\",\"message\":\"a\",\"snippet\":\"b\"},{\"id\":\"2\",\"code\":\"length_ratio\",\"message\":\"c\",\"snippet\":\"d\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "term_fidelity",
+            "id": "1",
+            "message": "a",
+            "snippet": "b"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic/happy-path",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":[{\"id\":\"3\",\"code\":\"term_fidelity\",\"message\":\"音译不准确\",\"snippet\":\"ル\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "term_fidelity",
+            "id": "3",
+            "message": "音译不准确",
+            "snippet": "ル"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic/stuttered-prefix",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues{\"issues\":[{\"code\":\"term_fidelity\",\"id\":\"3\",\"message\":\"音译错误\",\"snippet\":\"ル\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "term_fidelity",
+            "id": "3",
+            "message": "音译错误",
+            "snippet": "ル"
+          }
+        ],
+        "ok": true,
+        "repaired": ["json.robust-extract"]
+      }
+    },
+    {
+      "id": "repair/semantic/trailing-comma",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":[{\"id\":\"1\",\"code\":\"term_fidelity\",\"message\":\"x\",\"snippet\":\"y\",}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "term_fidelity",
+            "id": "1",
+            "message": "x",
+            "snippet": "y"
+          }
+        ],
+        "ok": true,
+        "repaired": ["json.trailing-comma"]
+      }
+    },
+    {
+      "id": "repair/semantic/truncated-with-content",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":[{\"code\":\"term_fidelity\",\"id\":\"3\",\"message\":\"音译不准确\",\"snippet\":\"ルトルバーグ\""
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic/truncation-salvage-declined",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":[{\"id\":\"1\",\"code\":\"term_fidelity\",\"message\":\"x\",\"snippet\":\"y\"},{\"i"
+      },
+      "expect": {
+        "error": "other",
+        "items": [],
+        "ok": false,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/semantic/unescaped-quotes-in-message",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":[{\"id\":\"10\",\"code\":\"mistranslation\",\"message\":\"\"少女\"是中文标准词汇，非残留\",\"snippet\":\"少女\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "mistranslation",
+            "id": "10",
+            "message": "\"少女\"是中文标准词汇，非残留",
+            "snippet": "少女"
+          }
+        ],
+        "ok": true,
+        "repaired": ["json.escape-quotes"]
+      }
+    },
+    {
+      "id": "repair/semantic/zero-opts",
+      "op": "repair.semantic.qa",
+      "args": {
+        "options": {
+          "jsonStructural": false,
+          "placeholderNormalize": false,
+          "promptUpgrade": false,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "{\"issues\":[{\"id\":\"1\",\"code\":\"term_fidelity\",\"message\":\"x\",\"snippet\":\"y\"}]}"
+      },
+      "expect": {
+        "error": "",
+        "items": [
+          {
+            "code": "term_fidelity",
+            "id": "1",
+            "message": "x",
+            "snippet": "y"
+          }
+        ],
+        "ok": true,
+        "repaired": []
+      }
+    },
+    {
+      "id": "repair/text/bom",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "﻿[1] 早上好\n[2] 很高兴认识你\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-bom-zw", "text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "早上好",
+          "2": "很高兴认识你"
+        }
+      }
+    },
+    {
+      "id": "repair/text/code-fence",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "```text\n[1] 早上好\n[2] 很高兴认识你\n```\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "早上好",
+          "2": "很高兴认识你"
+        }
+      }
+    },
+    {
+      "id": "repair/text/continuation-lines",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] 第一行\n继续第二行\n[2] 独立段落\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "第一行\n继续第二行",
+          "2": "独立段落"
+        }
+      }
+    },
+    {
+      "id": "repair/text/empty-response",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/text/glossary-with-trailing-translations",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] Hello\n[glossary]\nAPI | 接口\n[2] World\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [
+          {
+            "notes": "",
+            "source": "API",
+            "target": "接口"
+          }
+        ],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "Hello",
+          "2": "World"
+        }
+      }
+    },
+    {
+      "id": "repair/text/happy-path",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] 早上好\n[2] 很高兴认识你\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "早上好",
+          "2": "很高兴认识你"
+        }
+      }
+    },
+    {
+      "id": "repair/text/missing-id",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": false,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] 早上好\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["2"],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "早上好"
+        }
+      }
+    },
+    {
+      "id": "repair/text/missing-id-always-partial",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": false,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] a\n",
+        "wantIds": ["1", "2", "3", "4"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["2", "3", "4"],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a"
+        }
+      }
+    },
+    {
+      "id": "repair/text/no-translations",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "just some random text\n",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/text/repair-tracking",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "```text\n[1] 早上好\n```\n",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "早上好"
+        }
+      }
+    },
+    {
+      "id": "repair/text/section-ruby-empty",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] 你好\n[ruby]\n",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "你好"
+        }
+      }
+    },
+    {
+      "id": "repair/text/section-ruby-four-field",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] I want water\n\n[ruby]\n1: I | aɪ | phonetic | 1\n",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "I",
+              "id": "1",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "aɪ"
+            }
+          ]
+        },
+        "trans": {
+          "1": "I want water"
+        }
+      }
+    },
+    {
+      "id": "repair/text/section-ruby-three-field-no-id",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] I want water\n\n[ruby]\n1: I | aɪ | phonetic\n",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "I",
+              "id": "",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "aɪ"
+            }
+          ]
+        },
+        "trans": {
+          "1": "I want water"
+        }
+      }
+    },
+    {
+      "id": "repair/text/with-context-segments",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[*] Hello, how are you?\n[1] Good morning\n[*] See you later\n[2] Nice to meet you\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "Good morning",
+          "2": "Nice to meet you"
+        }
+      }
+    },
+    {
+      "id": "repair/text/with-glossary",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] 早上好\n[2] 很高兴认识你\n\n[glossary]\nLinguaFlow | 灵流 | 翻译平台名称\nAPI | 接口 | 应用程序编程接口\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [
+          {
+            "notes": "翻译平台名称",
+            "source": "LinguaFlow",
+            "target": "灵流"
+          },
+          {
+            "notes": "应用程序编程接口",
+            "source": "API",
+            "target": "接口"
+          }
+        ],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "早上好",
+          "2": "很高兴认识你"
+        }
+      }
+    },
+    {
+      "id": "repair/text/with-section-ruby",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] 早上好\n[2] 很高兴认识你\n\n[ruby]\n1: 早上 | 早晨 | phonetic\n2: 高兴 | 愉快 | semantic\n",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "早上",
+              "id": "",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "早晨"
+            }
+          ],
+          "2": [
+            {
+              "base": "高兴",
+              "id": "",
+              "invalid": false,
+              "kind": "semantic",
+              "occurrence": 0,
+              "text": "愉快"
+            }
+          ]
+        },
+        "trans": {
+          "1": "早上好",
+          "2": "很高兴认识你"
+        }
+      }
+    },
+    {
+      "id": "repair/text/with-section-ruby-and-glossary",
+      "op": "repair.text",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": true,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "[1] 你好世界\n[glossary]\nAPI | 接口\n[ruby]\n1: 世界 | 世間 | phonetic\n",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [
+          {
+            "notes": "",
+            "source": "API",
+            "target": "接口"
+          }
+        ],
+        "missing": [],
+        "repaired": ["text.strip-code-fence"],
+        "rubyOutput": {
+          "1": [
+            {
+              "base": "世界",
+              "id": "",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "世間"
+            }
+          ]
+        },
+        "trans": {
+          "1": "你好世界"
+        }
+      }
+    },
+    {
+      "id": "repair/try/close-unbalanced-braces",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"a\",\"2\":\"b\"",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.close-braces"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a",
+          "2": "b"
+        }
+      }
+    },
+    {
+      "id": "repair/try/code-fence-thinking",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "\u003cthinking\u003escratch {\"reasoning\":\"x\"}\u003c/thinking\u003e\n```json\n{\"translations\":{\"1\":\"a\",\"2\":\"b\"}}\n```\nDone.",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a",
+          "2": "b"
+        }
+      }
+    },
+    {
+      "id": "repair/try/control-char-inside-string",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"line1\nline2\"}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.escape-control"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "line1\nline2"
+        }
+      }
+    },
+    {
+      "id": "repair/try/data-nested-translations",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"data\":{\"translations\":{\"1\":\"a\"}}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["schema.alias"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a"
+        }
+      }
+    },
+    {
+      "id": "repair/try/extra-ids-ignored",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"a\",\"2\":\"b\",\"3\":\"c\"}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a",
+          "2": "b",
+          "3": "c"
+        }
+      }
+    },
+    {
+      "id": "repair/try/fatal-not-json",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "not json at all",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/field-alias",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translation\":{\"1\":\"a\"}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["schema.alias"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a"
+        }
+      }
+    },
+    {
+      "id": "repair/try/field-alias-disabled",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": false,
+          "promptUpgrade": false,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "{\"translation\":{\"1\":\"a\"}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/happy-path",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"hello\",\"2\":\"world\"}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {
+          "1": "hello",
+          "2": "world"
+        }
+      }
+    },
+    {
+      "id": "repair/try/merges-multiple-objects",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"a\"}}\n{\"translations\":{\"2\":\"b\"}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.merge-objects"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a",
+          "2": "b"
+        }
+      }
+    },
+    {
+      "id": "repair/try/nested-ruby-output",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":{\"translation\":\"『才没有那回事啦』\",\"ruby_output\":[]},\"2\":{\"translation\":\"包裹着她身体的体温也渐渐离去。\",\"ruby_output\":[{\"base\":\"身体\",\"text\":\"からだ\",\"kind\":\"phonetic\"}]}}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["schema.ruby-nested-extract"],
+        "rubyOutput": {
+          "2": [
+            {
+              "base": "身体",
+              "id": "",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "からだ"
+            }
+          ]
+        },
+        "trans": {
+          "1": "『才没有那回事啦』",
+          "2": "包裹着她身体的体温也渐渐离去。"
+        }
+      }
+    },
+    {
+      "id": "repair/try/partial-missing-ids",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"a\",\"2\":\"b\"}}",
+        "wantIds": ["1", "2", "3"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["3"],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a",
+          "2": "b"
+        }
+      }
+    },
+    {
+      "id": "repair/try/partial-with-glossary",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"你好\"},\"glossary\":[{\"source\":\"Hello\",\"target\":\"你好\",\"notes\":\"\"}]}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [
+          {
+            "notes": "",
+            "source": "Hello",
+            "target": "你好"
+          }
+        ],
+        "missing": ["2"],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {
+          "1": "你好"
+        }
+      }
+    },
+    {
+      "id": "repair/try/robust-conflicting-fatal",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"{{\"translations\":{\"1\":\"FIRST\"}}{\"translations\":{\"1\":\"SECOND\"}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/robust-merges-split",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"{{\"translations\":{\"1\":\"A\"}}{\"translations\":{\"2\":\"B\"}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.robust-extract"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "A",
+          "2": "B"
+        }
+      }
+    },
+    {
+      "id": "repair/try/robust-preserves-unclosed-fatal",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"hello",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/robust-rejects-alias-decoy",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":BAD}{\"output\":{\"2\":\"DECOY\"}}",
+        "wantIds": ["2"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.close-braces"],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/robust-skips-alias-decoy",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"{{\"output\":{\"2\":\"DECOY\"}}{\"translations\":{\"2\":\"REAL\"}}",
+        "wantIds": ["2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.robust-extract"],
+        "rubyOutput": {},
+        "trans": {
+          "2": "REAL"
+        }
+      }
+    },
+    {
+      "id": "repair/try/salvage/container-closure",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"甲\"},\"glossary\":[{\"source\":\"a\",\"target\":\"b\"},{\"source\":\"c",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [
+          {
+            "notes": "",
+            "source": "a",
+            "target": "b"
+          }
+        ],
+        "missing": [],
+        "repaired": ["json.truncation-salvage", "json.close-braces"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "甲"
+        }
+      }
+    },
+    {
+      "id": "repair/try/salvage/dangling-key-colon",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3\":",
+        "wantIds": ["1", "2", "3"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["3"],
+        "repaired": ["json.close-braces", "json.truncation-salvage", "json.close-braces"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "完整甲",
+          "2": "完整乙"
+        }
+      }
+    },
+    {
+      "id": "repair/try/salvage/declined",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": true
+        },
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3\":\"瑞贝卡学姐一问",
+        "wantIds": ["1", "2", "3"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/salvage/key-mid-cut",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3",
+        "wantIds": ["1", "2", "3"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["3"],
+        "repaired": ["json.truncation-salvage", "json.close-braces"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "完整甲",
+          "2": "完整乙"
+        }
+      }
+    },
+    {
+      "id": "repair/try/salvage/real-world-sample",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\n  \"translations\": {\n    \"10\": \"只要经过几分钟，暴食就会被赫冰封印给吞没。\",\n    \"100\": \"那个夜晚，在她离去之际我听说了。\",\n    \"101\": \"她说自己等了埃文·伯恩斯坦整整十年。\",\n    \"102\": \"所以她才说希望把伯恩斯坦先生交给她来处理。\",\n    \"103\": \"那个时候，她应该就已经做好了杀他的觉悟了吧。\",\n    \"104\": \"“和埃文嘛，没错。我们曾是恋人。但是，我并不懂得什么是爱。因为渴望理解爱，我才和他成为了恋人。然后一直等待着消失的他。期待着如果能再见埃文一次，或许就能明白自己的这份感情了。”\",\n    \"105\": \"她将手轻轻放在胸口。\",\n    \"106\": \"“但是，埃文死后我明白了。我果然还是爱着他的啊。”\",\n    \"107\": \"“是，这样吗……”\",\n    \"108\": \"“真是讽刺啊。竟然要等到死后才像这样产生自觉。我真是个无可救药的人。”\",\n    \"109\": \"用着如造物般漂亮的脸庞诉说着的她，看起来不知为何有些落寞。\",\n    \"11\": \"虽然他似乎还在反抗，但魔术领域已经完全停止了。现在应该只是用最后残存的力量在抵抗吧。\",\n    \"110\": \"“不过，埃文因为对我异常执着而变得不正常，那是他的软弱所致。”\",\n    \"111\": \"“因为软弱，所以才追求了力量吗？”\",\n    \"112\": \"“没错。我和你都是‘拥有’的那一方。即便能想象对方的心情，也永远无法真正理解。”\",\n    \"113\": \"确实如此。\",\n    \"114\": \"心情是可以想象的。\",\n    \"115\": \"但绝对无法完全理解他人的心情。\",\n    \"116\": \"“我啊。在想。”\",\n    \"117\": \"这次她用温柔的声线继续说道。\",\n    \"118\": \"“想什么呢？”\",\n    \"11",
+        "wantIds": [
+          "10",
+          "100",
+          "101",
+          "102",
+          "103",
+          "104",
+          "105",
+          "106",
+          "107",
+          "108",
+          "109",
+          "11",
+          "110",
+          "111",
+          "112",
+          "113",
+          "114",
+          "115",
+          "116",
+          "117",
+          "118",
+          "119"
+        ]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["119"],
+        "repaired": ["json.truncation-salvage", "json.close-braces"],
+        "rubyOutput": {},
+        "trans": {
+          "10": "只要经过几分钟，暴食就会被赫冰封印给吞没。",
+          "100": "那个夜晚，在她离去之际我听说了。",
+          "101": "她说自己等了埃文·伯恩斯坦整整十年。",
+          "102": "所以她才说希望把伯恩斯坦先生交给她来处理。",
+          "103": "那个时候，她应该就已经做好了杀他的觉悟了吧。",
+          "104": "“和埃文嘛，没错。我们曾是恋人。但是，我并不懂得什么是爱。因为渴望理解爱，我才和他成为了恋人。然后一直等待着消失的他。期待着如果能再见埃文一次，或许就能明白自己的这份感情了。”",
+          "105": "她将手轻轻放在胸口。",
+          "106": "“但是，埃文死后我明白了。我果然还是爱着他的啊。”",
+          "107": "“是，这样吗……”",
+          "108": "“真是讽刺啊。竟然要等到死后才像这样产生自觉。我真是个无可救药的人。”",
+          "109": "用着如造物般漂亮的脸庞诉说着的她，看起来不知为何有些落寞。",
+          "11": "虽然他似乎还在反抗，但魔术领域已经完全停止了。现在应该只是用最后残存的力量在抵抗吧。",
+          "110": "“不过，埃文因为对我异常执着而变得不正常，那是他的软弱所致。”",
+          "111": "“因为软弱，所以才追求了力量吗？”",
+          "112": "“没错。我和你都是‘拥有’的那一方。即便能想象对方的心情，也永远无法真正理解。”",
+          "113": "确实如此。",
+          "114": "心情是可以想象的。",
+          "115": "但绝对无法完全理解他人的心情。",
+          "116": "“我啊。在想。”",
+          "117": "这次她用温柔的声线继续说道。",
+          "118": "“想什么呢？”"
+        }
+      }
+    },
+    {
+      "id": "repair/try/salvage/rejects-garbage-after-quote",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"甲\"垃圾\"2\":\"乙",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/salvage/requires-json-structural",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": false,
+          "placeholderNormalize": false,
+          "promptUpgrade": false,
+          "schemaAliases": false,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3\":\"瑞贝卡学姐一问",
+        "wantIds": ["1", "2", "3"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "repair/try/salvage/trailing-comma-close-braces",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",",
+        "wantIds": ["1", "2", "3"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["3"],
+        "repaired": ["json.close-braces", "json.trailing-comma"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "完整甲",
+          "2": "完整乙"
+        }
+      }
+    },
+    {
+      "id": "repair/try/salvage/value-mid-cut",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"完整甲\",\"2\":\"完整乙\",\"3\":\"瑞贝卡学姐一问",
+        "wantIds": ["1", "2", "3"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": ["3"],
+        "repaired": ["json.truncation-salvage", "json.close-braces"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "完整甲",
+          "2": "完整乙"
+        }
+      }
+    },
+    {
+      "id": "repair/try/skips-thinking-object",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"reasoning\":\"step by step\"}\n{\"translations\":{\"1\":\"a\"}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a"
+        }
+      }
+    },
+    {
+      "id": "repair/try/strips-bom",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "﻿{\"translations\":{\"1\":\"a\"}}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.strip-bom-zw"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a"
+        }
+      }
+    },
+    {
+      "id": "repair/try/stuttered-key-prefix",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\n  \"rub{\n  \"ruby_output\": {\n    \"1\": []\n  },\n  \"translations\": {\n    \"1\": \"目录\"\n  }\n}",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.robust-extract"],
+        "rubyOutput": {
+          "1": []
+        },
+        "trans": {
+          "1": "目录"
+        }
+      }
+    },
+    {
+      "id": "repair/try/stuttered-prefix",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"{\"ruby_output\":{\"1\":[]},\"translations\":{\"1\":\"目录\",\"2\":\"世界\"}}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.robust-extract"],
+        "rubyOutput": {
+          "1": []
+        },
+        "trans": {
+          "1": "目录",
+          "2": "世界"
+        }
+      }
+    },
+    {
+      "id": "repair/try/trailing-comma",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"a\",\"2\":\"b\",}}",
+        "wantIds": ["1", "2"]
+      },
+      "expect": {
+        "fatal": false,
+        "glos": [],
+        "missing": [],
+        "repaired": ["json.trailing-comma"],
+        "rubyOutput": {},
+        "trans": {
+          "1": "a",
+          "2": "b"
+        }
+      }
+    },
+    {
+      "id": "repair/try/unclosed-quote-fatal",
+      "op": "repair.try",
+      "args": {
+        "options": {
+          "jsonStructural": true,
+          "placeholderNormalize": true,
+          "promptUpgrade": true,
+          "schemaAliases": true,
+          "withoutSalvage": false
+        },
+        "text": "{\"translations\":{\"1\":\"hello",
+        "wantIds": ["1"]
+      },
+      "expect": {
+        "fatal": true,
+        "glos": [],
+        "missing": [],
+        "repaired": [],
+        "rubyOutput": {},
+        "trans": {}
+      }
+    },
+    {
+      "id": "text/strip-code-fence/fenced",
+      "op": "text.strip_code_fence",
+      "args": {
+        "text": "```text\nhello\n```"
+      },
+      "expect": {
+        "text": "hello"
+      }
+    },
+    {
+      "id": "text/strip-code-fence/fenced-no-lang",
+      "op": "text.strip_code_fence",
+      "args": {
+        "text": "```\nhello\n```"
+      },
+      "expect": {
+        "text": "hello"
+      }
+    },
+    {
+      "id": "text/strip-code-fence/nested",
+      "op": "text.strip_code_fence",
+      "args": {
+        "text": "```text\n```\ninner\n```"
+      },
+      "expect": {
+        "text": "```\ninner"
+      }
+    },
+    {
+      "id": "text/strip-code-fence/no-fence",
+      "op": "text.strip_code_fence",
+      "args": {
+        "text": "hello"
+      },
+      "expect": {
+        "text": "hello"
+      }
+    }
+  ]
+}

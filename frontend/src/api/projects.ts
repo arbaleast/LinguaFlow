@@ -1,4 +1,5 @@
 import { t } from '@/i18n'
+import { dispatchUpload } from '@/gateway'
 import { countUnicodeCodePoints, SEGMENT_SEARCH_MAX_LENGTH } from '@/utils/unicode'
 
 import type { ApiClient, ApiPaths, ApiSchemas } from './client-core'
@@ -338,6 +339,30 @@ export const uploadProjectResourcesWithProgress = async (
   // Freeze the input before any authentication wait.
   const batchFiles = [...files]
   const batchPaths = paths ? [...paths] : undefined
+
+  // Gateway 接缝：纯浏览器本地运行模式（'browser-local'）下由 LocalGateway 接管上传
+  // （Phase 2 接入 OPFS）。网关未接管时原样回落到既有 raw XHR 实现，
+  // 'local' / 'server' 两种模式因此保持零回归。
+  const localUpload = dispatchUpload({
+    url,
+    files: batchFiles,
+    paths: batchPaths,
+    idempotencyKey: key,
+    signal,
+    onProgress: callbacks.onProgress,
+    onServerProcessing: callbacks.onServerProcessing,
+  })
+  if (localUpload) {
+    const local = await localUpload
+    if (local.status < 200 || local.status >= 300) throw storageRequestError(local, local.text)
+    let localParsed: unknown
+    try {
+      localParsed = JSON.parse(local.text)
+    } catch {
+      throw storageRequestError()
+    }
+    return sanitizeUploadBatch(localParsed, batchFiles.length)
+  }
 
   const send = (token: string | null): Promise<{ status: number; text: string }> =>
     new Promise((resolve, reject) => {

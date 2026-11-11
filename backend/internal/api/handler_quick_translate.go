@@ -20,9 +20,15 @@ func (s *Server) handleQuickTranslate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	input := service.QuickTranslateInput{
-		ActorUserID:     authUser.User.ID,
-		SourceText:      req.SourceText,
-		ExecutionPlanID: req.ExecutionPlanId,
+		ActorUserID: authUser.User.ID,
+		SourceText:  req.SourceText,
+	}
+	// execution_plan_id 可选：省略或为 0 时后端回退到默认可用 AI 后端直接处理。
+	if req.ExecutionPlanId != nil {
+		input.ExecutionPlanID = *req.ExecutionPlanId
+	}
+	if req.Instructions != nil {
+		input.Instructions = *req.Instructions
 	}
 	if req.SourceLang != nil {
 		input.SourceLang = *req.SourceLang
@@ -79,6 +85,8 @@ func (s *Server) writeQuickTranslateServiceError(w http.ResponseWriter, r *http.
 		s.writeProblem(w, r, http.StatusBadRequest, "invalid_input", "输入文本不能为空")
 	case errors.Is(err, service.ErrQuickTranslateNoTranslate):
 		s.writeProblem(w, r, http.StatusBadRequest, "no_translate_round", "执行计划不含翻译轮次")
+	case errors.Is(err, service.ErrQuickTranslateNoBackend):
+		s.writeProblem(w, r, http.StatusBadRequest, "no_ai_backend", "未找到可用的 AI 后端，请先在「后端」中配置并授权")
 	case errors.Is(err, service.ErrForbidden):
 		s.writeProblem(w, r, http.StatusForbidden, "forbidden", "没有权限执行该操作")
 	case errors.Is(err, service.ErrBackendNotFound), errors.Is(err, service.ErrExecutionPlanNotFound), errors.Is(err, service.ErrProjectNotFound):

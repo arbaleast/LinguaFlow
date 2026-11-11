@@ -1,0 +1,1262 @@
+{
+  "package": "protect",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "protect/analyze/cjk",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["xml"],
+        "source": "汉字"
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "汉字",
+        "ran": true,
+        "structural": false
+      }
+    },
+    {
+      "id": "protect/analyze/code-only",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["code"],
+        "source": "`code only`"
+      },
+      "expect": {
+        "err": false,
+        "mapping": {
+          "__LF_000001__": "`code only`"
+        },
+        "meta": null,
+        "protected": "__LF_000001__",
+        "ran": true,
+        "structural": true
+      }
+    },
+    {
+      "id": "protect/analyze/code-with-text",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["code"],
+        "source": "`code` plus text"
+      },
+      "expect": {
+        "err": false,
+        "mapping": {
+          "__LF_000001__": "`code`"
+        },
+        "meta": null,
+        "protected": "__LF_000001__ plus text",
+        "ran": true,
+        "structural": false
+      }
+    },
+    {
+      "id": "protect/analyze/digits",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["xml"],
+        "source": "12345"
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "12345",
+        "ran": true,
+        "structural": false
+      }
+    },
+    {
+      "id": "protect/analyze/emoji",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["xml"],
+        "source": "🎉"
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "",
+        "ran": false,
+        "structural": true
+      }
+    },
+    {
+      "id": "protect/analyze/empty",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["xml"],
+        "source": ""
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "",
+        "ran": false,
+        "structural": true
+      }
+    },
+    {
+      "id": "protect/analyze/letters",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["code", "link", "placeholder", "xml"],
+        "source": "hello world"
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "hello world",
+        "ran": true,
+        "structural": false
+      }
+    },
+    {
+      "id": "protect/analyze/literal-placeholder",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["xml"],
+        "source": "__LF_000001__"
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "__LF_000001__",
+        "ran": true,
+        "structural": false
+      }
+    },
+    {
+      "id": "protect/analyze/nil-rules",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": null,
+        "source": "plain"
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "",
+        "ran": false,
+        "structural": false
+      }
+    },
+    {
+      "id": "protect/analyze/pure-punct",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["code", "link", "placeholder", "xml"],
+        "source": "--- ... !!!"
+      },
+      "expect": {
+        "err": false,
+        "mapping": null,
+        "meta": null,
+        "protected": "",
+        "ran": false,
+        "structural": true
+      }
+    },
+    {
+      "id": "protect/analyze/xml-only",
+      "op": "protect.analyze_structural",
+      "args": {
+        "rules": ["xml"],
+        "source": "\u003cb\u003ebold\u003c/b\u003e"
+      },
+      "expect": {
+        "err": false,
+        "mapping": {
+          "__LF_000001__": "\u003cb\u003e",
+          "__LF_000002__": "\u003c/b\u003e"
+        },
+        "meta": null,
+        "protected": "__LF_000001__bold__LF_000002__",
+        "ran": true,
+        "structural": false
+      }
+    },
+    {
+      "id": "protect/code/fenced-backtick",
+      "op": "protect.code",
+      "args": {
+        "source": "```go\nfmt.Println(\"hi\")\n```"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "```go\nfmt.Println(\"hi\")\n```"
+        },
+        "source": "__LF_000001__"
+      }
+    },
+    {
+      "id": "protect/code/fenced-tilde",
+      "op": "protect.code",
+      "args": {
+        "source": "~~~python\nprint('hi')\n~~~"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "~~~python\nprint('hi')\n~~~"
+        },
+        "source": "__LF_000001__"
+      }
+    },
+    {
+      "id": "protect/code/inline",
+      "op": "protect.code",
+      "args": {
+        "source": "hello `world` foo"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "`world`"
+        },
+        "source": "hello __LF_000001__ foo"
+      }
+    },
+    {
+      "id": "protect/code/inline-multi-backtick",
+      "op": "protect.code",
+      "args": {
+        "source": "a ``co`de`` b"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "``co`"
+        },
+        "source": "a __LF_000001__de`` b"
+      }
+    },
+    {
+      "id": "protect/code/mixed",
+      "op": "protect.code",
+      "args": {
+        "source": "mix `inline` and:\n```\nblock\n```\nafter"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "```\nblock\n```",
+          "__LF_000002__": "`inline`"
+        },
+        "source": "mix __LF_000002__ and:\n__LF_000001__\nafter"
+      }
+    },
+    {
+      "id": "protect/code/plain",
+      "op": "protect.code",
+      "args": {
+        "source": "plain text without code"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "plain text without code"
+      }
+    },
+    {
+      "id": "protect/code/unclosed-fence",
+      "op": "protect.code",
+      "args": {
+        "source": "```go\nno closing fence"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "```go\nno closing fence"
+      }
+    },
+    {
+      "id": "protect/code/unicode",
+      "op": "protect.code",
+      "args": {
+        "source": "行内 `代码` 与 🎉 混排"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "`代码`"
+        },
+        "source": "行内 __LF_000001__ 与 🎉 混排"
+      }
+    },
+    {
+      "id": "protect/compose/adjacent",
+      "op": "protect.compose",
+      "args": {
+        "chain": ["xml"],
+        "source": "────\u003c/span\u003e\u003cruby\u003e椎名\u003crt\u003eしいな\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000003__": "\u003crt\u003e",
+          "__LF_000006__": "\u003c/span\u003e\u003cruby\u003e",
+          "__LF_000007__": "\u003c/rt\u003e\u003c/ruby\u003e"
+        },
+        "source": "────__LF_000006__椎名__LF_000003__しいな__LF_000007__"
+      }
+    },
+    {
+      "id": "protect/compose/all",
+      "op": "protect.compose",
+      "args": {
+        "chain": ["code", "link", "placeholder", "xml"],
+        "source": "Use `code` and [link](https://x.com) with {{var}} \u003cbr/\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "`code`",
+          "__LF_000002__": "https://x.com",
+          "__LF_000005__": "{{var}} \u003cbr/\u003e"
+        },
+        "source": "Use __LF_000001__ and [link](__LF_000002__) with __LF_000005__"
+      }
+    },
+    {
+      "id": "protect/compose/ruby-then-xml",
+      "op": "protect.compose",
+      "args": {
+        "chain": ["ruby", "xml"],
+        "source": "\u003cruby\u003e微\u003crt\u003eほほ\u003c/rt\u003e\u003c/ruby\u003e\u003cruby\u003e笑\u003crt\u003eえ\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": {
+          "ruby_items": [
+            {
+              "id": "1",
+              "source_base": "微笑",
+              "source_text": "ほほえ"
+            }
+          ]
+        },
+        "protected": {},
+        "source": "微笑"
+      }
+    },
+    {
+      "id": "protect/compose/ruby-xml",
+      "op": "protect.compose",
+      "args": {
+        "chain": ["ruby", "xml"],
+        "source": "\u003cruby\u003e呪\u003crt\u003eじゅ\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": {
+          "ruby_items": [
+            {
+              "id": "1",
+              "source_base": "呪",
+              "source_text": "じゅ"
+            }
+          ]
+        },
+        "protected": {},
+        "source": "呪"
+      }
+    },
+    {
+      "id": "protect/compose/unicode",
+      "op": "protect.compose",
+      "args": {
+        "chain": ["code", "link", "placeholder", "xml"],
+        "source": "🎉 `code` {{变量}} [链接](https://x.com) \u003cb\u003e粗体\u003c/b\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000002__": "https://x.com",
+          "__LF_000004__": "\u003cb\u003e",
+          "__LF_000005__": "\u003c/b\u003e",
+          "__LF_000006__": "`code` {{变量}}"
+        },
+        "source": "🎉 __LF_000006__ [链接](__LF_000002__) __LF_000004__粗体__LF_000005__"
+      }
+    },
+    {
+      "id": "protect/from-rules/all",
+      "op": "protect.from_rules",
+      "args": {
+        "rules": ["code", "link", "unknown", "placeholder", "xml"],
+        "source": "`x` [y](z) {{w}} \u003ca/\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "`x`",
+          "__LF_000002__": "z",
+          "__LF_000005__": "{{w}} \u003ca/\u003e"
+        },
+        "source": "__LF_000001__ [y](__LF_000002__) __LF_000005__"
+      }
+    },
+    {
+      "id": "protect/from-rules/empty",
+      "op": "protect.from_rules",
+      "args": {
+        "rules": [],
+        "source": "nothing to protect"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "nothing to protect"
+      }
+    },
+    {
+      "id": "protect/from-rules/no-ruby",
+      "op": "protect.from_rules",
+      "args": {
+        "rules": ["code", "link", "placeholder", "ruby", "xml"],
+        "source": "\u003cruby\u003e呪\u003crt\u003eじゅ\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003cruby\u003e",
+          "__LF_000002__": "\u003crt\u003e",
+          "__LF_000005__": "\u003c/rt\u003e\u003c/ruby\u003e"
+        },
+        "source": "__LF_000001__呪__LF_000002__じゅ__LF_000005__"
+      }
+    },
+    {
+      "id": "protect/link/auto",
+      "op": "protect.link",
+      "args": {
+        "source": "auto \u003chttps://example.com\u003e link"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003chttps://example.com\u003e"
+        },
+        "source": "auto __LF_000001__ link"
+      }
+    },
+    {
+      "id": "protect/link/ftp",
+      "op": "protect.link",
+      "args": {
+        "source": "ftp \u003cftp://example.com/x\u003e mail \u003cmailto:a@b.c\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003cftp://example.com/x\u003e",
+          "__LF_000002__": "\u003cmailto:a@b.c\u003e"
+        },
+        "source": "ftp __LF_000001__ mail __LF_000002__"
+      }
+    },
+    {
+      "id": "protect/link/image",
+      "op": "protect.link",
+      "args": {
+        "source": "image ![alt](https://e.com/a.png) here"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "https://e.com/a.png"
+        },
+        "source": "image ![alt](__LF_000001__) here"
+      }
+    },
+    {
+      "id": "protect/link/md",
+      "op": "protect.link",
+      "args": {
+        "source": "see [docs](https://example.com) please"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "https://example.com"
+        },
+        "source": "see [docs](__LF_000001__) please"
+      }
+    },
+    {
+      "id": "protect/link/none",
+      "op": "protect.link",
+      "args": {
+        "source": "no link here"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "no link here"
+      }
+    },
+    {
+      "id": "protect/link/ref",
+      "op": "protect.link",
+      "args": {
+        "source": "ref [foo][1] link"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "1"
+        },
+        "source": "ref [foo][__LF_000001__] link"
+      }
+    },
+    {
+      "id": "protect/link/title",
+      "op": "protect.link",
+      "args": {
+        "source": "titled [docs](https://example.com \"Title\")"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "https://example.com \"Title\""
+        },
+        "source": "titled [docs](__LF_000001__)"
+      }
+    },
+    {
+      "id": "protect/link/unicode-text",
+      "op": "protect.link",
+      "args": {
+        "source": "链接 [文档](https://example.com/文档)"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "https://example.com/文档"
+        },
+        "source": "链接 [文档](__LF_000001__)"
+      }
+    },
+    {
+      "id": "protect/merge/newline-between",
+      "op": "protect.merge_adjacent",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A",
+          "__LF_000002__": "B"
+        },
+        "source": "__LF_000001__\n__LF_000002__"
+      },
+      "expect": {
+        "protected": {
+          "__LF_000003__": "A\nB"
+        },
+        "source": "__LF_000003__"
+      }
+    },
+    {
+      "id": "protect/merge/no-placeholder",
+      "op": "protect.merge_adjacent",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "source": "plain text"
+      },
+      "expect": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "source": "plain text"
+      }
+    },
+    {
+      "id": "protect/merge/non-adjacent",
+      "op": "protect.merge_adjacent",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A",
+          "__LF_000002__": "B"
+        },
+        "source": "__LF_000001__ text __LF_000002__"
+      },
+      "expect": {
+        "protected": {
+          "__LF_000001__": "A",
+          "__LF_000002__": "B"
+        },
+        "source": "__LF_000001__ text __LF_000002__"
+      }
+    },
+    {
+      "id": "protect/merge/single",
+      "op": "protect.merge_adjacent",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "source": "text __LF_000001__ more"
+      },
+      "expect": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "source": "text __LF_000001__ more"
+      }
+    },
+    {
+      "id": "protect/merge/two-adjacent",
+      "op": "protect.merge_adjacent",
+      "args": {
+        "protected": {
+          "__LF_000001__": "\u003cruby\u003e",
+          "__LF_000002__": "\u003crt\u003e"
+        },
+        "source": "__LF_000001____LF_000002__after"
+      },
+      "expect": {
+        "protected": {
+          "__LF_000003__": "\u003cruby\u003e\u003crt\u003e"
+        },
+        "source": "__LF_000003__after"
+      }
+    },
+    {
+      "id": "protect/merge/two-groups",
+      "op": "protect.merge_adjacent",
+      "args": {
+        "protected": {
+          "__LF_000001__": "\u003cruby\u003e",
+          "__LF_000002__": "\u003crt\u003e",
+          "__LF_000003__": "\u003c/rt\u003e",
+          "__LF_000004__": "\u003c/ruby\u003e"
+        },
+        "source": "__LF_000001____LF_000002__じゅ__LF_000003____LF_000004__"
+      },
+      "expect": {
+        "protected": {
+          "__LF_000005__": "\u003cruby\u003e\u003crt\u003e",
+          "__LF_000006__": "\u003c/rt\u003e\u003c/ruby\u003e"
+        },
+        "source": "__LF_000005__じゅ__LF_000006__"
+      }
+    },
+    {
+      "id": "protect/merge/whitespace-between",
+      "op": "protect.merge_adjacent",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A",
+          "__LF_000002__": "B"
+        },
+        "source": "__LF_000001__ __LF_000002__"
+      },
+      "expect": {
+        "protected": {
+          "__LF_000003__": "A B"
+        },
+        "source": "__LF_000003__"
+      }
+    },
+    {
+      "id": "protect/missing-placeholders/basic",
+      "op": "protect.missing_placeholders",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A",
+          "__LF_000002__": "B",
+          "__LF_000003__": "C"
+        },
+        "target": "kept __LF_000002__ only"
+      },
+      "expect": {
+        "missing": ["__LF_000001__", "__LF_000003__"]
+      }
+    },
+    {
+      "id": "protect/next-key/literal-collision",
+      "op": "protect.next_key",
+      "args": {
+        "source": "literal __LF_000001__ inside text"
+      },
+      "expect": {
+        "collidedKeys": ["__LF_000001__"],
+        "protected": {},
+        "source": "literal __LF_000001__ inside text"
+      }
+    },
+    {
+      "id": "protect/next-key/sequential-collisions",
+      "op": "protect.next_key",
+      "args": {
+        "source": "__LF_000001__ and __LF_000002__ end"
+      },
+      "expect": {
+        "collidedKeys": ["__LF_000001__", "__LF_000002__"],
+        "protected": {},
+        "source": "__LF_000001__ and __LF_000002__ end"
+      }
+    },
+    {
+      "id": "protect/placeholder/double-brace",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "hello {{ .Name }} and {{var}}!"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "{{ .Name }}",
+          "__LF_000002__": "{{var}}"
+        },
+        "source": "hello __LF_000001__ and __LF_000002__!"
+      }
+    },
+    {
+      "id": "protect/placeholder/empty-brace",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "{} {{}} {a}"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "{a}"
+        },
+        "source": "{} {{}} __LF_000001__"
+      }
+    },
+    {
+      "id": "protect/placeholder/nested-brace",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "{{outer {inner}}}"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "{inner}"
+        },
+        "source": "{{outer __LF_000001__}}"
+      }
+    },
+    {
+      "id": "protect/placeholder/plain",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "plain text without placeholders"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "plain text without placeholders"
+      }
+    },
+    {
+      "id": "protect/placeholder/printf",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "format %s and %d and %.2f and %+v and %#x"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "%s",
+          "__LF_000002__": "%d",
+          "__LF_000003__": "%.2f",
+          "__LF_000004__": "%+v",
+          "__LF_000005__": "%#x"
+        },
+        "source": "format __LF_000001__ and __LF_000002__ and __LF_000003__ and __LF_000004__ and __LF_000005__"
+      }
+    },
+    {
+      "id": "protect/placeholder/shell",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "env $HOME and ${PATH} and $_SKIP"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "{PATH}",
+          "__LF_000002__": "$HOME"
+        },
+        "source": "env __LF_000002__ and $__LF_000001__ and $_SKIP"
+      }
+    },
+    {
+      "id": "protect/placeholder/single-brace",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "value is {0} and {1} and {abc.def}"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "{0}",
+          "__LF_000002__": "{1}",
+          "__LF_000003__": "{abc.def}"
+        },
+        "source": "value is __LF_000001__ and __LF_000002__ and __LF_000003__"
+      }
+    },
+    {
+      "id": "protect/placeholder/unicode",
+      "op": "protect.placeholder",
+      "args": {
+        "source": "变量 {{名前}} 与 {索引0} 混排 🎉"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "{{名前}}"
+        },
+        "source": "变量 __LF_000001__ 与 {索引0} 混排 🎉"
+      }
+    },
+    {
+      "id": "protect/protect-text/nil-protector",
+      "op": "protect.protect_text",
+      "args": {
+        "rules": null,
+        "text": "no protector"
+      },
+      "expect": {
+        "mapping": null,
+        "text": "no protector"
+      }
+    },
+    {
+      "id": "protect/protect-text/with-rules",
+      "op": "protect.protect_text",
+      "args": {
+        "rules": ["code", "link", "placeholder", "xml"],
+        "text": "Use `code` and [link](https://x.com) with {{var}} \u003cbr/\u003e"
+      },
+      "expect": {
+        "mapping": {
+          "__LF_000001__": "`code`",
+          "__LF_000002__": "https://x.com",
+          "__LF_000005__": "{{var}} \u003cbr/\u003e"
+        },
+        "text": "Use __LF_000001__ and [link](__LF_000002__) with __LF_000005__"
+      }
+    },
+    {
+      "id": "protect/restore-all/adjacent",
+      "op": "protect.restore_all",
+      "args": {
+        "protected": {
+          "__LF_000001__": "\u003cspan class=\"x\"\u003e",
+          "__LF_000002__": "\u003c/span\u003e",
+          "__LF_000003__": "\u003cruby\u003e",
+          "__LF_000004__": "\u003crt\u003e",
+          "__LF_000005__": "\u003c/rt\u003e",
+          "__LF_000006__": "\u003c/ruby\u003e"
+        },
+        "text": "────__LF_000002____LF_000003__椎名__LF_000004__しいな__LF_000005____LF_000006__"
+      },
+      "expect": {
+        "text": "────\u003c/span\u003e\u003cruby\u003e椎名\u003crt\u003eしいな\u003c/rt\u003e\u003c/ruby\u003e"
+      }
+    },
+    {
+      "id": "protect/restore-all/length-desc",
+      "op": "protect.restore_all",
+      "args": {
+        "protected": {
+          "__LF_000001__": "SHORT",
+          "__LF_000001__X": "LONG"
+        },
+        "text": "a __LF_000001__X b __LF_000001__ c"
+      },
+      "expect": {
+        "text": "a LONG b SHORT c"
+      }
+    },
+    {
+      "id": "protect/restore-all/no-double-restore",
+      "op": "protect.restore_all",
+      "args": {
+        "protected": {
+          "__LF_000001__": "the literal __LF_000002__ should remain",
+          "__LF_000002__": "WRONG"
+        },
+        "text": "head __LF_000001__ tail"
+      },
+      "expect": {
+        "text": "head the literal __LF_000002__ should remain tail"
+      }
+    },
+    {
+      "id": "protect/restore-text/basic",
+      "op": "protect.restore_text",
+      "args": {
+        "mapping": {
+          "__LF_000001__": "X"
+        },
+        "text": "a __LF_000001__ b"
+      },
+      "expect": {
+        "text": "a X b"
+      }
+    },
+    {
+      "id": "protect/ruby/adjacent-merge",
+      "op": "protect.ruby",
+      "args": {
+        "source": "\u003cruby\u003e微\u003crt\u003eほほ\u003c/rt\u003e\u003c/ruby\u003e\u003cruby\u003e笑\u003crt\u003eえ\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": {
+          "ruby_items": [
+            {
+              "id": "1",
+              "source_base": "微笑",
+              "source_text": "ほほえ"
+            }
+          ]
+        },
+        "protected": {},
+        "source": "微笑"
+      }
+    },
+    {
+      "id": "protect/ruby/emoji-base",
+      "op": "protect.ruby",
+      "args": {
+        "source": "\u003cruby\u003e🎉\u003crt\u003eParty\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": {
+          "ruby_items": [
+            {
+              "id": "1",
+              "source_base": "🎉",
+              "source_text": "Party"
+            }
+          ]
+        },
+        "protected": {},
+        "source": "🎉"
+      }
+    },
+    {
+      "id": "protect/ruby/meta-items",
+      "op": "protect.ruby_items",
+      "args": {
+        "source": "\u003cruby\u003e椎名\u003crt\u003eしいな\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "items": [
+          {
+            "id": "1",
+            "source_base": "椎名",
+            "source_text": "しいな"
+          }
+        ],
+        "source": "椎名"
+      }
+    },
+    {
+      "id": "protect/ruby/multi-rt",
+      "op": "protect.ruby",
+      "args": {
+        "source": "\u003cruby\u003e何\u003crt\u003eな\u003c/rt\u003e故\u003crt\u003eぜ\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": {
+          "ruby_items": [
+            {
+              "id": "1",
+              "source_base": "何故",
+              "source_text": "なぜ"
+            }
+          ]
+        },
+        "protected": {},
+        "source": "何故"
+      }
+    },
+    {
+      "id": "protect/ruby/no-rt",
+      "op": "protect.ruby",
+      "args": {
+        "source": "\u003cp\u003eno ruby here\u003c/p\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "\u003cp\u003eno ruby here\u003c/p\u003e"
+      }
+    },
+    {
+      "id": "protect/ruby/plain",
+      "op": "protect.ruby",
+      "args": {
+        "source": "plain text without ruby"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "plain text without ruby"
+      }
+    },
+    {
+      "id": "protect/ruby/single",
+      "op": "protect.ruby",
+      "args": {
+        "source": "\u003cruby\u003e呪\u003crt\u003eじゅ\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": {
+          "ruby_items": [
+            {
+              "id": "1",
+              "source_base": "呪",
+              "source_text": "じゅ"
+            }
+          ]
+        },
+        "protected": {},
+        "source": "呪"
+      }
+    },
+    {
+      "id": "protect/ruby/word",
+      "op": "protect.ruby",
+      "args": {
+        "source": "\u003cruby\u003e椎名\u003crt\u003eしいな\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "meta": {
+          "ruby_items": [
+            {
+              "id": "1",
+              "source_base": "椎名",
+              "source_text": "しいな"
+            }
+          ]
+        },
+        "protected": {},
+        "source": "椎名"
+      }
+    },
+    {
+      "id": "protect/violations/duplicated",
+      "op": "protect.violations",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "target": "x __LF_000001__ y __LF_000001__ z"
+      },
+      "expect": {
+        "duplicated": ["__LF_000001__"],
+        "invented": [],
+        "missing": []
+      }
+    },
+    {
+      "id": "protect/violations/empty-protected",
+      "op": "protect.violations",
+      "args": {
+        "protected": {},
+        "target": "has __LF_000001__ literal"
+      },
+      "expect": {
+        "duplicated": [],
+        "invented": ["__LF_000001__"],
+        "missing": []
+      }
+    },
+    {
+      "id": "protect/violations/invented",
+      "op": "protect.violations",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "target": "model said __LF_999999__ here"
+      },
+      "expect": {
+        "duplicated": [],
+        "invented": ["__LF_999999__"],
+        "missing": ["__LF_000001__"]
+      }
+    },
+    {
+      "id": "protect/violations/invented-upper",
+      "op": "protect.violations",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "target": "model said __LF_ABCDEF__ here"
+      },
+      "expect": {
+        "duplicated": [],
+        "invented": ["__LF_ABCDEF__"],
+        "missing": ["__LF_000001__"]
+      }
+    },
+    {
+      "id": "protect/violations/missing",
+      "op": "protect.violations",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A",
+          "__LF_000002__": "B",
+          "__LF_000003__": "C"
+        },
+        "target": "kept __LF_000002__ only"
+      },
+      "expect": {
+        "duplicated": [],
+        "invented": [],
+        "missing": ["__LF_000001__", "__LF_000003__"]
+      }
+    },
+    {
+      "id": "protect/violations/mixed",
+      "op": "protect.violations",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A",
+          "__LF_000002__": "B",
+          "__LF_000003__": "C"
+        },
+        "target": "a __LF_000001__ b __LF_000001__ c __LF_888888__ d __LF_000002__"
+      },
+      "expect": {
+        "duplicated": ["__LF_000001__"],
+        "invented": ["__LF_888888__"],
+        "missing": ["__LF_000003__"]
+      }
+    },
+    {
+      "id": "protect/violations/none",
+      "op": "protect.violations",
+      "args": {
+        "protected": {
+          "__LF_000001__": "A"
+        },
+        "target": "nothing here"
+      },
+      "expect": {
+        "duplicated": [],
+        "invented": [],
+        "missing": ["__LF_000001__"]
+      }
+    },
+    {
+      "id": "protect/xml/attr-with-gt",
+      "op": "protect.xml",
+      "args": {
+        "source": "\u003ca title=\"a\u003eb\"\u003ex\u003c/a\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003ca title=\"a\u003e",
+          "__LF_000002__": "\u003c/a\u003e"
+        },
+        "source": "__LF_000001__b\"\u003ex__LF_000002__"
+      }
+    },
+    {
+      "id": "protect/xml/basic",
+      "op": "protect.xml",
+      "args": {
+        "source": "click \u003ca href=\"x\"\u003ehere\u003c/a\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003ca href=\"x\"\u003e",
+          "__LF_000002__": "\u003c/a\u003e"
+        },
+        "source": "click __LF_000001__here__LF_000002__"
+      }
+    },
+    {
+      "id": "protect/xml/custom",
+      "op": "protect.xml",
+      "args": {
+        "source": "\u003ccustom-tag attr=\"v\"/\u003emiddle\u003c/custom-tag\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003ccustom-tag attr=\"v\"/\u003e",
+          "__LF_000002__": "\u003c/custom-tag\u003e"
+        },
+        "source": "__LF_000001__middle__LF_000002__"
+      }
+    },
+    {
+      "id": "protect/xml/lt-space",
+      "op": "protect.xml",
+      "args": {
+        "source": "a \u003c b and c \u003e d"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "a \u003c b and c \u003e d"
+      }
+    },
+    {
+      "id": "protect/xml/namespaced",
+      "op": "protect.xml",
+      "args": {
+        "source": "\u003cns:tag ns:attr=\"v\"\u003e\u003c/ns:tag\u003e"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003cns:tag ns:attr=\"v\"\u003e",
+          "__LF_000002__": "\u003c/ns:tag\u003e"
+        },
+        "source": "__LF_000001____LF_000002__"
+      }
+    },
+    {
+      "id": "protect/xml/none",
+      "op": "protect.xml",
+      "args": {
+        "source": "no tags at all"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {},
+        "source": "no tags at all"
+      }
+    },
+    {
+      "id": "protect/xml/self-closing",
+      "op": "protect.xml",
+      "args": {
+        "source": "\u003cbr/\u003e ends line"
+      },
+      "expect": {
+        "meta": null,
+        "protected": {
+          "__LF_000001__": "\u003cbr/\u003e"
+        },
+        "source": "__LF_000001__ ends line"
+      }
+    }
+  ]
+}

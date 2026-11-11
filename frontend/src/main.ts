@@ -9,6 +9,7 @@ import App from './App.vue'
 import { bootstrapApp } from './bootstrap'
 import { i18n } from './i18n'
 import { installRouterGuards } from './router/guards'
+import { legacyRedirectRoutes } from './router/legacy-redirects'
 import { useLocaleStore } from './stores/locale'
 import { useThemeStore } from './stores/theme'
 import { installSessionIsolation } from './stores/sessionIsolation'
@@ -34,7 +35,8 @@ if (!callbackPrepared) prepareExternalCallback()
 const router = createRouter({
   history: createWebHistory(),
   // 旧即时翻译页已并入首页，保留重定向以兼容历史链接与书签
-  routes: [...routes, { path: '/tools/quick-translate', redirect: '/' }],
+  // 提示词 / 执行配置 / 用量概览合并后的旧路径同样重定向到新页面对应的 Tab
+  routes: [...routes, { path: '/tools/quick-translate', redirect: '/' }, ...legacyRedirectRoutes],
 })
 
 const app = createApp(App)

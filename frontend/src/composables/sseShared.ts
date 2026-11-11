@@ -1,5 +1,6 @@
 import { getAccessToken, readStoredApiBaseUrl } from '@/api/token-storage'
 import { isLocalMode } from '@/api/client'
+import { getGateway } from '@/gateway'
 
 import type { ApiSchemas } from '@/api/client'
 
@@ -89,6 +90,12 @@ export const KNOWN_EVENT_TYPES = [
 ] as const
 
 export const resolveStreamUrl = (jobId: number): string | null => {
+  // Gateway 接缝：纯浏览器本地运行模式（'browser-local'）下没有 SSE 端点，
+  // 事件流将由浏览器内的事件总线（Phase 2 的 BroadcastChannel）提供。
+  // Phase 1 尚未实现该通道，返回 null 让 globalJobTracker 跳过 SSE 连接，
+  // 其余既有逻辑（Store / 组件）无需任何改动。
+  if (!getGateway().supportsEventStream) return null
+
   const token = getAccessToken()
   if (!token && !isLocalMode()) return null
 

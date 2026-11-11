@@ -1,0 +1,3 @@
+### 黄金向量可复现性：bash scripts/gen-golden-vectors.sh 重新生成 12 份 fixture 后与提交版本逐字节比对 ###
+--- diff 结果（无输出 = 逐字节一致）---
+--- 比对结束 ---

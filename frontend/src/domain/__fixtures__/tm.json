@@ -1,0 +1,1062 @@
+{
+  "package": "tm",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "tm/add/case-sensitive-distinct",
+      "op": "tm.add",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "Hello",
+        "srcLang": "en",
+        "tgt": "您好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          },
+          {
+            "id": 2,
+            "projectId": 1,
+            "sourceHash": "185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969",
+            "sourceLang": "en",
+            "sourceText": "Hello",
+            "targetLang": "zh",
+            "targetText": "您好",
+            "usageCount": 0
+          }
+        ],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/create",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgt": "你好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/create-trimmed",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 1,
+        "src": "  hello  ",
+        "srcLang": " en ",
+        "tgt": " 你好 ",
+        "tgtLang": " zh "
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/duplicate-noop",
+      "op": "tm.add",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgt": "你好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/empty-scope-error",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 0,
+        "src": "hello",
+        "srcLang": "en",
+        "tgt": "你好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [],
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "tm/add/empty-scope-invalid-short-circuit",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 0,
+        "src": "",
+        "srcLang": "en",
+        "tgt": "你好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/invalid-empty-src",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 1,
+        "src": "",
+        "srcLang": "en",
+        "tgt": "你好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/invalid-empty-src-lang",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "",
+        "tgt": "你好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/invalid-empty-tgt",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgt": "",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/invalid-empty-tgt-lang",
+      "op": "tm.add",
+      "args": {
+        "entries": [],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgt": "你好",
+        "tgtLang": ""
+      },
+      "expect": {
+        "entries": [],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/multiple-existing-error",
+      "op": "tm.add",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "甲",
+            "usageCount": 0
+          },
+          {
+            "id": 2,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "乙",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "dup",
+        "srcLang": "en",
+        "tgt": "丙",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "9eb6203435cb3e0033f544e3bf6f1b74b138c765fc489a38a092e8f7adbd9638",
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "甲",
+            "usageCount": 0
+          },
+          {
+            "id": 2,
+            "projectId": 1,
+            "sourceHash": "9eb6203435cb3e0033f544e3bf6f1b74b138c765fc489a38a092e8f7adbd9638",
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "乙",
+            "usageCount": 0
+          }
+        ],
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "tm/add/project-isolation",
+      "op": "tm.add",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 2,
+        "src": "hello",
+        "srcLang": "en",
+        "tgt": "你好",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          },
+          {
+            "id": 2,
+            "projectId": 2,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/update-after-trim",
+      "op": "tm.add",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "  hello  ",
+        "srcLang": "en",
+        "tgt": "嗨",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "嗨",
+            "usageCount": 0
+          }
+        ],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/add/update-target",
+      "op": "tm.add",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgt": "嗨",
+        "tgtLang": "zh"
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceHash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "嗨",
+            "usageCount": 0
+          }
+        ],
+        "error": false,
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/nop/empty",
+      "op": "tm.nop",
+      "args": {},
+      "expect": {
+        "matches": [],
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/scope/empty",
+      "op": "tm.scope",
+      "args": {
+        "projectId": 0
+      },
+      "expect": {
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "tm/scope/project-1",
+      "op": "tm.scope",
+      "args": {
+        "projectId": 1
+      },
+      "expect": {
+        "key": "project:1",
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/scope/project-7",
+      "op": "tm.scope",
+      "args": {
+        "projectId": 7
+      },
+      "expect": {
+        "key": "project:7",
+        "ok": true
+      }
+    },
+    {
+      "id": "tm/search/case-sensitive",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "Hello",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/empty-query",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/empty-scope",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 0,
+        "src": "hello",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "tm/search/empty-store",
+      "op": "tm.search",
+      "args": {
+        "entries": [],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [],
+        "ok": true,
+        "usage": []
+      }
+    },
+    {
+      "id": "tm/search/exact-hit",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [
+          {
+            "score": 1,
+            "source": "hello",
+            "target": "你好"
+          }
+        ],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/language-pair-separation",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          },
+          {
+            "id": 2,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "ja",
+            "targetText": "こんにちは",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [
+          {
+            "score": 1,
+            "source": "hello",
+            "target": "你好"
+          }
+        ],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 1
+          },
+          {
+            "id": 2,
+            "usageCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/project-isolation",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 2,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/source-lang-mismatch",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "ja",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/target-lang-mismatch",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": "en",
+        "tgtLang": "ja",
+        "times": 1
+      },
+      "expect": {
+        "matches": [],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/trimmed-langs",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "hello",
+        "srcLang": " en ",
+        "tgtLang": " zh ",
+        "times": 1
+      },
+      "expect": {
+        "matches": [
+          {
+            "score": 1,
+            "source": "hello",
+            "target": "你好"
+          }
+        ],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/trimmed-query",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "hello",
+            "targetLang": "zh",
+            "targetText": "你好",
+            "usageCount": 0
+          }
+        ],
+        "projectId": 1,
+        "src": "  hello  ",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [
+          {
+            "score": 1,
+            "source": "hello",
+            "target": "你好"
+          }
+        ],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/usage-increment-twice",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "甲",
+            "usageCount": 2
+          },
+          {
+            "id": 2,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "乙",
+            "usageCount": 5
+          }
+        ],
+        "projectId": 1,
+        "src": "dup",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 2
+      },
+      "expect": {
+        "matches": [
+          {
+            "score": 1,
+            "source": "dup",
+            "target": "乙"
+          },
+          {
+            "score": 1,
+            "source": "dup",
+            "target": "甲"
+          }
+        ],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 4
+          },
+          {
+            "id": 2,
+            "usageCount": 7
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/search/usage-order",
+      "op": "tm.search",
+      "args": {
+        "entries": [
+          {
+            "id": 3,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "丙",
+            "usageCount": 5
+          },
+          {
+            "id": 1,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "甲",
+            "usageCount": 5
+          },
+          {
+            "id": 2,
+            "projectId": 1,
+            "sourceLang": "en",
+            "sourceText": "dup",
+            "targetLang": "zh",
+            "targetText": "乙",
+            "usageCount": 9
+          }
+        ],
+        "projectId": 1,
+        "src": "dup",
+        "srcLang": "en",
+        "tgtLang": "zh",
+        "times": 1
+      },
+      "expect": {
+        "matches": [
+          {
+            "score": 1,
+            "source": "dup",
+            "target": "乙"
+          },
+          {
+            "score": 1,
+            "source": "dup",
+            "target": "甲"
+          },
+          {
+            "score": 1,
+            "source": "dup",
+            "target": "丙"
+          }
+        ],
+        "ok": true,
+        "usage": [
+          {
+            "id": 1,
+            "usageCount": 6
+          },
+          {
+            "id": 2,
+            "usageCount": 10
+          },
+          {
+            "id": 3,
+            "usageCount": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "tm/source-hash/ascii",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "hello"
+      },
+      "expect": {
+        "hash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+      }
+    },
+    {
+      "id": "tm/source-hash/cjk",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "人工智能"
+      },
+      "expect": {
+        "hash": "161332dd5ba244f14566d9ccfc214dbbd620bcd401cded068fc230e3d4e2815b"
+      }
+    },
+    {
+      "id": "tm/source-hash/emoji",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "🎉 emoji"
+      },
+      "expect": {
+        "hash": "b2545d3e08b7c0469dc1980cdc0ad6a1a659b622b12b2e7dee294b7f7e88f73f"
+      }
+    },
+    {
+      "id": "tm/source-hash/empty",
+      "op": "tm.source_hash",
+      "args": {
+        "src": ""
+      },
+      "expect": {
+        "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "tm/source-hash/internal-spaces",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "  a  b  "
+      },
+      "expect": {
+        "hash": "6e12db73209a66d147a67a15868bdb4b8ae57b884d4731310b62f82a7d67611e"
+      }
+    },
+    {
+      "id": "tm/source-hash/lower",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "hello"
+      },
+      "expect": {
+        "hash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+      }
+    },
+    {
+      "id": "tm/source-hash/padded",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "   padded   "
+      },
+      "expect": {
+        "hash": "c7f9b538b93ce513f654b8d199e50252ae037c5bde542c132b04a42cd8b92ea0"
+      }
+    },
+    {
+      "id": "tm/source-hash/sentence",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "hello world"
+      },
+      "expect": {
+        "hash": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+      }
+    },
+    {
+      "id": "tm/source-hash/upper",
+      "op": "tm.source_hash",
+      "args": {
+        "src": "Hello"
+      },
+      "expect": {
+        "hash": "185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969"
+      }
+    }
+  ]
+}

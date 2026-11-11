@@ -1,32 +1,55 @@
 <script setup lang="ts">
-import type { ApiSchemas } from '@/api/client'
+/**
+ * 提示词管理（统一入口）：翻译 / 术语抽取 / 术语精简三类提示词合并到同一页面。
+ *
+ * - Tab 与路由 Query 双向同步（?tab=translation|bootstrap|prune，默认 translation）；
+ * - 各 Tab 继续使用各自原有的 Store 与 API，底层数据模型与接口契约保持不变；
+ * - 面板按需挂载并由 KeepAlive 保活，切换 Tab 不丢搜索条件与未保存的表单。
+ */
+import { useI18n } from 'vue-i18n'
 
-import PromptTemplateListPage, {
-  type TemplateFormPayload,
-} from '@/components/templates/PromptTemplateListPage.vue'
-import { usePromptTemplatesStore } from '@/stores/promptTemplates'
+import SectionTabs from '@/components/common/SectionTabs.vue'
+import type { SectionTabItem } from '@/components/common/section-tabs'
+import BootstrapPromptTemplatesPanel from '@/components/templates/BootstrapPromptTemplatesPanel.vue'
+import PrunePromptTemplatesPanel from '@/components/templates/PrunePromptTemplatesPanel.vue'
+import TranslationPromptTemplatesPanel from '@/components/templates/TranslationPromptTemplatesPanel.vue'
+import { useRouteTab } from '@/composables/useRouteTab'
 
-type CreateRequest = ApiSchemas['CreateTranslationPromptTemplateRequest']
+type PromptTemplateTab = 'translation' | 'bootstrap' | 'prune'
 
-const store = usePromptTemplatesStore()
+const { t } = useI18n()
 
-/** 归一化表单 → 翻译提示词请求（内容字段为 system_prompt_content） */
-const save = (payload: TemplateFormPayload, id?: number): Promise<unknown> => {
-  const request: CreateRequest = { name: payload.name }
-  if (payload.description) request.description = payload.description
-  if (payload.content) request.system_prompt_content = payload.content
+const tabs = computed<SectionTabItem<PromptTemplateTab>[]>(() => [
+  {
+    key: 'translation',
+    label: t('promptTemplateManagement.tabs.translation'),
+    panel: TranslationPromptTemplatesPanel,
+  },
+  {
+    key: 'bootstrap',
+    label: t('promptTemplateManagement.tabs.bootstrap'),
+    panel: BootstrapPromptTemplatesPanel,
+  },
+  {
+    key: 'prune',
+    label: t('promptTemplateManagement.tabs.prune'),
+    panel: PrunePromptTemplatesPanel,
+  },
+])
 
-  return id === undefined ? store.createTemplate(request) : store.updateTemplate(id, request)
-}
+const { activeTab, setTab } = useRouteTab<PromptTemplateTab>(
+  [{ value: 'translation' }, { value: 'bootstrap' }, { value: 'prune' }],
+  'translation',
+)
 </script>
 
 <template>
-  <PromptTemplateListPage
-    class="lf-content-narrow"
-    :store="store"
-    i18n-prefix="promptTemplates"
-    content-field="system_prompt_content"
-    variable-set="system"
-    :save="save"
-  />
+  <div class="lf-page lf-content-narrow">
+    <PageHeader
+      :title="t('promptTemplateManagement.title')"
+      :subtitle="t('promptTemplateManagement.subtitle')"
+    />
+
+    <SectionTabs :tabs="tabs" :model-value="activeTab" @update:model-value="setTab" />
+  </div>
 </template>

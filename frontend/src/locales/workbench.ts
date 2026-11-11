@@ -91,6 +91,10 @@ export default {
     },
     failureWindow: '统计窗口：{from} 至 {before}',
   },
+  tabs: {
+    overview: '概览',
+    usage: '用量',
+  },
   stats: {
     usage: '历史用量',
     organizationActivity: '当前组织活动',

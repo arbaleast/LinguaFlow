@@ -1,0 +1,160 @@
+?   	github.com/MeowSalty/LinguaFlow/backend/cmd/hanvariantgen	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/cmd/linguaflow	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/cmd/linguaflow-migrate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/cmd/promptseed	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/accountidentity	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/api	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/authhttp	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/authoauth2	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/authoidc	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/authprotocol	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/authrules	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/backend	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/backend/anthropic	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/backend/google	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/backend/openai	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/cli	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/config	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/correct	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/credential	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/credentialstore	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/database	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/diskspace	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/engine	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/activitylog	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/authchannelpolicy	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/authconnection	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/authconnectionrevision	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/authconnectionsecret	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/authenticationrecovery	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/authtransaction	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/backend	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/backuppin	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/blob	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/bloblocation	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/bootstrapprompttemplate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/credential	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/credentialjobreference	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/credentialversion	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/deletionentry	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/enttest	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/executionplantemplate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/executionprofile	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/exportartifact	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/externalidentity	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/glossaryentry	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/hook	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/instanceinitialization	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/job	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/jobresource	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/jobround	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/jobroundsegment	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/localaccountpolicy	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/loginbinding	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/migrate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/organization	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/orgmembership	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/predicate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/project	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/pruneprompttemplate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/reauthenticationproof	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/refreshsession	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/refreshtoken	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/resource	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/runtime	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/schema	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/segment	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/segmentrevision	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/sourcerevision	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/sseevent	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storageauthversion	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagebackup	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagecheck	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagecheckwrite	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storageconnection	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagemigrationitem	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagenamespace	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagepathclaim	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagereservation	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storageretirement	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storageretiremententry	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagespace	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagetask	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storageuploadbatch	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storageuploadbatchitem	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/storagewrite	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/synctask	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/systemsetting	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/tmentry	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/translationprompttemplate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/usagerecord	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/user	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/workcandidate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/workitem	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/ent/workrequest	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/event	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/execution	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/glossary	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/goldenv	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/hash	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/logging	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/markup	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/migration/catalog	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/migration/cli	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/migration/operation	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/migration/snapshot	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/migration/storage	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/migration/upgrade/v013	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/migration/upgrade/v015	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/migration/upgrade/v015/source	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/model	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/output	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/parser	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/parser/docx	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/parser/epub	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/parser/html	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/parser/jsonp	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/parser/markdown	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/parser/subtitle	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/parser/text	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/persistence	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/persistenceacceptance	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/pipeline	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/plugin	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/preview	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/previewtoken	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/progress	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/prompt	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/protect	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/qa	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/repair	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/ruby	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/script	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/service	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/service/segmatch	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/storage	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/storageacceptance	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/storageauth	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/storagebackup	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/storageguard	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/storagenet	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/store/drivertest	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/store/filestore	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/store/localstore	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/store/s3store	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/store/storeutil	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/sysmem	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/tasklife	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/telemetry	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/templates	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/timeutil	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/tm	(cached)
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/tools/docker-smoke	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/tools/ent-generate	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/tools/openapi-bundle	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/version	[no test files]
+?   	github.com/MeowSalty/LinguaFlow/backend/internal/web	[no test files]
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/worker	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/workstate	(cached)
+ok  	github.com/MeowSalty/LinguaFlow/backend/internal/ziputil	(cached)

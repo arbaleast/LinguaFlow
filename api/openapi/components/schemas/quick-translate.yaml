@@ -1,6 +1,6 @@
 QuickTranslateRequest:
   type: object
-  required: [source_text, execution_plan_id]
+  required: [source_text]
   additionalProperties: false
   properties:
     source_text:
@@ -17,9 +17,17 @@ QuickTranslateRequest:
     execution_plan_id:
       type: integer
       description: |
-        执行计划模板 ID。执行计划模板统一为用户/org 级(ExecutionPlanTemplate
+        执行计划模板 ID(可选)。省略或为 0 时后端回退到当前账号可用的默认 AI
+        后端与内置翻译提示词模板,直接完成本次文本处理,不再因缺少执行计划而阻断。
+        提供时:执行计划模板统一为用户/org 级(ExecutionPlanTemplate
         无 project 关联),无论是否提供 project_id,用的都是同一套模板;
         后端用 ExecutionPlanService.checkAccess 对 actor 做用户/org 级授权。
+    instructions:
+      type: string
+      description: |
+        可选的补充指令(场景/语气/格式意图),追加到翻译轮次的系统提示词末尾。
+        用于「标准商务 / 报盘议价 / 礼貌催款 / WhatsApp 简短」等外贸沟通场景的
+        快捷切换;省略时按提示词模板的默认行为输出。
     project_id:
       type: integer
       nullable: true

@@ -1,0 +1,2825 @@
+{
+  "package": "glossary",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "glossary/add-for-request/no-request-id",
+      "op": "glossary.add_for_request",
+      "args": {
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "requestID": ""
+      },
+      "expect": {
+        "len": 1,
+        "requestAware": false,
+        "result": {
+          "added": [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "Bar",
+              "target": "巴"
+            }
+          ],
+          "skipped": []
+        }
+      }
+    },
+    {
+      "id": "glossary/add-for-request/request-aware",
+      "op": "glossary.add_for_request",
+      "args": {
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "requestID": "req-1"
+      },
+      "expect": {
+        "len": 1,
+        "requestAware": true,
+        "result": {
+          "added": [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "Foo",
+              "target": "福"
+            }
+          ],
+          "skipped": []
+        }
+      }
+    },
+    {
+      "id": "glossary/add/conflict-after-load",
+      "op": "glossary.add",
+      "args": {
+        "content": "source,target\nFoo,福\n",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "foo",
+              "target": "覆"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": false,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [],
+            "skipped": [
+              {
+                "existing": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": true,
+                  "notes": "",
+                  "source": "Foo",
+                  "target": "福"
+                },
+                "proposed": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "foo",
+                  "target": "覆"
+                },
+                "reason": "exists"
+              }
+            ]
+          }
+        ],
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/add/conflict-with-existing",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "thread pool",
+              "target": "线程池"
+            }
+          ],
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "thread pool",
+              "target": "并发池"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": false,
+                "mandatory": false,
+                "notes": "",
+                "source": "thread pool",
+                "target": "线程池"
+              }
+            ],
+            "skipped": []
+          },
+          {
+            "added": [],
+            "skipped": [
+              {
+                "existing": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "thread pool",
+                  "target": "线程池"
+                },
+                "proposed": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "thread pool",
+                  "target": "并发池"
+                },
+                "reason": "exists"
+              }
+            ]
+          }
+        ],
+        "sources": ["thread pool"]
+      }
+    },
+    {
+      "id": "glossary/add/dirty-set",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "x",
+              "target": "x"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": false,
+                "mandatory": false,
+                "notes": "",
+                "source": "x",
+                "target": "x"
+              }
+            ],
+            "skipped": []
+          }
+        ],
+        "sources": ["x"]
+      }
+    },
+    {
+      "id": "glossary/add/duplicate-does-not-set-dirty",
+      "op": "glossary.add",
+      "args": {
+        "content": "source,target\nx,x\n",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "x",
+              "target": "x"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": false,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [],
+            "skipped": []
+          }
+        ],
+        "sources": ["x"]
+      }
+    },
+    {
+      "id": "glossary/add/empty-skipped",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "",
+              "target": "x"
+            },
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "y",
+              "target": ""
+            },
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "z",
+              "target": "z"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": false,
+                "mandatory": false,
+                "notes": "",
+                "source": "z",
+                "target": "z"
+              }
+            ],
+            "skipped": [
+              {
+                "existing": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "",
+                  "target": ""
+                },
+                "proposed": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "",
+                  "target": "x"
+                },
+                "reason": "empty"
+              },
+              {
+                "existing": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "",
+                  "target": ""
+                },
+                "proposed": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "y",
+                  "target": ""
+                },
+                "reason": "empty"
+              }
+            ]
+          }
+        ],
+        "sources": ["z"]
+      }
+    },
+    {
+      "id": "glossary/add/forbidden-multiplicity",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": true,
+              "notes": "",
+              "source": "API",
+              "target": "接口"
+            },
+            {
+              "caseSensitive": false,
+              "forbidden": true,
+              "mandatory": false,
+              "notes": "",
+              "source": "API",
+              "target": "应用接口"
+            },
+            {
+              "caseSensitive": false,
+              "forbidden": true,
+              "mandatory": false,
+              "notes": "",
+              "source": "API",
+              "target": "应用程序接口"
+            }
+          ],
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "api",
+              "target": "端点"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 3,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": false,
+                "mandatory": true,
+                "notes": "",
+                "source": "API",
+                "target": "接口"
+              },
+              {
+                "caseSensitive": false,
+                "forbidden": true,
+                "mandatory": false,
+                "notes": "",
+                "source": "API",
+                "target": "应用接口"
+              },
+              {
+                "caseSensitive": false,
+                "forbidden": true,
+                "mandatory": false,
+                "notes": "",
+                "source": "API",
+                "target": "应用程序接口"
+              }
+            ],
+            "skipped": []
+          },
+          {
+            "added": [],
+            "skipped": [
+              {
+                "existing": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": true,
+                  "notes": "",
+                  "source": "API",
+                  "target": "接口"
+                },
+                "proposed": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "api",
+                  "target": "端点"
+                },
+                "reason": "exists"
+              }
+            ]
+          }
+        ],
+        "sources": ["API", "API", "API"]
+      }
+    },
+    {
+      "id": "glossary/add/forbidden-same-target-noop",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": true,
+              "mandatory": false,
+              "notes": "",
+              "source": "bad",
+              "target": "坏"
+            }
+          ],
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": true,
+              "mandatory": false,
+              "notes": "",
+              "source": "bad",
+              "target": "坏"
+            }
+          ],
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": true,
+              "mandatory": false,
+              "notes": "",
+              "source": "bad",
+              "target": "很坏"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 2,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": true,
+                "mandatory": false,
+                "notes": "",
+                "source": "bad",
+                "target": "坏"
+              }
+            ],
+            "skipped": []
+          },
+          {
+            "added": [],
+            "skipped": []
+          },
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": true,
+                "mandatory": false,
+                "notes": "",
+                "source": "bad",
+                "target": "很坏"
+              }
+            ],
+            "skipped": []
+          }
+        ],
+        "sources": ["bad", "bad"]
+      }
+    },
+    {
+      "id": "glossary/add/no-entries",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [[]]
+      },
+      "expect": {
+        "dirtyAfter": false,
+        "dirtyBefore": false,
+        "len": 0,
+        "results": [
+          {
+            "added": [],
+            "skipped": []
+          }
+        ],
+        "sources": []
+      }
+    },
+    {
+      "id": "glossary/add/same-target-noop",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "foo",
+              "target": "甲"
+            }
+          ],
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "foo",
+              "target": "甲"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": false,
+                "mandatory": false,
+                "notes": "",
+                "source": "foo",
+                "target": "甲"
+              }
+            ],
+            "skipped": []
+          },
+          {
+            "added": [],
+            "skipped": []
+          }
+        ],
+        "sources": ["foo"]
+      }
+    },
+    {
+      "id": "glossary/add/strict-merge",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "Foo",
+              "target": "原始译文"
+            }
+          ],
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "foo",
+              "target": "覆盖尝试"
+            }
+          ],
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "",
+              "source": "Foo",
+              "target": "再次覆盖"
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": false,
+                "mandatory": false,
+                "notes": "",
+                "source": "Foo",
+                "target": "原始译文"
+              }
+            ],
+            "skipped": []
+          },
+          {
+            "added": [],
+            "skipped": [
+              {
+                "existing": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "Foo",
+                  "target": "原始译文"
+                },
+                "proposed": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "foo",
+                  "target": "覆盖尝试"
+                },
+                "reason": "exists"
+              }
+            ]
+          },
+          {
+            "added": [],
+            "skipped": [
+              {
+                "existing": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "Foo",
+                  "target": "原始译文"
+                },
+                "proposed": {
+                  "caseSensitive": false,
+                  "forbidden": false,
+                  "mandatory": false,
+                  "notes": "",
+                  "source": "Foo",
+                  "target": "再次覆盖"
+                },
+                "reason": "exists"
+              }
+            ]
+          }
+        ],
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/add/trim-fields",
+      "op": "glossary.add",
+      "args": {
+        "content": "",
+        "rounds": [
+          [
+            {
+              "caseSensitive": false,
+              "forbidden": false,
+              "mandatory": false,
+              "notes": "  备注  ",
+              "source": "  Foo  ",
+              "target": " 福 "
+            }
+          ]
+        ]
+      },
+      "expect": {
+        "dirtyAfter": true,
+        "dirtyBefore": false,
+        "len": 1,
+        "results": [
+          {
+            "added": [
+              {
+                "caseSensitive": false,
+                "forbidden": false,
+                "mandatory": false,
+                "notes": "备注",
+                "source": "Foo",
+                "target": "福"
+              }
+            ],
+            "skipped": []
+          }
+        ],
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/de",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "de"
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/empty",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": ""
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/en",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "en"
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/en-us",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "en-US"
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/es",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "es"
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/fr",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "fr"
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/ja",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "ja"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/ja-jp-upper",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "JA-JP"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/km",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "km"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/ko",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "ko"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/lo",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "lo"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/my",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "my"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/padded",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": " zh "
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/ru",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "ru"
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/th",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "th"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/zh",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "zh"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/zh-cn",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "zh-CN"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/zh-tw-underscore",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "zh_TW"
+      },
+      "expect": {
+        "cjk": true
+      }
+    },
+    {
+      "id": "glossary/is-cjk-target/zhh",
+      "op": "glossary.is_cjk_target",
+      "args": {
+        "lang": "zhh"
+      },
+      "expect": {
+        "cjk": false
+      }
+    },
+    {
+      "id": "glossary/load/blank-lines-inside",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\n\n\nBar,巴\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "len": 2,
+        "ok": true,
+        "sources": ["Foo", "Bar"]
+      }
+    },
+    {
+      "id": "glossary/load/bom-header",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "﻿source,target,notes\nFoo,福,备注\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/bom-only",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "﻿"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [],
+        "len": 0,
+        "ok": true,
+        "sources": []
+      }
+    },
+    {
+      "id": "glossary/load/boolean-variants",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\na,甲,1,0,yes,note1\nb,乙,YES,TRUE,on,note2\nc,丙, True , False , 1 ,note3\nd,丁,0,no,off,note4\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "note1",
+            "source": "a",
+            "target": "甲"
+          },
+          {
+            "caseSensitive": true,
+            "forbidden": true,
+            "mandatory": true,
+            "notes": "note2",
+            "source": "b",
+            "target": "乙"
+          },
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "note3",
+            "source": "c",
+            "target": "丙"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "note4",
+            "source": "d",
+            "target": "丁"
+          }
+        ],
+        "len": 4,
+        "ok": true,
+        "sources": ["a", "b", "c", "d"]
+      }
+    },
+    {
+      "id": "glossary/load/cjk-byte-length-order",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target\nAI,人工智能\n人工智能,AI\nAI技术,AI技术\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "人工智能",
+            "target": "AI"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "AI技术",
+            "target": "AI技术"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "AI",
+            "target": "人工智能"
+          }
+        ],
+        "len": 3,
+        "ok": true,
+        "sources": ["人工智能", "AI技术", "AI"]
+      }
+    },
+    {
+      "id": "glossary/load/crlf",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,notes\r\nFoo,福,true,x\r\nBar,巴,false,\r\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "x",
+            "source": "Foo",
+            "target": "福"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "len": 2,
+        "ok": true,
+        "sources": ["Foo", "Bar"]
+      }
+    },
+    {
+      "id": "glossary/load/duplicate-identical-rows",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\nFoo,福\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 2,
+        "ok": true,
+        "sources": ["Foo", "Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/duplicate-recommendation",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target\nFoo,福\nfoo,福2\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "foo",
+            "target": "福2"
+          }
+        ],
+        "len": 2,
+        "ok": true,
+        "sources": ["Foo", "foo"]
+      }
+    },
+    {
+      "id": "glossary/load/embedded-crlf",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,notes\r\n\"multi\r\nline\",多行,备注\r\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "multi\nline",
+            "target": "多行"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["multi\nline"]
+      }
+    },
+    {
+      "id": "glossary/load/embedded-newline",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,notes\n\"multi\nline\",\"多行\n译文\",备注\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "multi\nline",
+            "target": "多行\n译文"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["multi\nline"]
+      }
+    },
+    {
+      "id": "glossary/load/empty-cells-skipped",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": ",x\nFoo,\nBar,巴\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Bar"]
+      }
+    },
+    {
+      "id": "glossary/load/empty-file",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": ""
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [],
+        "len": 0,
+        "ok": true,
+        "sources": []
+      }
+    },
+    {
+      "id": "glossary/load/error-bare-quote",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,ba\"r\n"
+      },
+      "expect": {
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "glossary/load/error-quote-after-close",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target\n \"Foo\" ,\"福\"\n"
+      },
+      "expect": {
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "glossary/load/error-unclosed-quote",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "\"Foo,福\n"
+      },
+      "expect": {
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "glossary/load/extended-forbidden-multiplicity",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\nAPI,接口,false,false,true,recommended\nAPI,应用接口,false,true,true,banned one\nAPI,应用程序接口,false,true,false,banned two\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "recommended",
+            "source": "API",
+            "target": "接口"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": true,
+            "mandatory": true,
+            "notes": "banned one",
+            "source": "API",
+            "target": "应用接口"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": true,
+            "mandatory": false,
+            "notes": "banned two",
+            "source": "API",
+            "target": "应用程序接口"
+          }
+        ],
+        "len": 3,
+        "ok": true,
+        "sources": ["API", "API", "API"]
+      }
+    },
+    {
+      "id": "glossary/load/extra-columns",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福,false,false,true,note,extra,more\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "note",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/header-case-insensitive",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "SOURCE,Target,Case_Sensitive,Notes\nFoo,福,TRUE,n\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "n",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/header-forbidden-five-columns",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,forbidden,notes\nAPI,接口,false,true,备注\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "true",
+            "source": "API",
+            "target": "接口"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["API"]
+      }
+    },
+    {
+      "id": "glossary/load/header-not-first",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\nsource,target\nBar,巴\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "source",
+            "target": "target"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "len": 3,
+        "ok": true,
+        "sources": ["source", "Foo", "Bar"]
+      }
+    },
+    {
+      "id": "glossary/load/header-only",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [],
+        "len": 0,
+        "ok": true,
+        "sources": []
+      }
+    },
+    {
+      "id": "glossary/load/header-six-without-forbidden",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,mandatory,notes,extra\nFoo,福,false,true,备注,x\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": true,
+            "mandatory": false,
+            "notes": "x",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/leading-space",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target\n  Foo , 福 \n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/legacy-roundtrip",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,notes\nLinguaFlow,灵枢,true,产品名\npipeline,流水线,false,\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "产品名",
+            "source": "LinguaFlow",
+            "target": "灵枢"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "pipeline",
+            "target": "流水线"
+          }
+        ],
+        "len": 2,
+        "ok": true,
+        "sources": ["LinguaFlow", "pipeline"]
+      }
+    },
+    {
+      "id": "glossary/load/lone-cr-inside-field",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\rBar,巴\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福\rBar"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/missing-file",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": ""
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [],
+        "len": 0,
+        "ok": true,
+        "sources": []
+      }
+    },
+    {
+      "id": "glossary/load/no-trailing-newline",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/notes-trimmed",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,notes\nFoo,福,false,  spaced note  \n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "spaced note",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/quoted-after-space",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target\nFoo, \"福\"\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/quoted-empty-target",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,\"\"\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [],
+        "len": 0,
+        "ok": true,
+        "sources": []
+      }
+    },
+    {
+      "id": "glossary/load/quoted-fields",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target,case_sensitive,notes\n\"Foo, Inc.\",\"福, 公司\",true,\"含逗号, 与引号 \"\"强调\"\" 的备注\"\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "含逗号, 与引号 \"强调\" 的备注",
+            "source": "Foo, Inc.",
+            "target": "福, 公司"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo, Inc."]
+      }
+    },
+    {
+      "id": "glossary/load/quoted-only",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "\"Foo\",\"福\"\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/short-row-skipped",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\nOnlyOneField\nBar,巴\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "len": 2,
+        "ok": true,
+        "sources": ["Foo", "Bar"]
+      }
+    },
+    {
+      "id": "glossary/load/six-columns-no-header",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福,false,true,false,备注\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": true,
+            "mandatory": false,
+            "notes": "备注",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/tab-leading-space",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "source,target\n\tFoo\t,福\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/trailing-blank-lines",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\n\n\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/trailing-cr-no-newline",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\r"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          }
+        ],
+        "len": 1,
+        "ok": true,
+        "sources": ["Foo"]
+      }
+    },
+    {
+      "id": "glossary/load/without-header",
+      "op": "glossary.load_csv",
+      "args": {
+        "content": "Foo,福\nBar,巴,true,note\n"
+      },
+      "expect": {
+        "dirty": false,
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Foo",
+            "target": "福"
+          },
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "note",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "len": 2,
+        "ok": true,
+        "sources": ["Foo", "Bar"]
+      }
+    },
+    {
+      "id": "glossary/lookup/case-insensitive-unicode",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "",
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Über",
+            "target": "关于"
+          }
+        ],
+        "text": "über alles"
+      },
+      "expect": {
+        "hits": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Über",
+            "target": "关于"
+          }
+        ]
+      }
+    },
+    {
+      "id": "glossary/lookup/case-sensitivity-hit",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "",
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "API",
+            "target": "接口"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "pipeline",
+            "target": "流水线"
+          }
+        ],
+        "text": "build an API for the Pipeline"
+      },
+      "expect": {
+        "hits": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "pipeline",
+            "target": "流水线"
+          },
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "API",
+            "target": "接口"
+          }
+        ]
+      }
+    },
+    {
+      "id": "glossary/lookup/case-sensitivity-miss",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "",
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "API",
+            "target": "接口"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "pipeline",
+            "target": "流水线"
+          }
+        ],
+        "text": "build an api for the Pipeline"
+      },
+      "expect": {
+        "hits": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "pipeline",
+            "target": "流水线"
+          }
+        ]
+      }
+    },
+    {
+      "id": "glossary/lookup/cjk-byte-length-order",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "",
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "AI",
+            "target": "人工智能"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "人工智能",
+            "target": "AI"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "AI技术",
+            "target": "AI技术"
+          }
+        ],
+        "text": "AI技术与人工智能"
+      },
+      "expect": {
+        "hits": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "人工智能",
+            "target": "AI"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "AI技术",
+            "target": "AI技术"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "AI",
+            "target": "人工智能"
+          }
+        ]
+      }
+    },
+    {
+      "id": "glossary/lookup/empty-text",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "",
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "AI",
+            "target": "人工智能"
+          }
+        ],
+        "text": ""
+      },
+      "expect": {
+        "hits": []
+      }
+    },
+    {
+      "id": "glossary/lookup/forbidden-multiplicity",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\nAPI,接口,false,false,true,recommended\nAPI,应用接口,false,true,true,banned one\nAPI,应用程序接口,false,true,false,banned two\n",
+        "entries": [],
+        "text": "API"
+      },
+      "expect": {
+        "hits": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "recommended",
+            "source": "API",
+            "target": "接口"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": true,
+            "mandatory": true,
+            "notes": "banned one",
+            "source": "API",
+            "target": "应用接口"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": true,
+            "mandatory": false,
+            "notes": "banned two",
+            "source": "API",
+            "target": "应用程序接口"
+          }
+        ]
+      }
+    },
+    {
+      "id": "glossary/lookup/legacy-roundtrip-reload",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "source,target,case_sensitive,notes\nLinguaFlow,灵枢,true,产品名\npipeline,流水线,false,\n",
+        "entries": [],
+        "text": "LinguaFlow pipeline"
+      },
+      "expect": {
+        "hits": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "产品名",
+            "source": "LinguaFlow",
+            "target": "灵枢"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "pipeline",
+            "target": "流水线"
+          }
+        ]
+      }
+    },
+    {
+      "id": "glossary/lookup/long-term-first",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "",
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Gemini",
+            "target": "哈基米"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Gemini API",
+            "target": "哈基米接口"
+          }
+        ],
+        "text": "we call the Gemini API today"
+      },
+      "expect": {
+        "hits": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Gemini API",
+            "target": "哈基米接口"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Gemini",
+            "target": "哈基米"
+          }
+        ]
+      }
+    },
+    {
+      "id": "glossary/lookup/no-hit",
+      "op": "glossary.lookup",
+      "args": {
+        "content": "",
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "AI",
+            "target": "人工智能"
+          }
+        ],
+        "text": "nothing relevant here"
+      },
+      "expect": {
+        "hits": []
+      }
+    },
+    {
+      "id": "glossary/nop/empty",
+      "op": "glossary.nop",
+      "args": {},
+      "expect": {
+        "added": [],
+        "hits": [],
+        "ok": true,
+        "skipped": []
+      }
+    },
+    {
+      "id": "glossary/replace-ci/basic",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "Hi",
+        "old": "hello",
+        "text": "Hello World"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "Hi World"
+      }
+    },
+    {
+      "id": "glossary/replace-ci/cjk-unaffected",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "AI",
+        "old": "人工智能",
+        "text": "人工智能正在改变世界"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "AI正在改变世界"
+      }
+    },
+    {
+      "id": "glossary/replace-ci/empty-old",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "Hi",
+        "old": "",
+        "text": "Hello World"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "Hello World"
+      }
+    },
+    {
+      "id": "glossary/replace-ci/exact-case",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "Hi",
+        "old": "Hello",
+        "text": "Hello World"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "Hi World"
+      }
+    },
+    {
+      "id": "glossary/replace-ci/mixed-case",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "example",
+        "old": "test",
+        "text": "This is a TeSt"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "This is a example"
+      }
+    },
+    {
+      "id": "glossary/replace-ci/multiple-matches",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "AI tech",
+        "old": "ai",
+        "text": "AI is AI good"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "AI tech is AI tech good"
+      }
+    },
+    {
+      "id": "glossary/replace-ci/no-match",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "Hi",
+        "old": "xyz",
+        "text": "Hello World"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "Hello World"
+      }
+    },
+    {
+      "id": "glossary/replace-ci/no-substring",
+      "op": "glossary.replace_ci",
+      "args": {
+        "new": "AI",
+        "old": "ai",
+        "text": "Hello for it"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "Hello for it"
+      }
+    },
+    {
+      "id": "glossary/replace/cjk-direct-replace-all",
+      "op": "glossary.replace",
+      "args": {
+        "from": "A2",
+        "lang": "zh",
+        "text": "使用 A2 时记得释放 A2 资源",
+        "to": "A1"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "使用 A1 时记得释放 A1 资源",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/cjk-no-match",
+      "op": "glossary.replace",
+      "args": {
+        "from": "A2",
+        "lang": "zh",
+        "text": "纯中文文本",
+        "to": "A1"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "纯中文文本",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/cjk-substring-inside-latin",
+      "op": "glossary.replace",
+      "args": {
+        "from": "b",
+        "lang": "zh",
+        "text": "abcabc",
+        "to": "X"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "aXcaXc",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/empty-from",
+      "op": "glossary.replace",
+      "args": {
+        "from": "",
+        "lang": "en",
+        "text": "anything",
+        "to": "X"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "anything",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/empty-text",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/from-longer-than-text",
+      "op": "glossary.replace",
+      "args": {
+        "from": "much longer needle",
+        "lang": "en",
+        "text": "short",
+        "to": "X"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "short",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/identical-from-to",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "anything AI here",
+        "to": "AI"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "anything AI here",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/latin-delete",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "use AI carefully",
+        "to": ""
+      },
+      "expect": {
+        "replaced": true,
+        "text": "use  carefully",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/latin-edge-punctuation",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "future is AI.",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "future is ML.",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/latin-emoji-neighbor",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "🎉AI🎉",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "🎉ML🎉",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/latin-independent",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "use AI carefully",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "use ML carefully",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/latin-mixed",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "AI and AIfoo",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "ML and AIfoo",
+        "warn": "kept 1 substring matches"
+      }
+    },
+    {
+      "id": "glossary/replace/latin-multiple-independent",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "say AI, AI!",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "say ML, ML!",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/latin-neighbor-digit",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "AI2 and 3AI",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "AI2 and 3AI",
+        "warn": "ambiguous-substring-only"
+      }
+    },
+    {
+      "id": "glossary/replace/latin-neighbor-underscore",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "_AI_ and AI_ok",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "_AI_ and AI_ok",
+        "warn": "ambiguous-substring-only"
+      }
+    },
+    {
+      "id": "glossary/replace/latin-substring-only",
+      "op": "glossary.replace",
+      "args": {
+        "from": "ai",
+        "lang": "en",
+        "text": "wait and rain",
+        "to": "oo"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "wait and rain",
+        "warn": "ambiguous-substring-only"
+      }
+    },
+    {
+      "id": "glossary/replace/latin-unicode-boundary",
+      "op": "glossary.replace",
+      "args": {
+        "from": "KI",
+        "lang": "de",
+        "text": "über die KI gestern",
+        "to": "AI"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "über die AI gestern",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/replace/latin-unicode-neighbor-letter",
+      "op": "glossary.replace",
+      "args": {
+        "from": "KI",
+        "lang": "de",
+        "text": "KIüber",
+        "to": "AI"
+      },
+      "expect": {
+        "replaced": false,
+        "text": "KIüber",
+        "warn": "ambiguous-substring-only"
+      }
+    },
+    {
+      "id": "glossary/replace/latin-whole-string",
+      "op": "glossary.replace",
+      "args": {
+        "from": "AI",
+        "lang": "en",
+        "text": "AI",
+        "to": "ML"
+      },
+      "expect": {
+        "replaced": true,
+        "text": "ML",
+        "warn": ""
+      }
+    },
+    {
+      "id": "glossary/save/byte-length-order",
+      "op": "glossary.save",
+      "args": {
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "AI",
+            "target": "人工智能"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "人工智能",
+            "target": "AI"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "Gemini API",
+            "target": "双子接口"
+          }
+        ],
+        "path": "ordered.csv"
+      },
+      "expect": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\n人工智能,AI,false,false,true,\nGemini API,双子接口,false,false,true,\nAI,人工智能,false,false,true,\n",
+        "dirty": false,
+        "ok": true,
+        "sources": ["人工智能", "Gemini API", "AI"]
+      }
+    },
+    {
+      "id": "glossary/save/creates-dir",
+      "op": "glossary.save",
+      "args": {
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "x",
+            "target": "ε"
+          }
+        ],
+        "path": "sub/deep/g.csv"
+      },
+      "expect": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\nx,ε,false,false,true,\n",
+        "dirty": false,
+        "ok": true,
+        "sources": ["x"]
+      }
+    },
+    {
+      "id": "glossary/save/empty-fields",
+      "op": "glossary.save",
+      "args": {
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Foo",
+            "target": ""
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "Bar",
+            "target": "巴"
+          }
+        ],
+        "path": "empty-fields.csv"
+      },
+      "expect": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\nFoo,,false,false,false,\nBar,巴,false,false,false,\n",
+        "dirty": false,
+        "ok": true,
+        "sources": ["Foo", "Bar"]
+      }
+    },
+    {
+      "id": "glossary/save/empty-path",
+      "op": "glossary.save",
+      "args": {
+        "entries": [],
+        "path": ""
+      },
+      "expect": {
+        "error": true,
+        "ok": false
+      }
+    },
+    {
+      "id": "glossary/save/empty-table",
+      "op": "glossary.save",
+      "args": {
+        "entries": [],
+        "path": "empty.csv"
+      },
+      "expect": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\n",
+        "dirty": false,
+        "ok": true,
+        "sources": []
+      }
+    },
+    {
+      "id": "glossary/save/legacy-roundtrip",
+      "op": "glossary.save",
+      "args": {
+        "entries": [
+          {
+            "caseSensitive": true,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "产品名",
+            "source": "LinguaFlow",
+            "target": "灵枢"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": true,
+            "notes": "",
+            "source": "pipeline",
+            "target": "流水线"
+          }
+        ],
+        "path": "out.csv"
+      },
+      "expect": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\nLinguaFlow,灵枢,true,false,true,产品名\npipeline,流水线,false,false,true,\n",
+        "dirty": false,
+        "ok": true,
+        "sources": ["LinguaFlow", "pipeline"]
+      }
+    },
+    {
+      "id": "glossary/save/quoting",
+      "op": "glossary.save",
+      "args": {
+        "entries": [
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "comma,source",
+            "target": "含,逗号"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "quote\"inside",
+            "target": "newline\ninside"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "cr\rinside",
+            "target": "tab\tinside"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "dot",
+            "target": "\\."
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": " leading-space",
+            "target": "前导空格"
+          },
+          {
+            "caseSensitive": false,
+            "forbidden": false,
+            "mandatory": false,
+            "notes": "",
+            "source": "",
+            "target": "空 source"
+          }
+        ],
+        "path": "quoted.csv"
+      },
+      "expect": {
+        "content": "source,target,case_sensitive,forbidden,mandatory,notes\n\" leading-space\",前导空格,false,false,false,\n\"comma,source\",\"含,逗号\",false,false,false,\n\"quote\"\"inside\",\"newline\ninside\",false,false,false,\n\"cr\rinside\",tab\tinside,false,false,false,\ndot,\"\\.\",false,false,false,\n,空 source,false,false,false,\n",
+        "dirty": false,
+        "ok": true,
+        "sources": [" leading-space", "comma,source", "quote\"inside", "cr\rinside", "dot", ""]
+      }
+    }
+  ]
+}

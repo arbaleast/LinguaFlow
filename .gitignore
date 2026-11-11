@@ -1,0 +1,9 @@
+# 本地开发工具链、运行时状态与日志（scripts/dev.sh 使用）
+.tooling/
+
+# 临时构建缓存与测试产物
+.tmp/
+.tmpvitest/
+
+# 进程崩溃转储（core.<pid>）
+core.*

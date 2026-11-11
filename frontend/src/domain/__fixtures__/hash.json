@@ -1,0 +1,194 @@
+{
+  "package": "hash",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "hash/%20%20leading%20and%20trailing%20%20",
+      "op": "hash.compute",
+      "args": {
+        "text": "  leading and trailing  "
+      },
+      "expect": {
+        "full": "2ef763ca2f4f2881ff1efa49428784736bd11b60901cc192c12eb9df1c5885a9",
+        "short": "2ef763ca2f4f"
+      }
+    },
+    {
+      "id": "hash/%21%40%23%24%25%5e%26%2a%28%29_%2b-%3d%5b%5d%7b%7d%7c%3b%27%3a%22%2c%2e%2f%3c%3e%3f",
+      "op": "hash.compute",
+      "args": {
+        "text": "!@#$%^\u0026*()_+-=[]{}|;':\",./\u003c\u003e?"
+      },
+      "expect": {
+        "full": "58b745a6c9c20be48b4ea3951b4d79bbc834d26d001554c137bc91ff5598fa76",
+        "short": "58b745a6c9c2"
+      }
+    },
+    {
+      "id": "hash/%d0%9f%d1%80%d0%b8%d0%b2%d0%b5%d1%82%20%d0%bc%d0%b8%d1%80",
+      "op": "hash.compute",
+      "args": {
+        "text": "Привет мир"
+      },
+      "expect": {
+        "full": "830d1964dc8673182a40f9adebf598960d37fbe200405b249774ecfa5b465748",
+        "short": "830d1964dc86"
+      }
+    },
+    {
+      "id": "hash/%d9%85%d8%b1%d8%ad%d8%a8%d8%a7%20%d8%a8%d8%a7%d9%84%d8%b9%d8%a7%d9%84%d9%85",
+      "op": "hash.compute",
+      "args": {
+        "text": "مرحبا بالعالم"
+      },
+      "expect": {
+        "full": "9262a0a791605071a500c1a15bef2d5efcc6c8f198567105e9ab364811377e9f",
+        "short": "9262a0a79160"
+      }
+    },
+    {
+      "id": "hash/%e4%b8%ad%e6%96%87%e6%ae%b5%e8%90%bd",
+      "op": "hash.compute",
+      "args": {
+        "text": "中文段落"
+      },
+      "expect": {
+        "full": "51e2034db6a67fbb5eed5cfde30a0489eddb7847b45be9a67de7c58b3edbd4dc",
+        "short": "51e2034db6a6"
+      }
+    },
+    {
+      "id": "hash/%e6%b7%b7%e5%90%88%20mixed%20%e6%96%87%e6%9c%ac%20123",
+      "op": "hash.compute",
+      "args": {
+        "text": "混合 mixed 文本 123"
+      },
+      "expect": {
+        "full": "4b10e7ede58bfdfd71892abb1dcb69d3c53ad78fd910beb0a5077e52985a8fc5",
+        "short": "4b10e7ede58b"
+      }
+    },
+    {
+      "id": "hash/%e9%87%8d%e5%a4%8d%e9%87%8d%e5%a4%8d%e9%87%8d%e5%a4%8d%e9%87%8d%e5%a4%8d%e9%87%8d%e5%a4%8d",
+      "op": "hash.compute",
+      "args": {
+        "text": "重复重复重复重复重复"
+      },
+      "expect": {
+        "full": "366a148fdf2ee5b96b9a2db7a75dec2efb2ba92958be47943ab21c63c9c0438e",
+        "short": "366a148fdf2e"
+      }
+    },
+    {
+      "id": "hash/%f0%9f%8e%89%20emoji%20%f0%9f%9a%80%20surrogate%20pair",
+      "op": "hash.compute",
+      "args": {
+        "text": "🎉 emoji 🚀 surrogate pair"
+      },
+      "expect": {
+        "full": "38149f8810516322b12682cfa8b180b6cb42a44584078c42b01baad4c7f4eaec",
+        "short": "38149f881051"
+      }
+    },
+    {
+      "id": "hash/%f0%a0%80%80%f0%a0%80%81%20CJK%20Ext%20B",
+      "op": "hash.compute",
+      "args": {
+        "text": "𠀀𠀁 CJK Ext B"
+      },
+      "expect": {
+        "full": "50ea950559d703ca56339d6e9084ba5b34d9abd16248b4905773c1f928689709",
+        "short": "50ea950559d7"
+      }
+    },
+    {
+      "id": "hash/__LF_000001__",
+      "op": "hash.compute",
+      "args": {
+        "text": "__LF_000001__"
+      },
+      "expect": {
+        "full": "3fd53b8c21bd13d5f23bb1c0e4b336ad8bd205828f3baf927d05239add3fc8ab",
+        "short": "3fd53b8c21bd"
+      }
+    },
+    {
+      "id": "hash/a",
+      "op": "hash.compute",
+      "args": {
+        "text": "a"
+      },
+      "expect": {
+        "full": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+        "short": "ca978112ca1b"
+      }
+    },
+    {
+      "id": "hash/abc",
+      "op": "hash.compute",
+      "args": {
+        "text": "abc"
+      },
+      "expect": {
+        "full": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+        "short": "ba7816bf8f01"
+      }
+    },
+    {
+      "id": "hash/empty",
+      "op": "hash.compute",
+      "args": {
+        "text": ""
+      },
+      "expect": {
+        "full": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "short": "e3b0c44298fc"
+      }
+    },
+    {
+      "id": "hash/h%c3%a9llo%20w%c3%b6rld",
+      "op": "hash.compute",
+      "args": {
+        "text": "héllo wörld"
+      },
+      "expect": {
+        "full": "a1003f7d04a4115711d0b48a2eaf1359ce565d2d2a6fd65098dfcffadeeef59f",
+        "short": "a1003f7d04a4"
+      }
+    },
+    {
+      "id": "hash/hello%20world",
+      "op": "hash.compute",
+      "args": {
+        "text": "hello world"
+      },
+      "expect": {
+        "full": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+        "short": "b94d27b9934d"
+      }
+    },
+    {
+      "id": "hash/line1%0aline2%0d%0aline3",
+      "op": "hash.compute",
+      "args": {
+        "text": "line1\nline2\r\nline3"
+      },
+      "expect": {
+        "full": "50ba38bb6d7f20c4ccbbfea952d4cad1ba80f4f65cc6dd9e2e30b0b533224c1c",
+        "short": "50ba38bb6d7f"
+      }
+    },
+    {
+      "id": "hash/tab%09here",
+      "op": "hash.compute",
+      "args": {
+        "text": "tab\there"
+      },
+      "expect": {
+        "full": "5b8765931ded06ac39c11c47f83f7457636af4780d72900c1a0131f4ccb96c85",
+        "short": "5b8765931ded"
+      }
+    }
+  ]
+}

@@ -1,0 +1,842 @@
+{
+  "package": "markup",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "formats/",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": ""
+      },
+      "expect": {
+        "required": false
+      }
+    },
+    {
+      "id": "formats/ epub ",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": " epub "
+      },
+      "expect": {
+        "required": true
+      }
+    },
+    {
+      "id": "formats/EPUB",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "EPUB"
+      },
+      "expect": {
+        "required": true
+      }
+    },
+    {
+      "id": "formats/docx",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "docx"
+      },
+      "expect": {
+        "required": false
+      }
+    },
+    {
+      "id": "formats/epub",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "epub"
+      },
+      "expect": {
+        "required": true
+      }
+    },
+    {
+      "id": "formats/html",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "html"
+      },
+      "expect": {
+        "required": false
+      }
+    },
+    {
+      "id": "formats/json",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "json"
+      },
+      "expect": {
+        "required": false
+      }
+    },
+    {
+      "id": "formats/markdown",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "markdown"
+      },
+      "expect": {
+        "required": false
+      }
+    },
+    {
+      "id": "formats/srt",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "srt"
+      },
+      "expect": {
+        "required": false
+      }
+    },
+    {
+      "id": "formats/txt",
+      "op": "markup.requires_well_formed_targets",
+      "args": {
+        "format": "txt"
+      },
+      "expect": {
+        "required": false
+      }
+    },
+    {
+      "id": "regression/empty-target",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "\u003cruby\u003e基\u003crt\u003e注\u003c/rt\u003e\u003c/ruby\u003e",
+        "target": ""
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "regression/invalid-source",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "A \u0026 B \u003cruby\u003e基\u003crt\u003e注\u003c/rt\u003e\u003c/ruby\u003e",
+        "target": "A \u0026 B 基"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "regression/ruby-dropped",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "\u003cruby\u003e劣化雷神皇\u003crt\u003eレツサーエフタル\u003c/rt\u003e\u003c/ruby\u003e",
+        "target": "劣化雷神皇"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "regression/source-with-comment",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "\u003c!-- c --\u003e\u003cb\u003ex\u003c/b\u003e",
+        "target": "\u003cb\u003ey\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "regression/tagless-both",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "普通台词",
+        "target": "普通台词"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "regression/tagless-source",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "普通台词",
+        "target": "\u003ccolor=red\u003e红色台词"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "regression/valid-source-bare-amp-target",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "\u003cb\u003ea\u003c/b\u003e",
+        "target": "A \u0026 B"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026 (no semicolon)",
+        "ok": false
+      }
+    },
+    {
+      "id": "regression/valid-source-broken-target",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "「レベル６：\u003cruby\u003e劣化雷神皇\u003crt\u003eレツサーエフタル\u003c/rt\u003e\u003c/ruby\u003eっ！」",
+        "target": "「等级６：\u003cruby\u003e劣化雷神皇\u003crt\u003e雷瑟\u003c/rt\u003e！」"
+      },
+      "expect": {
+        "err": "标签 \u003cruby\u003e 未闭合",
+        "ok": false
+      }
+    },
+    {
+      "id": "regression/valid-source-valid-target",
+      "op": "markup.target_regression",
+      "args": {
+        "source": "\u003cruby\u003e劣化雷神皇\u003crt\u003eレツサーエフタル\u003c/rt\u003e\u003c/ruby\u003e",
+        "target": "\u003cruby\u003e劣化雷神皇\u003crt\u003e雷瑟\u003c/rt\u003e\u003c/ruby\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/amp-in-attr",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003ca href=\"x?a=1\u0026amp;b=2\"\u003ey\u003c/a\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/attr-bad-name",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan =\"x\"\u003ey\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: expected attribute name in element",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/attr-newline",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan\n  class=\"a\"\u003ex\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/attr-no-space-between",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003ca href=\"x\"title=\"y\"\u003ez\u003c/a\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/attr-no-value",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan class\u003ex\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: attribute name without = in element",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/attr-unquoted",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan class=a\u003ex\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: unquoted or missing attribute value in element",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/balanced-ruby",
+      "op": "markup.validate",
+      "args": {
+        "s": "「等级６：\u003cruby\u003e劣化雷神皇\u003crt\u003e雷瑟·艾福达尔\u003c/rt\u003e\u003c/ruby\u003e！」"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/bare-amp",
+      "op": "markup.validate",
+      "args": {
+        "s": "A \u0026 B"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026 (no semicolon)",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/bare-less-than",
+      "op": "markup.validate",
+      "args": {
+        "s": "1 \u003c 2"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: expected element name after \u003c",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/cdata",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003c![CDATA[\u003craw\u003e \u0026 stuff]]\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/cdata-close-in-chardata",
+      "op": "markup.validate",
+      "args": {
+        "s": "a]]\u003eb"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: unescaped ]]\u003e not in CDATA section",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/cdata-unterminated",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003c![CDATA[x"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: unexpected EOF in CDATA section",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/close-tag-with-attrs",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003ca\u003ex\u003c/a b\u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid characters between \u003c/a and \u003e",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/comment",
+      "op": "markup.validate",
+      "args": {
+        "s": "a\u003c!-- 注释 --\u003eb"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/comment-triple-hyphen",
+      "op": "markup.validate",
+      "args": {
+        "s": "a\u003c!--x---\u003eb"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid sequence \"--\" not allowed in comments",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/comment-unterminated",
+      "op": "markup.validate",
+      "args": {
+        "s": "a\u003c!--x"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: unexpected EOF",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/crossed-nesting",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cruby\u003ea\u003crt\u003eb\u003c/ruby\u003e\u003c/rt\u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: element \u003crt\u003e closed by \u003c/ruby\u003e",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/directive-unterminated",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003c!DOCTYPE"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: unexpected EOF",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/doctype",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003c!DOCTYPE html\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/double-hyphen-comment",
+      "op": "markup.validate",
+      "args": {
+        "s": "a\u003c!-- -- --\u003eb"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid sequence \"--\" not allowed in comments",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/duplicate-attr",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan class=\"a\" class=\"b\"\u003ex\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/empty",
+      "op": "markup.validate",
+      "args": {
+        "s": ""
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/empty-element-space",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cbr/\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/end-tag-newline",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003ca\u003ex\u003c/a\n\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/entity-invalid-name",
+      "op": "markup.validate",
+      "args": {
+        "s": "A \u0026notanentity; B"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026notanentity;",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/entity-no-semicolon-eof",
+      "op": "markup.validate",
+      "args": {
+        "s": "A \u0026"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026 (no semicolon)",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/entity-without-semicolon",
+      "op": "markup.validate",
+      "args": {
+        "s": "A \u0026amp B"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026amp (no semicolon)",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/escaped-amp",
+      "op": "markup.validate",
+      "args": {
+        "s": "A \u0026amp; B"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/escaped-angle",
+      "op": "markup.validate",
+      "args": {
+        "s": "1 \u0026lt; 2 \u0026gt; 0"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/greater-than-chardata",
+      "op": "markup.validate",
+      "args": {
+        "s": "a \u003e b"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/hex-ref",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u0026#x4F60;\u0026#22909;"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/html-void-shorthand",
+      "op": "markup.validate",
+      "args": {
+        "s": "第一行\u003cbr\u003e第二行"
+      },
+      "expect": {
+        "err": "标签 \u003cbr\u003e 未闭合",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/illegal-control-char",
+      "op": "markup.validate",
+      "args": {
+        "s": "a\u0001b"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: illegal character code U+0001",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/lt-in-attr",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan title=\"a\u003cb\"\u003ex\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: unescaped \u003c inside quoted string",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/mismatched-close",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003ca\u003ex\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: element \u003ca\u003e closed by \u003c/b\u003e",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/namespaced",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cepub:span\u003etext\u003c/epub:span\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/nested-inline",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan class=\"a\"\u003e这是\u003cb\u003e粗体\u003c/b\u003e与\u003ci\u003e斜体\u003c/i\u003e\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/numeric-empty",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u0026#;"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026#;",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/numeric-ref",
+      "op": "markup.validate",
+      "args": {
+        "s": "省略\u0026#8230;"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/numeric-too-large",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u0026#x110000;"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026#x110000;",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/pi-unterminated",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003c?xml"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: unexpected EOF",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/plain-cjk",
+      "op": "markup.validate",
+      "args": {
+        "s": "「レベル６：劣化雷神皇っ！」"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/processing-instruction",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003c?xml-stylesheet href=\"a.xsl\"?\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/ruby-text-outside",
+      "op": "markup.validate",
+      "args": {
+        "s": "「等级６：\u003cruby\u003e劣化雷神皇\u003crt\u003e雷瑟\u003c/rt\u003e！」"
+      },
+      "expect": {
+        "err": "标签 \u003cruby\u003e 未闭合",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/self-closing-img",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cimg src=\"a.png\" alt=\"图\" /\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/self-closing-space-before-slash",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003ca / \u003e"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: expected /\u003e in element",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/single-quoted-attrs",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan title='a \u0026amp; b'\u003ex\u003c/span\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/stray-close",
+      "op": "markup.validate",
+      "args": {
+        "s": "文本\u003c/p\u003e"
+      },
+      "expect": {
+        "err": "多余的闭标签 \u003c/p\u003e",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/stray-close-after-root-content",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003ca\u003ex\u003c/a\u003e\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "多余的闭标签 \u003c/b\u003e",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/unclosed-ruby",
+      "op": "markup.validate",
+      "args": {
+        "s": "「等级６：\u003cruby\u003e劣化雷神皇\u003crt\u003e雷瑟·艾福达尔\u003c/rt\u003e！」"
+      },
+      "expect": {
+        "err": "标签 \u003cruby\u003e 未闭合",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/unclosed-span",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan\u003e文本"
+      },
+      "expect": {
+        "err": "标签 \u003cspan\u003e 未闭合",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/unclosed-with-eof-in-tag",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003cspan"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: expected attribute name in element",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/undefined-entity",
+      "op": "markup.validate",
+      "args": {
+        "s": "A\u0026nbsp;B"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: invalid character entity \u0026nbsp;",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/unicode-name",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u003c日本語\u003ex\u003c/日本語\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/unknown-numeric-char",
+      "op": "markup.validate",
+      "args": {
+        "s": "\u0026#x0;"
+      },
+      "expect": {
+        "err": "XML syntax error on line 1: illegal character code U+0000",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/whitespace-only",
+      "op": "markup.validate",
+      "args": {
+        "s": "   \n\t  "
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/xhtml-void",
+      "op": "markup.validate",
+      "args": {
+        "s": "第一行\u003cbr /\u003e第二行"
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    }
+  ]
+}

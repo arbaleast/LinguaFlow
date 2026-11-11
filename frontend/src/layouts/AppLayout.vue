@@ -5,9 +5,9 @@ import IconCarbonMoon from '~icons/carbon/moon'
 import IconCarbonScreen from '~icons/carbon/screen'
 import IconCarbonSun from '~icons/carbon/sun'
 
-import AppLogo from '@/components/AppLogo.vue'
 import TaskHistoryDeleteDialog from '@/components/operations/TaskHistoryDeleteDialog.vue'
-import { APP_NAV_SECTIONS, type AppNavItem } from '@/layouts/navigation'
+import AppNavList from '@/components/layout/AppNavList.vue'
+import AppSidebar from '@/components/layout/AppSidebar.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLocaleStore } from '@/stores/locale'
 import { useServiceStore } from '@/stores/service'
@@ -60,19 +60,6 @@ const serviceSummary = computed(() => {
   }
   return service.displayName.trim() || service.baseUrl
 })
-
-const isAdmin = computed(() => auth.user?.role === 'admin')
-
-const navSections = computed(() =>
-  APP_NAV_SECTIONS.filter((section) => !section.adminOnly || isAdmin.value),
-)
-
-const isActive = (item: AppNavItem): boolean => {
-  if (item.path === '/') {
-    return route.path === '/'
-  }
-  return route.path === item.path || route.path.startsWith(`${item.path}/`)
-}
 
 const userOptions = computed<DropdownOption[]>(() => {
   const items: DropdownOption[] = [
@@ -191,85 +178,12 @@ const onDesktopNavChange = (event: MediaQueryListEvent): void => {
 }
 onMounted(() => desktopNavQuery.addEventListener('change', onDesktopNavChange))
 onUnmounted(() => desktopNavQuery.removeEventListener('change', onDesktopNavChange))
-
-const navigateTo = (path: string): void => {
-  mobileNavOpen.value = false
-  void router.push(path)
-}
 </script>
 
 <template>
   <div class="flex min-h-screen bg-lf-bg text-lf-text">
     <!-- 桌面侧边栏（可折叠为图标窄栏） -->
-    <aside
-      class="sticky top-0 hidden h-screen shrink-0 flex-col border-r border-lf-border-soft bg-lf-surface py-3.5 transition-[width] duration-200 lg:flex"
-      :class="sidebarCollapsed ? 'w-[60px] px-2' : 'w-[232px] px-3'"
-    >
-      <RouterLink
-        to="/"
-        class="mb-4 flex items-center rounded-lf-ctl no-underline"
-        :class="sidebarCollapsed ? 'justify-center' : 'px-2'"
-        :aria-label="t('common.appName')"
-      >
-        <AppLogo size="md" :wordmark="!sidebarCollapsed" />
-      </RouterLink>
-
-      <nav class="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto" :aria-label="t('nav.main')">
-        <template v-for="(section, si) in navSections" :key="`section-${si}`">
-          <div
-            v-if="si > 0 && section.labelKey === null"
-            class="my-3 border-t border-lf-border-soft"
-          />
-          <div
-            v-else-if="section.labelKey !== null && !sidebarCollapsed"
-            class="mt-5 mb-1 px-2.5 text-[11px] font-semibold tracking-wide text-lf-text-subtle"
-          >
-            {{ t(section.labelKey) }}
-          </div>
-
-          <RouterLink
-            v-for="item in section.items"
-            :key="item.path"
-            :to="item.path"
-            class="flex h-[34px] items-center gap-2.5 rounded-lf-ctl text-[13.5px] font-medium no-underline transition-colors"
-            :class="[
-              sidebarCollapsed ? 'justify-center px-0' : 'px-2.5',
-              isActive(item)
-                ? 'bg-lf-brand-soft text-brand-600'
-                : 'text-lf-text-muted hover:bg-lf-surface-muted hover:text-lf-text',
-            ]"
-            :title="sidebarCollapsed ? t(item.labelKey) : undefined"
-          >
-            <component
-              :is="item.icon"
-              class="h-[18px] w-[18px] shrink-0"
-              :class="isActive(item) ? 'text-brand-500' : 'text-lf-text-subtle'"
-            />
-            <span v-if="!sidebarCollapsed" class="whitespace-nowrap">
-              {{ t(item.labelKey) }}
-            </span>
-          </RouterLink>
-        </template>
-      </nav>
-
-      <div class="mt-2 border-t border-lf-border-soft pt-2">
-        <button
-          type="button"
-          class="flex h-[34px] w-full items-center gap-2.5 rounded-lf-ctl text-[13px] font-medium text-lf-text-subtle transition-colors hover:bg-lf-surface-muted hover:text-lf-text"
-          :class="sidebarCollapsed ? 'justify-center px-0' : 'px-2.5'"
-          :title="sidebarCollapsed ? t('layout.sidebar.expand') : t('layout.sidebar.collapse')"
-          @click="sidebarCollapsed = !sidebarCollapsed"
-        >
-          <IconCarbonChevronLeft
-            class="h-[18px] w-[18px] shrink-0 transition-transform duration-200"
-            :class="sidebarCollapsed ? 'rotate-180' : ''"
-          />
-          <span v-if="!sidebarCollapsed" class="whitespace-nowrap">
-            {{ t('layout.sidebar.collapse') }}
-          </span>
-        </button>
-      </div>
-    </aside>
+    <AppSidebar :collapsed="sidebarCollapsed" @update:collapsed="sidebarCollapsed = $event" />
 
     <!-- 主区 -->
     <div class="flex min-w-0 flex-1 flex-col">
@@ -370,43 +284,10 @@ const navigateTo = (path: string): void => {
       </main>
     </div>
 
-    <!-- 移动端导航抽屉（与桌面侧边栏共用导航数据） -->
+    <!-- 移动端导航抽屉（与桌面侧边栏共用同一套导航渲染） -->
     <NDrawer v-model:show="mobileNavOpen" placement="left" :width="280">
       <NDrawerContent :title="t('common.appName')" closable>
-        <nav class="flex flex-col gap-0.5 py-2" :aria-label="t('nav.main')">
-          <template v-for="(section, si) in navSections" :key="`drawer-section-${si}`">
-            <div
-              v-if="si > 0 && section.labelKey === null"
-              class="my-2 border-t border-lf-border-soft"
-            />
-            <div
-              v-else-if="section.labelKey !== null"
-              class="mt-4 mb-1 px-2.5 text-[11px] font-semibold tracking-wide text-lf-text-subtle"
-            >
-              {{ t(section.labelKey) }}
-            </div>
-
-            <button
-              v-for="item in section.items"
-              :key="item.path"
-              type="button"
-              class="flex items-center gap-2.5 rounded-lf-ctl px-2.5 py-2 text-left text-sm transition-colors"
-              :class="
-                isActive(item)
-                  ? 'bg-lf-brand-soft font-semibold text-brand-600'
-                  : 'text-lf-text-muted hover:bg-lf-surface-muted'
-              "
-              @click="navigateTo(item.path)"
-            >
-              <component
-                :is="item.icon"
-                class="h-[18px] w-[18px] shrink-0"
-                :class="isActive(item) ? 'text-brand-500' : 'text-lf-text-subtle'"
-              />
-              <span class="whitespace-nowrap">{{ t(item.labelKey) }}</span>
-            </button>
-          </template>
-        </nav>
+        <AppNavList variant="drawer" @navigate="mobileNavOpen = false" />
       </NDrawerContent>
     </NDrawer>
 

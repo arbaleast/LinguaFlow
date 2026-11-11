@@ -1,0 +1,5003 @@
+{
+  "package": "ruby",
+  "generator": "backend/internal/\u003cpkg\u003e/golden_vectors_test.go",
+  "schema": 1,
+  "cases": [
+    {
+      "id": "apply/ambiguous-fallback",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "absent",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "read"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "source",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "source source"
+      },
+      "expect": {
+        "added": 0,
+        "missing_ids": ["1"],
+        "rejected": {
+          "1": "source_fallback_ambiguous"
+        },
+        "verified": []
+      }
+    },
+    {
+      "id": "apply/ambiguous-main-no-occurrence",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "one",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "read"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": false,
+        "translation": "one one"
+      },
+      "expect": {
+        "added": 0,
+        "missing_ids": ["1"],
+        "rejected": {
+          "1": "invalid_occurrence"
+        },
+        "verified": []
+      }
+    },
+    {
+      "id": "apply/conflict",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "abc",
+            "id": "a",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "x"
+          },
+          {
+            "base": "bc",
+            "id": "b",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "y"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "a",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "b",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "c",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["a", "b"],
+        "require_occurrence": true,
+        "translation": "abc next"
+      },
+      "expect": {
+        "added": 0,
+        "missing_ids": ["a", "b", "c"],
+        "rejected": {
+          "a": "interval_conflict",
+          "b": "interval_conflict"
+        },
+        "verified": []
+      }
+    },
+    {
+      "id": "apply/entities-ruby-occurrence",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "行",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 3,
+            "text": "xíng\u003c\u0026"
+          },
+          {
+            "base": "\u0026",
+            "id": "2",
+            "invalid": false,
+            "kind": "semantic",
+            "occurrence": 1,
+            "text": "amp"
+          }
+        ],
+        "format": "epub",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "行",
+            "source_text": "xíng",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "\u0026",
+            "source_text": "amp",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1", "2"],
+        "require_occurrence": true,
+        "translation": "\u003cspan title=\"行\"\u003e行\u0026amp;行\u003c/span\u003e\u003cruby class=\"old\"\u003e行\u003crt\u003eold\u003c/rt\u003e\u003c/ruby\u003e\u003cb\u003e行\u003c/b\u003e"
+      },
+      "expect": {
+        "added": 2,
+        "missing_ids": [],
+        "rejected": {},
+        "verified": [
+          {
+            "base": "行",
+            "end": 82,
+            "id": "1",
+            "kind": "phonetic",
+            "occurrence": 3,
+            "source_fallback": false,
+            "start": 79,
+            "text": "xíng\u003c\u0026"
+          },
+          {
+            "base": "\u0026",
+            "end": 26,
+            "id": "2",
+            "kind": "semantic",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 21,
+            "text": "amp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/html-entity-occurrences",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "copy",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "unsafe"
+          },
+          {
+            "base": "cat",
+            "id": "2",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "suffix"
+          },
+          {
+            "base": "A",
+            "id": "3",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "letter"
+          }
+        ],
+        "format": "html",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1", "2", "3"],
+        "require_occurrence": true,
+        "translation": "\u003cp\u003e\u0026copycat \u0026amp \u0026#65 \u0026notit;\u003c/p\u003e"
+      },
+      "expect": {
+        "added": 2,
+        "missing_ids": ["1"],
+        "rejected": {
+          "1": "invalid_occurrence"
+        },
+        "verified": [
+          {
+            "base": "cat",
+            "end": 11,
+            "id": "2",
+            "kind": "creative",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 8,
+            "text": "suffix"
+          },
+          {
+            "base": "A",
+            "end": 21,
+            "id": "3",
+            "kind": "creative",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 17,
+            "text": "letter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/invalid-occurrence-no-fallback",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "one",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 2,
+            "text": "read"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "source",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "one source"
+      },
+      "expect": {
+        "added": 0,
+        "missing_ids": ["1"],
+        "rejected": {
+          "1": "invalid_occurrence"
+        },
+        "verified": []
+      }
+    },
+    {
+      "id": "apply/legacy-malformed-duplicate-id",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "b"
+          },
+          {
+            "base": "alpha",
+            "id": "",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "6",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "9",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 1,
+        "requested": ["6", "9"],
+        "require_occurrence": false,
+        "translation": "alpha beta"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": ["6"],
+        "rejected": {
+          "": "unrequested_id",
+          "6": "duplicate_id"
+        },
+        "verified": [
+          {
+            "base": "beta",
+            "end": 10,
+            "id": "9",
+            "kind": "creative",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 6,
+            "text": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/nonexistent-base",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "absent",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "read"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "one"
+      },
+      "expect": {
+        "added": 0,
+        "missing_ids": ["1"],
+        "rejected": {
+          "1": "invalid_occurrence"
+        },
+        "verified": []
+      }
+    },
+    {
+      "id": "apply/preserve-cannot-change",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "one",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "x"
+          },
+          {
+            "base": "two",
+            "id": "2",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "y"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "creative",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": {
+          "creative": true
+        },
+        "protocol_version": 2,
+        "requested": ["1", "2"],
+        "require_occurrence": true,
+        "translation": "one two"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": [],
+        "rejected": {
+          "2": "unrequested_id"
+        },
+        "verified": [
+          {
+            "base": "one",
+            "end": 3,
+            "id": "1",
+            "kind": "phonetic",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 0,
+            "text": "x"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/region-whitespace-no-cross-node",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "A\nB",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": " x "
+          },
+          {
+            "base": "BC",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "x"
+          }
+        ],
+        "format": "epub",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1", "2"],
+        "require_occurrence": true,
+        "translation": "\u003ci\u003eA\r\nB\u003c/i\u003e\u003cb\u003eC\u003c/b\u003e"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": ["2"],
+        "rejected": {
+          "2": "invalid_occurrence"
+        },
+        "verified": [
+          {
+            "base": "A\nB",
+            "end": 7,
+            "id": "1",
+            "kind": "creative",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 3,
+            "text": " x "
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/section-quoted-duplicate-id",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "alpha\\q",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "6",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "9",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["6", "9"],
+        "require_occurrence": false,
+        "translation": "alpha beta"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": ["6"],
+        "rejected": {
+          "6": "duplicate_id"
+        },
+        "verified": [
+          {
+            "base": "beta",
+            "end": 10,
+            "id": "9",
+            "kind": "creative",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 6,
+            "text": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/source-fallback-legal-count",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "missing",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 8,
+            "text": "read"
+          }
+        ],
+        "format": "html",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "≂",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "\u003cp\u003e\u0026NotEqualTilde; ≂\u003c/p\u003e"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": [],
+        "rejected": {},
+        "verified": [
+          {
+            "base": "≂",
+            "end": 22,
+            "id": "1",
+            "kind": "creative",
+            "occurrence": 2,
+            "source_fallback": true,
+            "start": 19,
+            "text": "read"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/strict-missing-occurrence",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "one",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "read"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "one"
+      },
+      "expect": {
+        "added": 0,
+        "missing_ids": ["1"],
+        "rejected": {
+          "1": "invalid_entry"
+        },
+        "verified": []
+      }
+    },
+    {
+      "id": "apply/subset-and-duplicate",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "b"
+          },
+          {
+            "base": "beta",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "b"
+          },
+          {
+            "base": "",
+            "id": "2",
+            "invalid": true,
+            "kind": "",
+            "occurrence": 0,
+            "text": ""
+          },
+          {
+            "base": "gamma",
+            "id": "3",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "g"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["2", "3"],
+        "require_occurrence": true,
+        "translation": "alpha beta gamma"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": ["1", "2"],
+        "rejected": {
+          "": "unrequested_id",
+          "1": "unrequested_id",
+          "2": "duplicate_id"
+        },
+        "verified": [
+          {
+            "base": "gamma",
+            "end": 16,
+            "id": "3",
+            "kind": "phonetic",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 11,
+            "text": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/unique-fallback",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "absent",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 7,
+            "text": "read"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "source",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "source"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": [],
+        "rejected": {},
+        "verified": [
+          {
+            "base": "source",
+            "end": 6,
+            "id": "1",
+            "kind": "phonetic",
+            "occurrence": 1,
+            "source_fallback": true,
+            "start": 0,
+            "text": "read"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/unique-main-no-occurrence",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "one",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "read"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": false,
+        "translation": "one"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": [],
+        "rejected": {},
+        "verified": [
+          {
+            "base": "one",
+            "end": 3,
+            "id": "1",
+            "kind": "phonetic",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 0,
+            "text": "read"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/unsafe-entity-boundary",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "≂",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "read"
+          }
+        ],
+        "format": "html",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "\u003cp\u003e\u0026NotEqualTilde; ≂\u003c/p\u003e"
+      },
+      "expect": {
+        "added": 0,
+        "missing_ids": ["1"],
+        "rejected": {
+          "1": "unsafe_text_boundary"
+        },
+        "verified": []
+      }
+    },
+    {
+      "id": "apply/unsafe-entity-later-occurrence",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "≂",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 2,
+            "text": "read"
+          }
+        ],
+        "format": "html",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "\u003cp\u003e\u0026NotEqualTilde; ≂\u003c/p\u003e"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": [],
+        "rejected": {},
+        "verified": [
+          {
+            "base": "≂",
+            "end": 22,
+            "id": "1",
+            "kind": "phonetic",
+            "occurrence": 2,
+            "source_fallback": false,
+            "start": 19,
+            "text": "read"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply/v2-malformed-duplicate-id",
+      "op": "ruby.apply_output",
+      "args": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "a"
+          },
+          {
+            "base": "alpha\\q",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "b"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "6",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "9",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["6", "9"],
+        "require_occurrence": true,
+        "translation": "alpha beta"
+      },
+      "expect": {
+        "added": 1,
+        "missing_ids": ["6"],
+        "rejected": {
+          "6": "duplicate_id"
+        },
+        "verified": [
+          {
+            "base": "beta",
+            "end": 10,
+            "id": "9",
+            "kind": "creative",
+            "occurrence": 1,
+            "source_fallback": false,
+            "start": 6,
+            "text": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bare/decoy",
+      "op": "ruby.valid_bare_output_entries",
+      "args": {
+        "entries": [
+          {
+            "id": "1",
+            "source_base": "a",
+            "source_text": "b"
+          }
+        ]
+      },
+      "expect": {
+        "valid": false
+      }
+    },
+    {
+      "id": "bare/empty",
+      "op": "ruby.valid_bare_output_entries",
+      "args": {
+        "entries": []
+      },
+      "expect": {
+        "valid": false
+      }
+    },
+    {
+      "id": "bare/mixed",
+      "op": "ruby.valid_bare_output_entries",
+      "args": {
+        "entries": [
+          {
+            "base": "a"
+          },
+          {
+            "base": "b",
+            "text": " y "
+          }
+        ]
+      },
+      "expect": {
+        "valid": true
+      }
+    },
+    {
+      "id": "bare/not-object",
+      "op": "ruby.valid_bare_output_entries",
+      "args": {
+        "entries": [
+          "x",
+          {
+            "base": "a",
+            "text": "x"
+          }
+        ]
+      },
+      "expect": {
+        "valid": false
+      }
+    },
+    {
+      "id": "bare/valid-kind",
+      "op": "ruby.valid_bare_output_entries",
+      "args": {
+        "entries": [
+          {
+            "base": "a",
+            "kind": "creative"
+          }
+        ]
+      },
+      "expect": {
+        "valid": true
+      }
+    },
+    {
+      "id": "bare/valid-text",
+      "op": "ruby.valid_bare_output_entries",
+      "args": {
+        "entries": [
+          {
+            "base": "a",
+            "text": "x"
+          }
+        ]
+      },
+      "expect": {
+        "valid": true
+      }
+    },
+    {
+      "id": "inline/malformed",
+      "op": "ruby.parse_inline_markers",
+      "args": {
+        "text": "⟦ruby:abc⟧ ⟦ruby:/x⟧"
+      },
+      "expect": {
+        "entries": []
+      }
+    },
+    {
+      "id": "inline/no-kind",
+      "op": "ruby.parse_inline_markers",
+      "args": {
+        "text": "a⟦ruby:我/wǒ⟧b⟦ruby:你/nǐ⟧"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "我",
+            "id": "",
+            "invalid": false,
+            "kind": "",
+            "occurrence": 0,
+            "text": "wǒ"
+          },
+          {
+            "base": "你",
+            "id": "",
+            "invalid": false,
+            "kind": "",
+            "occurrence": 0,
+            "text": "nǐ"
+          }
+        ]
+      }
+    },
+    {
+      "id": "inline/no-markers",
+      "op": "ruby.parse_inline_markers",
+      "args": {
+        "text": "普通文本"
+      },
+      "expect": {
+        "entries": []
+      }
+    },
+    {
+      "id": "inline/restore-empty-output",
+      "op": "ruby.restore_inline_markers",
+      "args": {
+        "entries": [],
+        "target": "a⟦ruby:行/xíng⟧b"
+      },
+      "expect": {
+        "matched": 0,
+        "target": "a行b",
+        "total": 1
+      }
+    },
+    {
+      "id": "inline/restore-filter",
+      "op": "ruby.restore_inline_markers",
+      "args": {
+        "entries": [
+          {
+            "base": "行",
+            "id": "",
+            "invalid": false,
+            "kind": "",
+            "occurrence": 0,
+            "text": "xíng"
+          }
+        ],
+        "target": "⟦ruby:行/xíng⟧⟦ruby:你/nǐ⟧"
+      },
+      "expect": {
+        "matched": 1,
+        "target": "\u003cruby\u003e行\u003crt\u003exíng\u003c/rt\u003e\u003c/ruby\u003e你",
+        "total": 2
+      }
+    },
+    {
+      "id": "inline/restore-match",
+      "op": "ruby.restore_inline_markers",
+      "args": {
+        "entries": [
+          {
+            "base": "行",
+            "id": "",
+            "invalid": false,
+            "kind": "",
+            "occurrence": 0,
+            "text": "xíng"
+          }
+        ],
+        "target": "⟦ruby:行/xíng⟧"
+      },
+      "expect": {
+        "matched": 1,
+        "target": "\u003cruby\u003e行\u003crt\u003exíng\u003c/rt\u003e\u003c/ruby\u003e",
+        "total": 1
+      }
+    },
+    {
+      "id": "inline/restore-no-markers",
+      "op": "ruby.restore_inline_markers",
+      "args": {
+        "entries": [
+          {
+            "base": "行",
+            "id": "",
+            "invalid": false,
+            "kind": "",
+            "occurrence": 0,
+            "text": "xíng"
+          }
+        ],
+        "target": "plain"
+      },
+      "expect": {
+        "matched": 0,
+        "target": "plain",
+        "total": 0
+      }
+    },
+    {
+      "id": "inline/with-kind",
+      "op": "ruby.parse_inline_markers",
+      "args": {
+        "text": "他⟦ruby:行/xíng/creative⟧了"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "行",
+            "id": "",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "xíng"
+          }
+        ]
+      }
+    },
+    {
+      "id": "item/assign-ids",
+      "op": "ruby.assign_ids",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "9",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      },
+      "expect": {
+        "ids": ["1", "9", "2"]
+      }
+    },
+    {
+      "id": "item/items-by-id",
+      "op": "ruby.items_by_id",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "我",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "想",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "",
+            "kind": "",
+            "source_base": "要",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      },
+      "expect": {
+        "map": {
+          "": "要",
+          "1": "我",
+          "2": "想"
+        }
+      }
+    },
+    {
+      "id": "item/merge-empty-base",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "x"
+          },
+          {
+            "base": "I",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "I",
+            "target_text": "aɪ"
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "unaligned": [
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "item/merge-hash-prefix",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "雷神皇",
+            "source_text": "カミナリサマ",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "戳",
+            "source_text": "たた",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "雷神皇",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "雷神大人"
+          },
+          {
+            "base": "戳",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "たた"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "creative",
+            "source_base": "雷神皇",
+            "source_text": "カミナリサマ",
+            "target_base": "雷神皇",
+            "target_text": "雷神大人"
+          },
+          {
+            "aligned": true,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "戳",
+            "source_text": "たた",
+            "target_base": "戳",
+            "target_text": "たた"
+          }
+        ],
+        "unaligned": []
+      }
+    },
+    {
+      "id": "item/merge-id-match",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "I",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          },
+          {
+            "base": "want",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "wɒnt"
+          },
+          {
+            "base": "water",
+            "id": "3",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "wɔːtər"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "I",
+            "target_text": "aɪ"
+          },
+          {
+            "aligned": true,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "want",
+            "target_text": "wɒnt"
+          },
+          {
+            "aligned": true,
+            "id": "3",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "water",
+            "target_text": "wɔːtər"
+          }
+        ],
+        "unaligned": []
+      }
+    },
+    {
+      "id": "item/merge-id-whitespace",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "I",
+            "id": " 1 ",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          },
+          {
+            "base": "w",
+            "id": "   ",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "w"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "I",
+            "target_text": "aɪ"
+          },
+          {
+            "aligned": true,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "w",
+            "target_text": "w"
+          }
+        ],
+        "unaligned": []
+      }
+    },
+    {
+      "id": "item/merge-no-free-item",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": false,
+            "kind": "",
+            "occurrence": 0,
+            "text": "a"
+          },
+          {
+            "base": "b",
+            "id": "1",
+            "invalid": false,
+            "kind": "",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "a",
+            "target_text": "a"
+          }
+        ],
+        "unaligned": []
+      }
+    },
+    {
+      "id": "item/merge-positional",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "I",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          },
+          {
+            "base": "want",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "wɒnt"
+          },
+          {
+            "base": "water",
+            "id": "",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "wɔːtər"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "I",
+            "target_text": "aɪ"
+          },
+          {
+            "aligned": true,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "want",
+            "target_text": "wɒnt"
+          },
+          {
+            "aligned": true,
+            "id": "3",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "water",
+            "target_text": "wɔːtər"
+          }
+        ],
+        "unaligned": []
+      }
+    },
+    {
+      "id": "item/merge-restructure",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "我",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "想",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "要",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "4",
+            "kind": "",
+            "source_base": "一",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "5",
+            "kind": "",
+            "source_base": "杯",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "6",
+            "kind": "",
+            "source_base": "水",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "I",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          },
+          {
+            "base": "want",
+            "id": "3",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "wɒnt"
+          },
+          {
+            "base": "water",
+            "id": "5",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "wɔːtər"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "我",
+            "source_text": "",
+            "target_base": "I",
+            "target_text": "aɪ"
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "想",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": true,
+            "id": "3",
+            "kind": "phonetic",
+            "source_base": "要",
+            "source_text": "",
+            "target_base": "want",
+            "target_text": "wɒnt"
+          },
+          {
+            "aligned": false,
+            "id": "4",
+            "kind": "",
+            "source_base": "一",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": true,
+            "id": "5",
+            "kind": "phonetic",
+            "source_base": "杯",
+            "source_text": "",
+            "target_base": "water",
+            "target_text": "wɔːtər"
+          },
+          {
+            "aligned": false,
+            "id": "6",
+            "kind": "",
+            "source_base": "水",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "unaligned": [
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "想",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "4",
+            "kind": "",
+            "source_base": "一",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "6",
+            "kind": "",
+            "source_base": "水",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "item/merge-unknown-dup",
+      "op": "ruby.merge_by_output",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "first",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "f"
+          },
+          {
+            "base": "dup",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "d"
+          },
+          {
+            "base": "x",
+            "id": "99",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "x"
+          },
+          {
+            "base": "w",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "w"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "first",
+            "target_text": "f"
+          },
+          {
+            "aligned": true,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "w",
+            "target_text": "w"
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "unaligned": [
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "item/unaligned",
+      "op": "ruby.unaligned",
+      "args": {
+        "items": [
+          {
+            "aligned": true,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": true,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "4",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "4",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "jsonv2/duplicate-envelope",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"ruby_output\":[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\",\"occurrence\":1}],\"ruby_output\":[]}"
+      },
+      "expect": {
+        "entries": [],
+        "ok": false
+      }
+    },
+    {
+      "id": "jsonv2/missing-field",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"other\":[]}"
+      },
+      "expect": {
+        "entries": [],
+        "ok": false
+      }
+    },
+    {
+      "id": "jsonv2/missing-occurrence",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"ruby_output\":[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\"}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "x"
+          }
+        ],
+        "ok": true
+      }
+    },
+    {
+      "id": "jsonv2/not-array",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"ruby_output\":null}"
+      },
+      "expect": {
+        "entries": [],
+        "ok": false
+      }
+    },
+    {
+      "id": "jsonv2/partial-rows",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"ruby_output\":[{\"id\":\"1\",\"base\":\" a \",\"text\":\" x \",\"kind\":\"creative\",\"occurrence\":1},{\"id\":\"2\",\"base\":\"b\",\"text\":\"x\",\"kind\":\"phonetic\",\"occurrence\":\"wrong\"},{\"id\":\"2\",\"base\":\"b\",\"text\":\"x\",\"kind\":\"phonetic\",\"occurrence\":1}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": " a ",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": " x "
+          },
+          {
+            "base": "b",
+            "id": "2",
+            "invalid": true,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "x"
+          },
+          {
+            "base": "b",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "x"
+          }
+        ],
+        "ok": true
+      }
+    },
+    {
+      "id": "jsonv2/trailing",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"ruby_output\":[]} extra"
+      },
+      "expect": {
+        "entries": [],
+        "ok": false
+      }
+    },
+    {
+      "id": "jsonv2/unknown-row-field",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"ruby_output\":[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\",\"occurrence\":1,\"extra\":true}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "x"
+          }
+        ],
+        "ok": true
+      }
+    },
+    {
+      "id": "jsonv2/valid",
+      "op": "ruby.parse_alignment_json_v2",
+      "args": {
+        "text": "{\"ruby_output\":[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\",\"occurrence\":1}]}"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "x"
+          }
+        ],
+        "ok": true
+      }
+    },
+    {
+      "id": "legacy/strip-markers",
+      "op": "ruby.strip_legacy_markers",
+      "args": {
+        "text": "他⟦ruby:行/xíng⟧了，⟦ruby:你/nǐ⟧好"
+      },
+      "expect": {
+        "text": "他行了，你好"
+      }
+    },
+    {
+      "id": "normalize/output-entries",
+      "op": "ruby.normalize_output_entries",
+      "args": {
+        "entries": [
+          {
+            "base": "  I  ",
+            "id": " 1 ",
+            "invalid": false,
+            "kind": " phonetic ",
+            "occurrence": 0,
+            "text": " aɪ "
+          },
+          {
+            "base": "   ",
+            "id": "",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "x"
+          },
+          {
+            "base": "w",
+            "id": "",
+            "invalid": false,
+            "kind": "bogus",
+            "occurrence": 0,
+            "text": " w "
+          }
+        ]
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "I",
+            "id": " 1 ",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          },
+          {
+            "base": "w",
+            "id": "",
+            "invalid": false,
+            "kind": "bogus",
+            "occurrence": 0,
+            "text": "w"
+          }
+        ]
+      }
+    },
+    {
+      "id": "outputentries/not-array",
+      "op": "ruby.parse_output_entries",
+      "args": {
+        "raw": "null"
+      },
+      "expect": {
+        "entries": [],
+        "ok": false
+      }
+    },
+    {
+      "id": "outputentries/null-occurrence",
+      "op": "ruby.parse_output_entries",
+      "args": {
+        "raw": "[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\",\"occurrence\":null}]"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "x"
+          }
+        ],
+        "ok": true
+      }
+    },
+    {
+      "id": "outputentries/unknown-field",
+      "op": "ruby.parse_output_entries",
+      "args": {
+        "raw": "[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\",\"extra\":1}]"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "x"
+          }
+        ],
+        "ok": true
+      }
+    },
+    {
+      "id": "outputentries/valid",
+      "op": "ruby.parse_output_entries",
+      "args": {
+        "raw": "[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\"}]"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "x"
+          }
+        ],
+        "ok": true
+      }
+    },
+    {
+      "id": "outputmap/bad-segment",
+      "op": "ruby.parse_output_map",
+      "args": {
+        "raw": "{\"1\":[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\"}],\"2\":42}"
+      },
+      "expect": {
+        "map": {
+          "1": [
+            {
+              "base": "a",
+              "id": "1",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "x"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "outputmap/not-object",
+      "op": "ruby.parse_output_map",
+      "args": {
+        "raw": "[]"
+      },
+      "expect": {
+        "map": {}
+      }
+    },
+    {
+      "id": "outputmap/valid",
+      "op": "ruby.parse_output_map",
+      "args": {
+        "raw": "{\"1\":[{\"id\":\"1\",\"base\":\"a\",\"text\":\"x\",\"kind\":\"creative\"}],\"2\":[]}"
+      },
+      "expect": {
+        "map": {
+          "1": [
+            {
+              "base": "a",
+              "id": "1",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "x"
+            }
+          ],
+          "2": []
+        }
+      }
+    },
+    {
+      "id": "regions/comment-and-script",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "html",
+        "translation": "\u003cp\u003ea\u003c!--c--\u003eb\u003c/p\u003e\u003cscript\u003evar x = \"\u003cp\u003e\";\u003c/script\u003e\u003cp\u003ec\u003c/p\u003e"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 3,
+                "raw_end": 4,
+                "linear": true
+              }
+            ],
+            "text": "a"
+          },
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 12,
+                "raw_end": 13,
+                "linear": true
+              }
+            ],
+            "text": "b"
+          },
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 51,
+                "raw_end": 52,
+                "linear": true
+              }
+            ],
+            "text": "c"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/docx-tags",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "docx",
+        "translation": "\u003cw:p\u003etext\u003c/w:p\u003e"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 4,
+                "raw_start": 5,
+                "raw_end": 9,
+                "linear": true
+              }
+            ],
+            "text": "text"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/epub-entities",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "epub",
+        "translation": "\u003cspan title=\"行\"\u003e行\u0026amp;行\u003c/span\u003e\u003cruby class=\"old\"\u003e行\u003crt\u003eold\u003c/rt\u003e\u003c/ruby\u003e\u003cb\u003e行\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 3,
+                "raw_start": 18,
+                "raw_end": 21,
+                "linear": true
+              },
+              {
+                "view_start": 3,
+                "view_end": 4,
+                "raw_start": 21,
+                "raw_end": 26,
+                "linear": false
+              },
+              {
+                "view_start": 4,
+                "view_end": 7,
+                "raw_start": 26,
+                "raw_end": 29,
+                "linear": true
+              }
+            ],
+            "text": "行\u0026行"
+          },
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 3,
+                "raw_start": 79,
+                "raw_end": 82,
+                "linear": true
+              }
+            ],
+            "text": "行"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/epub-invalid-xml",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "epub",
+        "translation": "\u003cp\u003eunclosed"
+      },
+      "expect": {
+        "err": "ruby candidate XML: XML syntax error on line 1: element \u003cp\u003e closed by \u003c/lf-ruby-view\u003e",
+        "regions": []
+      }
+    },
+    {
+      "id": "regions/epub-newline",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "epub",
+        "translation": "\u003ci\u003eA\r\nB\u003c/i\u003e\u003cb\u003eC\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 3,
+                "raw_end": 4,
+                "linear": true
+              },
+              {
+                "view_start": 1,
+                "view_end": 2,
+                "raw_start": 4,
+                "raw_end": 6,
+                "linear": false
+              },
+              {
+                "view_start": 2,
+                "view_end": 3,
+                "raw_start": 6,
+                "raw_end": 7,
+                "linear": true
+              }
+            ],
+            "text": "A\nB"
+          },
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 14,
+                "raw_end": 15,
+                "linear": true
+              }
+            ],
+            "text": "C"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/html-references",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "html",
+        "translation": "\u003cp\u003e\u0026copycat \u0026amp \u0026#65 \u0026notit;\u003c/p\u003e"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 2,
+                "raw_start": 3,
+                "raw_end": 8,
+                "linear": false
+              },
+              {
+                "view_start": 2,
+                "view_end": 6,
+                "raw_start": 8,
+                "raw_end": 12,
+                "linear": true
+              },
+              {
+                "view_start": 6,
+                "view_end": 7,
+                "raw_start": 12,
+                "raw_end": 16,
+                "linear": false
+              },
+              {
+                "view_start": 7,
+                "view_end": 8,
+                "raw_start": 16,
+                "raw_end": 17,
+                "linear": true
+              },
+              {
+                "view_start": 8,
+                "view_end": 9,
+                "raw_start": 17,
+                "raw_end": 21,
+                "linear": false
+              },
+              {
+                "view_start": 9,
+                "view_end": 10,
+                "raw_start": 21,
+                "raw_end": 22,
+                "linear": true
+              },
+              {
+                "view_start": 10,
+                "view_end": 12,
+                "raw_start": 22,
+                "raw_end": 26,
+                "linear": false
+              },
+              {
+                "view_start": 12,
+                "view_end": 15,
+                "raw_start": 26,
+                "raw_end": 29,
+                "linear": true
+              }
+            ],
+            "text": "©cat \u0026 A ¬it;"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/html-ruby-excluded",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "html",
+        "translation": "\u003cp\u003e行\u0026amp;行\u003c/p\u003e\u003cruby\u003e旧\u003crt\u003eold\u003c/rt\u003e\u003c/ruby\u003e\u003cb\u003e尾\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 3,
+                "raw_start": 3,
+                "raw_end": 6,
+                "linear": true
+              },
+              {
+                "view_start": 3,
+                "view_end": 4,
+                "raw_start": 6,
+                "raw_end": 11,
+                "linear": false
+              },
+              {
+                "view_start": 4,
+                "view_end": 7,
+                "raw_start": 11,
+                "raw_end": 14,
+                "linear": true
+              }
+            ],
+            "text": "行\u0026行"
+          },
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 3,
+                "raw_start": 49,
+                "raw_end": 52,
+                "linear": true
+              }
+            ],
+            "text": "尾"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/html-tags",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "html",
+        "translation": "A\u003cb\u003eB\u003c/b\u003eC"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 0,
+                "raw_end": 1,
+                "linear": true
+              }
+            ],
+            "text": "A"
+          },
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 4,
+                "raw_end": 5,
+                "linear": true
+              }
+            ],
+            "text": "B"
+          },
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 1,
+                "raw_start": 9,
+                "raw_end": 10,
+                "linear": true
+              }
+            ],
+            "text": "C"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/html-unsafe-entity",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "html",
+        "translation": "\u003cp\u003e\u0026NotEqualTilde; ≂\u003c/p\u003e"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 5,
+                "raw_start": 3,
+                "raw_end": 18,
+                "linear": false
+              },
+              {
+                "view_start": 5,
+                "view_end": 9,
+                "raw_start": 18,
+                "raw_end": 22,
+                "linear": true
+              }
+            ],
+            "text": "≂̸ ≂"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/plain",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "text",
+        "translation": "alpha beta gamma"
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 16,
+                "raw_start": 0,
+                "raw_end": 16,
+                "linear": true
+              }
+            ],
+            "text": "alpha beta gamma"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regions/plain-empty",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "text",
+        "translation": ""
+      },
+      "expect": {
+        "err": "",
+        "regions": []
+      }
+    },
+    {
+      "id": "regions/plain-newlines",
+      "op": "ruby.build_regions",
+      "args": {
+        "format": "text",
+        "translation": " A\r\nB \u0026amp; "
+      },
+      "expect": {
+        "err": "",
+        "regions": [
+          {
+            "mappings": [
+              {
+                "view_start": 0,
+                "view_end": 12,
+                "raw_start": 0,
+                "raw_end": 12,
+                "linear": true
+              }
+            ],
+            "text": " A\r\nB \u0026amp; "
+          }
+        ]
+      }
+    },
+    {
+      "id": "render/entities-ruby",
+      "op": "ruby.render",
+      "args": {
+        "entries": [
+          {
+            "base": "行",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 3,
+            "text": "xíng\u003c\u0026"
+          },
+          {
+            "base": "\u0026",
+            "id": "2",
+            "invalid": false,
+            "kind": "semantic",
+            "occurrence": 1,
+            "text": "amp"
+          }
+        ],
+        "format": "epub",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "行",
+            "source_text": "xíng",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "\u0026",
+            "source_text": "amp",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1", "2"],
+        "require_occurrence": true,
+        "translation": "\u003cspan title=\"行\"\u003e行\u0026amp;行\u003c/span\u003e\u003cruby class=\"old\"\u003e行\u003crt\u003eold\u003c/rt\u003e\u003c/ruby\u003e\u003cb\u003e行\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "",
+        "matched": 2,
+        "text": "\u003cspan title=\"行\"\u003e行\u003cruby\u003e\u0026amp;\u003crt\u003eamp\u003c/rt\u003e\u003c/ruby\u003e行\u003c/span\u003e\u003cruby class=\"old\"\u003e行\u003crt\u003eold\u003c/rt\u003e\u003c/ruby\u003e\u003cb\u003e\u003cruby\u003e行\u003crt\u003exíng\u0026lt;\u0026amp;\u003c/rt\u003e\u003c/ruby\u003e\u003c/b\u003e",
+        "total": 2
+      }
+    },
+    {
+      "id": "render/newline-preserved",
+      "op": "ruby.render",
+      "args": {
+        "entries": [
+          {
+            "base": "A\nB",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": " x "
+          },
+          {
+            "base": "BC",
+            "id": "2",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "x"
+          }
+        ],
+        "format": "epub",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1", "2"],
+        "require_occurrence": true,
+        "translation": "\u003ci\u003eA\r\nB\u003c/i\u003e\u003cb\u003eC\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "",
+        "matched": 1,
+        "text": "\u003ci\u003e\u003cruby\u003eA\r\nB\u003crt\u003e x \u003c/rt\u003e\u003c/ruby\u003e\u003c/i\u003e\u003cb\u003eC\u003c/b\u003e",
+        "total": 2
+      }
+    },
+    {
+      "id": "render/preserve-total",
+      "op": "ruby.render",
+      "args": {
+        "entries": [
+          {
+            "base": "one",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "x"
+          },
+          {
+            "base": "two",
+            "id": "2",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "y"
+          }
+        ],
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "creative",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": {
+          "creative": true
+        },
+        "protocol_version": 2,
+        "requested": ["1", "2"],
+        "require_occurrence": true,
+        "translation": "one two"
+      },
+      "expect": {
+        "err": "",
+        "matched": 1,
+        "text": "\u003cruby\u003eone\u003crt\u003ex\u003c/rt\u003e\u003c/ruby\u003e two",
+        "total": 1
+      }
+    },
+    {
+      "id": "render/unsafe-entity",
+      "op": "ruby.render",
+      "args": {
+        "entries": [
+          {
+            "base": "≂",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 2,
+            "text": "read"
+          }
+        ],
+        "format": "html",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "requested": ["1"],
+        "require_occurrence": true,
+        "translation": "\u003cp\u003e\u0026NotEqualTilde; ≂\u003c/p\u003e"
+      },
+      "expect": {
+        "err": "",
+        "matched": 1,
+        "text": "\u003cp\u003e\u0026NotEqualTilde; \u003cruby\u003e≂\u003crt\u003eread\u003c/rt\u003e\u003c/ruby\u003e\u003c/p\u003e",
+        "total": 1
+      }
+    },
+    {
+      "id": "restore/astral-offsets",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "I",
+            "target_text": "aɪ"
+          }
+        ],
+        "target": "😀I😀"
+      },
+      "expect": {
+        "is_full": true,
+        "matched": 1,
+        "target": "😀\u003cruby\u003eI\u003crt\u003eaɪ\u003c/rt\u003e\u003c/ruby\u003e😀",
+        "total": 1
+      }
+    },
+    {
+      "id": "restore/emoji-in-base",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "😀",
+            "target_text": "emoji"
+          }
+        ],
+        "target": "😀x😀"
+      },
+      "expect": {
+        "is_full": true,
+        "matched": 1,
+        "target": "\u003cruby\u003e😀\u003crt\u003eemoji\u003c/rt\u003e\u003c/ruby\u003ex😀",
+        "total": 1
+      }
+    },
+    {
+      "id": "restore/empty-target",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [],
+        "target": ""
+      },
+      "expect": {
+        "is_full": false,
+        "matched": 0,
+        "target": "",
+        "total": 0
+      }
+    },
+    {
+      "id": "restore/empty-target-with-items",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "I",
+            "target_text": ""
+          }
+        ],
+        "target": ""
+      },
+      "expect": {
+        "is_full": false,
+        "matched": 0,
+        "target": "",
+        "total": 0
+      }
+    },
+    {
+      "id": "restore/no-restorable",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "target": "abc"
+      },
+      "expect": {
+        "is_full": false,
+        "matched": 0,
+        "target": "abc",
+        "total": 0
+      }
+    },
+    {
+      "id": "restore/repeated-base",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "A",
+            "target_text": "one"
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "A",
+            "target_text": "two"
+          }
+        ],
+        "target": "xAyAz"
+      },
+      "expect": {
+        "is_full": true,
+        "matched": 2,
+        "target": "x\u003cruby\u003eA\u003crt\u003eone\u003c/rt\u003e\u003c/ruby\u003ey\u003cruby\u003eA\u003crt\u003etwo\u003c/rt\u003e\u003c/ruby\u003ez",
+        "total": 2
+      }
+    },
+    {
+      "id": "restore/source-equals-target",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "b",
+            "source_text": "",
+            "target_base": "b",
+            "target_text": "bee"
+          }
+        ],
+        "target": "abc"
+      },
+      "expect": {
+        "is_full": true,
+        "matched": 1,
+        "target": "a\u003cruby\u003eb\u003crt\u003ebee\u003c/rt\u003e\u003c/ruby\u003ec",
+        "total": 1
+      }
+    },
+    {
+      "id": "restore/source-fallback",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "我",
+            "source_text": "wǒ",
+            "target_base": "I",
+            "target_text": "aɪ"
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "杯",
+            "source_text": "bēi",
+            "target_base": "cup",
+            "target_text": "kʌp"
+          }
+        ],
+        "target": "我喝水。"
+      },
+      "expect": {
+        "is_full": false,
+        "matched": 1,
+        "target": "\u003cruby\u003e我\u003crt\u003eaɪ\u003c/rt\u003e\u003c/ruby\u003e喝水。",
+        "total": 2
+      }
+    },
+    {
+      "id": "restore/target-priority",
+      "op": "ruby.restore_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "我",
+            "source_text": "wǒ",
+            "target_base": "I",
+            "target_text": "aɪ"
+          }
+        ],
+        "target": "I want water"
+      },
+      "expect": {
+        "is_full": true,
+        "matched": 1,
+        "target": "\u003cruby\u003eI\u003crt\u003eaɪ\u003c/rt\u003e\u003c/ruby\u003e want water",
+        "total": 1
+      }
+    },
+    {
+      "id": "section/line-0",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "I | aɪ | phonetic | 1"
+      },
+      "expect": {
+        "base": "I",
+        "id": "1",
+        "kind": "phonetic",
+        "ok": true,
+        "text": "aɪ"
+      }
+    },
+    {
+      "id": "section/line-1",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "a|b | c | phonetic | 2"
+      },
+      "expect": {
+        "base": "a|b",
+        "id": "2",
+        "kind": "phonetic",
+        "ok": true,
+        "text": "c"
+      }
+    },
+    {
+      "id": "section/line-2",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "I | aɪ | phonetic"
+      },
+      "expect": {
+        "base": "I",
+        "id": "",
+        "kind": "phonetic",
+        "ok": true,
+        "text": "aɪ"
+      }
+    },
+    {
+      "id": "section/line-3",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "a|b | c | phonetic"
+      },
+      "expect": {
+        "base": "a|b",
+        "id": "",
+        "kind": "phonetic",
+        "ok": true,
+        "text": "c"
+      }
+    },
+    {
+      "id": "section/line-4",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "雷神皇 | 雷神大人 | creative | #1"
+      },
+      "expect": {
+        "base": "雷神皇",
+        "id": "1",
+        "kind": "creative",
+        "ok": true,
+        "text": "雷神大人"
+      }
+    },
+    {
+      "id": "section/line-5",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "no pipes"
+      },
+      "expect": {
+        "base": "",
+        "id": "",
+        "kind": "",
+        "ok": false,
+        "text": ""
+      }
+    },
+    {
+      "id": "section/line-6",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "only | two"
+      },
+      "expect": {
+        "base": "",
+        "id": "",
+        "kind": "",
+        "ok": false,
+        "text": ""
+      }
+    },
+    {
+      "id": "section/line-7",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": "x | y | custom | 7"
+      },
+      "expect": {
+        "base": "x",
+        "id": "7",
+        "kind": "custom",
+        "ok": true,
+        "text": "y"
+      }
+    },
+    {
+      "id": "section/line-8",
+      "op": "ruby.parse_section_line",
+      "args": {
+        "content": " | y | phonetic"
+      },
+      "expect": {
+        "base": "",
+        "id": "",
+        "kind": "",
+        "ok": false,
+        "text": ""
+      }
+    },
+    {
+      "id": "section/output-four-field",
+      "op": "ruby.parse_section_ruby_output",
+      "args": {
+        "lines": ["1: I | aɪ | phonetic | 1", "2: a|b | c | phonetic | 2"]
+      },
+      "expect": {
+        "map": {
+          "1": [
+            {
+              "base": "I",
+              "id": "1",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "aɪ"
+            }
+          ],
+          "2": [
+            {
+              "base": "a|b",
+              "id": "2",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "c"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "section/output-hash-prefix",
+      "op": "ruby.parse_section_ruby_output",
+      "args": {
+        "lines": ["1: 雷神皇 | 雷神大人 | creative | #1", "2: 戳 | たた | phonetic | #2"]
+      },
+      "expect": {
+        "map": {
+          "1": [
+            {
+              "base": "雷神皇",
+              "id": "1",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "雷神大人"
+            }
+          ],
+          "2": [
+            {
+              "base": "戳",
+              "id": "2",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "たた"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "section/output-mixed-invalid",
+      "op": "ruby.parse_section_ruby_output",
+      "args": {
+        "lines": ["", "   ", "no colon", "3: ", "4: only | two", "5: I | aɪ | phonetic | #5"]
+      },
+      "expect": {
+        "map": {
+          "5": [
+            {
+              "base": "I",
+              "id": "5",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "aɪ"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "section/output-quoted-primary",
+      "op": "ruby.parse_section_ruby_output",
+      "args": {
+        "lines": [
+          "1: \"alpha\" | \"a\" | \"creative\" | \"6\"",
+          "1: \"alpha\\q\" | \"a\" | \"creative\" | \"6\"",
+          "1: \"beta\" | \"b\" | \"creative\" | \"9\""
+        ]
+      },
+      "expect": {
+        "map": {
+          "1": [
+            {
+              "base": "alpha",
+              "id": "6",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "",
+              "id": "6",
+              "invalid": true,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "a"
+            },
+            {
+              "base": "beta",
+              "id": "9",
+              "invalid": false,
+              "kind": "creative",
+              "occurrence": 0,
+              "text": "b"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "section/output-three-field",
+      "op": "ruby.parse_section_ruby_output",
+      "args": {
+        "lines": ["1: I | aɪ | phonetic", "2: a|b | c | phonetic"]
+      },
+      "expect": {
+        "map": {
+          "1": [
+            {
+              "base": "I",
+              "id": "",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "aɪ"
+            }
+          ],
+          "2": [
+            {
+              "base": "a|b",
+              "id": "",
+              "invalid": false,
+              "kind": "phonetic",
+              "occurrence": 0,
+              "text": "c"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "state/classify-initial-items",
+      "op": "ruby.classify_initial_items",
+      "args": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "creative",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "4",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "output": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "x"
+          },
+          {
+            "base": "b",
+            "id": "2",
+            "invalid": false,
+            "kind": "semantic",
+            "occurrence": 0,
+            "text": "y"
+          },
+          {
+            "base": "c",
+            "id": "3",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "z"
+          },
+          {
+            "base": "c",
+            "id": "3",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "z"
+          },
+          {
+            "base": "d",
+            "id": "4",
+            "invalid": false,
+            "kind": "bogus",
+            "occurrence": 0,
+            "text": "w"
+          }
+        ]
+      },
+      "expect": {
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "creative",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "4",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "state/new-bad-protocol",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "text",
+        "items": [],
+        "keep": null,
+        "protocol_version": 9,
+        "translation": "one"
+      },
+      "expect": {
+        "err": "unsupported ruby protocol version",
+        "ok": false,
+        "state": null
+      }
+    },
+    {
+      "id": "state/new-duplicate-id",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "translation": "one"
+      },
+      "expect": {
+        "err": "ruby source item IDs must be nonempty and unique",
+        "ok": false,
+        "state": null
+      }
+    },
+    {
+      "id": "state/new-empty",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "text",
+        "items": [],
+        "keep": null,
+        "protocol_version": 2,
+        "translation": ""
+      },
+      "expect": {
+        "err": "",
+        "ok": true,
+        "state": {
+          "digest": "0d51433c2bedaf6ed2c2e02e63ff119da391a82c5cf5c15d5d7a100c316fccff",
+          "format": "text",
+          "items": null,
+          "protocol_version": 2,
+          "regions": null,
+          "translation": "",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      }
+    },
+    {
+      "id": "state/new-empty-id",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "",
+            "kind": "",
+            "source_base": "x",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "translation": "one"
+      },
+      "expect": {
+        "err": "ruby source item IDs must be nonempty and unique",
+        "ok": false,
+        "state": null
+      }
+    },
+    {
+      "id": "state/new-epub",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "epub",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "行",
+            "source_text": "xíng",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "\u0026",
+            "source_text": "amp",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "translation": "\u003cspan title=\"行\"\u003e行\u0026amp;行\u003c/span\u003e\u003cruby class=\"old\"\u003e行\u003crt\u003eold\u003c/rt\u003e\u003c/ruby\u003e\u003cb\u003e行\u003c/b\u003e"
+      },
+      "expect": {
+        "err": "",
+        "ok": true,
+        "state": {
+          "digest": "f6d0deb9e00f681b7c782183398f596fbec7b57a6a6629dfec6d3b803d5f9818",
+          "format": "epub",
+          "items": [
+            {
+              "item": {
+                "id": "1",
+                "source_base": "行",
+                "source_text": "xíng"
+              },
+              "preserve": true
+            },
+            {
+              "item": {
+                "id": "2",
+                "source_base": "\u0026",
+                "source_text": "amp"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 21,
+                  "raw_start": 18,
+                  "view_end": 3,
+                  "view_start": 0
+                },
+                {
+                  "linear": false,
+                  "raw_end": 26,
+                  "raw_start": 21,
+                  "view_end": 4,
+                  "view_start": 3
+                },
+                {
+                  "linear": true,
+                  "raw_end": 29,
+                  "raw_start": 26,
+                  "view_end": 7,
+                  "view_start": 4
+                }
+              ],
+              "text": "行\u0026行"
+            },
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 82,
+                  "raw_start": 79,
+                  "view_end": 3,
+                  "view_start": 0
+                }
+              ],
+              "text": "行"
+            }
+          ],
+          "translation": "\u003cspan title=\"行\"\u003e行\u0026amp;行\u003c/span\u003e\u003cruby class=\"old\"\u003e行\u003crt\u003eold\u003c/rt\u003e\u003c/ruby\u003e\u003cb\u003e行\u003c/b\u003e",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      }
+    },
+    {
+      "id": "state/new-keep",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "creative",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "phonetic",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": {
+          "creative": true
+        },
+        "protocol_version": 2,
+        "translation": "one two"
+      },
+      "expect": {
+        "err": "",
+        "ok": true,
+        "state": {
+          "digest": "c7040fe51e1010b17a50a0a9516f23d0c283978e21e4f5229d099d959b18f083",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1",
+                "kind": "creative"
+              },
+              "preserve": true
+            },
+            {
+              "item": {
+                "id": "2",
+                "kind": "phonetic"
+              },
+              "preserve": false
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 7,
+                  "raw_start": 0,
+                  "view_end": 7,
+                  "view_start": 0
+                }
+              ],
+              "text": "one two"
+            }
+          ],
+          "translation": "one two",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      }
+    },
+    {
+      "id": "state/new-legacy-protocol",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 1,
+        "translation": "one"
+      },
+      "expect": {
+        "err": "",
+        "ok": true,
+        "state": {
+          "digest": "709d30d4417056d3bdbdc3861f09f76a47c4e5359fdd69012577fb6194362646",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 1,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 3,
+                  "raw_start": 0,
+                  "view_end": 3,
+                  "view_start": 0
+                }
+              ],
+              "text": "one"
+            }
+          ],
+          "translation": "one",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      }
+    },
+    {
+      "id": "state/new-plain",
+      "op": "ruby.new_alignment_state",
+      "args": {
+        "format": "text",
+        "items": [
+          {
+            "aligned": false,
+            "id": "1",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "2",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          },
+          {
+            "aligned": false,
+            "id": "3",
+            "kind": "",
+            "source_base": "",
+            "source_text": "",
+            "target_base": "",
+            "target_text": ""
+          }
+        ],
+        "keep": null,
+        "protocol_version": 2,
+        "translation": "alpha beta gamma"
+      },
+      "expect": {
+        "err": "",
+        "ok": true,
+        "state": {
+          "digest": "4b681c1c3094a07b1b8139813d4c13abb6da3782f31de13ae9ec8926448e1ede",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            },
+            {
+              "item": {
+                "id": "2"
+              },
+              "preserve": true
+            },
+            {
+              "item": {
+                "id": "3"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 16,
+                  "raw_start": 0,
+                  "view_end": 16,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta gamma"
+            }
+          ],
+          "translation": "alpha beta gamma",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      }
+    },
+    {
+      "id": "textlegacy/custom-kind",
+      "op": "ruby.parse_alignment_text_legacy",
+      "args": {
+        "text": "x | y | custom | 7"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "x",
+            "id": "7",
+            "invalid": true,
+            "kind": "custom",
+            "occurrence": 0,
+            "text": "y"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textlegacy/four-field",
+      "op": "ruby.parse_alignment_text_legacy",
+      "args": {
+        "text": "I | aɪ | phonetic | 1"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "I",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textlegacy/hash-id",
+      "op": "ruby.parse_alignment_text_legacy",
+      "args": {
+        "text": "雷神皇 | 雷神大人 | creative | #1"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "雷神皇",
+            "id": "1",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "雷神大人"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textlegacy/multiline",
+      "op": "ruby.parse_alignment_text_legacy",
+      "args": {
+        "text": "a | b | phonetic | 1\n\nc | d | creative | #2"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "1",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "b"
+          },
+          {
+            "base": "c",
+            "id": "2",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "d"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textlegacy/no-pipes",
+      "op": "ruby.parse_alignment_text_legacy",
+      "args": {
+        "text": "garbage"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "",
+            "id": "",
+            "invalid": true,
+            "kind": "",
+            "occurrence": 0,
+            "text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "textlegacy/three-field",
+      "op": "ruby.parse_alignment_text_legacy",
+      "args": {
+        "text": "I | aɪ | phonetic"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "I",
+            "id": "",
+            "invalid": true,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "aɪ"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textlegacy/two-fields",
+      "op": "ruby.parse_alignment_text_legacy",
+      "args": {
+        "text": "only | two"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "",
+            "id": "two",
+            "invalid": true,
+            "kind": "",
+            "occurrence": 0,
+            "text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/bad-escape",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\"alpha\\q\" | \"a\" | \"creative\" | \"6\" | 1"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "a"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/bad-text-escape",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\"alpha\" | \"a\\u000Z\" | \"creative\" | \"6\" | 1"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/blank-lines",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\n  \n\"a\" | \"b\" | \"phonetic\" | \"6\" | 1\n\n"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "6",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/float-occurrence",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\"a\" | \"b\" | \"phonetic\" | \"6\" | 1.5"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "6",
+            "invalid": true,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/missing-occurrence",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\"alpha\" | \"a\" | \"creative\" | \"6\""
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 0,
+            "text": "a"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/roundtrip",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\" A|B \\\"quoted\\\"\\\\\\n\" | \" read | \\\\ \\n \" | \"creative\" | \"6\" | 2"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": " A|B \"quoted\"\\\n",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 2,
+            "text": " read | \\ \n "
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/roundtrip-exact",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\" A|B \\\"quoted\\\"\\\\\\n\" | \" read | \\\\ \\n \" | \"creative\" | \"6\" | 2"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": " A|B \"quoted\"\\\n",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 2,
+            "text": " read | \\ \n "
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/unquoted",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "alpha | \"a\" | \"creative\" | \"6\" | 1"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "",
+            "id": "6",
+            "invalid": true,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "a"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/valid",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\"alpha\" | \"a\" | \"creative\" | \"6\" | 1\n\"beta\" | \"b\" | \"phonetic\" | \"9\" | 1"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "alpha",
+            "id": "6",
+            "invalid": false,
+            "kind": "creative",
+            "occurrence": 1,
+            "text": "a"
+          },
+          {
+            "base": "beta",
+            "id": "9",
+            "invalid": false,
+            "kind": "phonetic",
+            "occurrence": 1,
+            "text": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "textv2/zero-occurrence",
+      "op": "ruby.parse_alignment_text_v2",
+      "args": {
+        "text": "\"a\" | \"b\" | \"phonetic\" | \"6\" | 0"
+      },
+      "expect": {
+        "entries": [
+          {
+            "base": "a",
+            "id": "6",
+            "invalid": true,
+            "kind": "phonetic",
+            "occurrence": 0,
+            "text": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "validate/digest-changed",
+      "op": "ruby.validate_state",
+      "args": {
+        "state": {
+          "digest": "deadbeef",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 10,
+                  "raw_start": 0,
+                  "view_end": 10,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta"
+            }
+          ],
+          "translation": "alpha beta",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      },
+      "expect": {
+        "err": "ruby alignment state digest mismatch",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/ok",
+      "op": "ruby.validate_state",
+      "args": {
+        "state": {
+          "digest": "5ea5150c02568e7cc6a091d58384b82c0ef83d4fa628c59580bb60f7f238c8b8",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 10,
+                  "raw_start": 0,
+                  "view_end": 10,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta"
+            }
+          ],
+          "translation": "alpha beta",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/translation-changed",
+      "op": "ruby.validate_state",
+      "args": {
+        "state": {
+          "digest": "5ea5150c02568e7cc6a091d58384b82c0ef83d4fa628c59580bb60f7f238c8b8",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 10,
+                  "raw_start": 0,
+                  "view_end": 10,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta"
+            }
+          ],
+          "translation": "alpha betachanged",
+          "validator_version": 1,
+          "verified": null,
+          "version": 1
+        }
+      },
+      "expect": {
+        "err": "ruby alignment state digest mismatch",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/verified-bad-text",
+      "op": "ruby.validate_state",
+      "args": {
+        "state": {
+          "digest": "5ea5150c02568e7cc6a091d58384b82c0ef83d4fa628c59580bb60f7f238c8b8",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 10,
+                  "raw_start": 0,
+                  "view_end": 10,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta"
+            }
+          ],
+          "translation": "alpha beta",
+          "validator_version": 1,
+          "verified": [
+            {
+              "base": "alpha",
+              "end": 5,
+              "id": "1",
+              "kind": "phonetic",
+              "occurrence": 1,
+              "source_fallback": false,
+              "start": 0,
+              "text": ""
+            }
+          ],
+          "version": 1
+        }
+      },
+      "expect": {
+        "err": "invalid verified ruby entry",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/verified-overlap",
+      "op": "ruby.validate_state",
+      "args": {
+        "state": {
+          "digest": "5ea5150c02568e7cc6a091d58384b82c0ef83d4fa628c59580bb60f7f238c8b8",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 10,
+                  "raw_start": 0,
+                  "view_end": 10,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta"
+            }
+          ],
+          "translation": "alpha beta",
+          "validator_version": 1,
+          "verified": [
+            {
+              "base": "alpha",
+              "end": 5,
+              "id": "1",
+              "kind": "phonetic",
+              "occurrence": 1,
+              "source_fallback": false,
+              "start": 0,
+              "text": "a"
+            },
+            {
+              "base": "alpha",
+              "end": 5,
+              "id": "1",
+              "kind": "phonetic",
+              "occurrence": 1,
+              "source_fallback": false,
+              "start": 0,
+              "text": "b"
+            }
+          ],
+          "version": 1
+        }
+      },
+      "expect": {
+        "err": "invalid verified ruby entry",
+        "ok": false
+      }
+    },
+    {
+      "id": "validate/verified-valid",
+      "op": "ruby.validate_state",
+      "args": {
+        "state": {
+          "digest": "5ea5150c02568e7cc6a091d58384b82c0ef83d4fa628c59580bb60f7f238c8b8",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 10,
+                  "raw_start": 0,
+                  "view_end": 10,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta"
+            }
+          ],
+          "translation": "alpha beta",
+          "validator_version": 1,
+          "verified": [
+            {
+              "base": "alpha",
+              "end": 5,
+              "id": "1",
+              "kind": "phonetic",
+              "occurrence": 1,
+              "source_fallback": false,
+              "start": 0,
+              "text": "a"
+            }
+          ],
+          "version": 1
+        }
+      },
+      "expect": {
+        "err": "",
+        "ok": true
+      }
+    },
+    {
+      "id": "validate/version-changed",
+      "op": "ruby.validate_state",
+      "args": {
+        "state": {
+          "digest": "5ea5150c02568e7cc6a091d58384b82c0ef83d4fa628c59580bb60f7f238c8b8",
+          "format": "text",
+          "items": [
+            {
+              "item": {
+                "id": "1"
+              },
+              "preserve": true
+            }
+          ],
+          "protocol_version": 2,
+          "regions": [
+            {
+              "mappings": [
+                {
+                  "linear": true,
+                  "raw_end": 10,
+                  "raw_start": 0,
+                  "view_end": 10,
+                  "view_start": 0
+                }
+              ],
+              "text": "alpha beta"
+            }
+          ],
+          "translation": "alpha beta",
+          "validator_version": 1,
+          "verified": null,
+          "version": 99
+        }
+      },
+      "expect": {
+        "err": "unsupported ruby alignment state version",
+        "ok": false
+      }
+    }
+  ]
+}

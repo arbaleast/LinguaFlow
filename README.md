@@ -225,6 +225,50 @@ task openapi:generate
 task backend:local:build
 ```
 
+### 本地开发（前后端一键启动）
+
+开发时前端走 Vite（热更新），后端走 Go 服务，由一个脚本统一拉起：
+
+```bash
+./scripts/dev.sh start     # 启动后端(18080) + 前端(5173)，自动健康检查
+./scripts/dev.sh status    # 查看运行状态
+./scripts/dev.sh logs      # 跟踪日志
+./scripts/dev.sh stop      # 停止两者
+```
+
+启动后访问 <http://127.0.0.1:5173>。前端开发服务器会把 `/api` 代理到后端，浏览器侧保持同源，因此无需再配置跨域。
+
+脚本不依赖 Task：Go 工具链优先复用 `PATH`，其次复用 `.tooling/go`，都没有时自动下载到 `.tooling/go`；端口与代理地址可用 `LINGUAFLOW_BACKEND_PORT`、`LINGUAFLOW_FRONTEND_PORT`、`LINGUAFLOW_API_TARGET` 覆盖。已安装 Task 时也可以用 `task dev`、`task dev:stop`、`task dev:status`、`task dev:logs`。
+
+端口被其他程序占用时，脚本会自动顺延到下一个空闲端口并打印实际地址（例如 5173 被占用则用 5174），后端代理目标会同步跟随；端口上若是 LinguaFlow 自己的实例，则直接复用。
+
+需要单端口的生产式预览时用 `./scripts/dev.sh local`：构建前端并嵌入后端，访问 <http://127.0.0.1:18080>。
+
+**排障**
+
+- 服务连接页报「无法连接本机服务」：说明浏览器没能自动探测到后端。多半是在地址栏填了**绝对地址**（如 `http://127.0.0.1:18080/api/v1`），绝对地址属于跨域请求，会被后端的 CORS 拦截；开发服务器下请保留输入框默认的相对地址 `/api/v1`，由 Vite 代理转发。
+- 提示端口被占用：同一个数据目录不允许两个后端实例并存（会报 `storage_generation_conflict`）。先 `./scripts/dev.sh stop`，或用 `LINGUAFLOW_BACKEND_PORT` 换一个端口；脚本检测到端口已有可用实例时会直接复用并提示。
+- `./scripts/dev.sh status` 显示「端口被其他程序占用（非 LinguaFlow）」：说明该端口被别的应用（如其他前端项目）占着，脚本会顺延到下一个空闲端口，不会去动那个程序。
+- 多会话共用同一工作区时，PID 在彼此的命名空间里不可见，`stop` 会退回到按端口定位；脚本只会停止确认属于 LinguaFlow 的进程。
+
+#### 通过 SSH 端口转发访问
+
+开发服务器默认只监听 `127.0.0.1`，正好适合 SSH 转发（在**本地机器**执行）：
+
+```bash
+ssh -N -L 5173:127.0.0.1:5173 -L 18080:127.0.0.1:18080 <用户>@<主机>
+```
+
+然后在本地浏览器打开 <http://localhost:5173>。端口以 `./scripts/dev.sh start` 实际打印的为准（被占用时会顺延），也可以直接用 `./scripts/dev.sh ssh <用户>@<主机>` 生成命令。
+
+- **先在远端启动**：`./scripts/dev.sh start` 必须先跑，隧道连上没有服务响应时浏览器只会显示「无法连接」。
+- **本地端口可以和远端不同**：`-L <本地端口>:127.0.0.1:<远端端口>`。本地 5173 已被占用时用 `./scripts/dev.sh ssh <用户>@<主机> 15173`，得到 `-L 15173:127.0.0.1:5173`。
+- **验证隧道是否通**：在本地执行 `curl -s http://localhost:5173/api/v1/mode`，返回 `{"mode":"local"}` 即正常。
+- **务必用 `localhost` 或 `127.0.0.1` 访问**：浏览器只把这两个视为安全上下文，改用自定义主机名会让 `crypto.randomUUID`、剪贴板等能力被禁用，应用会提示「非安全上下文」。确实要用主机名时，启动时加 `LINGUAFLOW_DEV_HOSTS=devbox.local` 让 Vite 放行该 Host，否则返回 403 `Blocked request`。
+- **不必转发后端端口**：界面经 Vite 代理同源访问 API，只有直连 API（脚本、外部工具）才需要 `18080`。
+- **不要为转发把监听地址改成 `0.0.0.0`**：那等于把开发服务器暴露到网络。local 模式后端若监听非回环地址还得加 `--allow-network`，相当于把本地管理员权限交给所有能连上的人。
+- 转发中断即会话失效；HMR 与代理都走同一条隧道，无需额外配置。
+
 ### 启动本地模式
 
 本地模式无需登录，适合个人使用。

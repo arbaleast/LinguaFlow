@@ -20,6 +20,12 @@ withDefaults(
     /** 列表为空（含筛选后为空）时展示空态，否则渲染默认插槽 */
     empty?: boolean
     emptyDescription?: string
+    /**
+     * 是否展示页头（标题 + 副标题）。
+     * 内嵌到多 Tab 页面时置为 false：页面标题由外层容器统一提供，
+     * 避免外层与内层出现重复的标题/副标题堆叠（操作区仍保留）。
+     */
+    showHeader?: boolean
   }>(),
   {
     subtitle: '',
@@ -27,17 +33,23 @@ withDefaults(
     loading: false,
     empty: false,
     emptyDescription: '',
+    showHeader: true,
   },
 )
 </script>
 
 <template>
   <div class="lf-page lf-content-narrow">
-    <PageHeader :title="title" :subtitle="subtitle || undefined">
+    <PageHeader v-if="showHeader" :title="title" :subtitle="subtitle || undefined">
       <template v-if="$slots.actions" #actions>
         <slot name="actions" />
       </template>
     </PageHeader>
+
+    <!-- 内嵌模式：页头由外层容器提供，操作区降级为独立的一行 -->
+    <div v-else-if="$slots.actions" class="flex flex-wrap items-center justify-end gap-3">
+      <slot name="actions" />
+    </div>
 
     <div
       v-if="metrics.length > 0"

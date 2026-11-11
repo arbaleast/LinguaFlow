@@ -97,8 +97,13 @@ const props = withDefaults(
     variableSet?: 'system' | 'bootstrap' | 'prune'
     /** 保存适配器：把归一化表单数据映射为具体请求并调用 store */
     save: SaveTemplate
+    /**
+     * 内嵌模式：隐藏本组件的页面标题/副标题（改由外层多 Tab 容器统一提供），
+     * 避免出现重复的标题堆叠；筛选、卡片与抽屉等能力保持不变。
+     */
+    embedded?: boolean
   }>(),
-  { variableSet: 'system' },
+  { variableSet: 'system', embedded: false },
 )
 
 interface FormModel {
@@ -284,6 +289,7 @@ useStoreErrorToast(
   <EntityListPage
     :title="tx('title')"
     :subtitle="tx('subtitle')"
+    :show-header="!embedded"
     :loading="store.loading"
     :empty="store.filteredItems.length === 0"
     :empty-description="tx(hasActiveFilters ? 'empty.filtered' : 'empty.default')"

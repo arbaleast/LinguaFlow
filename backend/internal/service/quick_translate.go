@@ -20,6 +20,8 @@ import (
 var (
 	ErrQuickTranslateBusy        = errors.New("quick translate: concurrency limit reached")
 	ErrQuickTranslateNoTranslate = errors.New("quick translate: execution plan has no translate round")
+	// ErrQuickTranslateNoBackend 表示回退路径下找不到任何可用（含凭据有效）的 AI 后端。
+	ErrQuickTranslateNoBackend = errors.New("quick translate: no usable AI backend available")
 )
 
 // QuickGlossaryEntryInput 即时翻译请求中的一条内联临时术语表条目。
@@ -35,13 +37,18 @@ type QuickGlossaryEntryInput struct {
 
 // QuickTranslateInput 即时翻译的输入参数。
 type QuickTranslateInput struct {
-	ActorUserID     int
-	SourceText      string
-	SourceLang      string
-	TargetLang      string
+	ActorUserID int
+	SourceText  string
+	SourceLang  string
+	TargetLang  string
+	// ExecutionPlanID 为 0 表示未指定执行计划：回退到当前账号可用的默认 AI 后端，
+	// 配合内置翻译提示词模板直接完成本次文本处理（不再因缺少执行计划而阻断）。
 	ExecutionPlanID int
 	ProjectID       *int // nil = 无项目（纯即时翻译）
 	Glossary        []QuickGlossaryEntryInput
+	// Instructions 是可选的场景/语气意图（如「标准商务」「报盘议价」「礼貌催款」），
+	// 追加到翻译轮次的系统提示词末尾。
+	Instructions string
 }
 
 // QuickTranslateOutput 即时翻译的输出结果。
@@ -241,11 +248,26 @@ func (s *QuickTranslateService) Translate(ctx context.Context, in QuickTranslate
 	// prepareExecutionSnapshotForActor: with a project it reuses the project-level
 	// validateBackendAccess (same semantics as job/preview); without a project it
 	// authorizes against the actor's own identity.
-	snapshot, release, err := s.jobs.prepareExecutionSnapshotForActor(runCtx, in.ActorUserID, in.ExecutionPlanID, "", sourceLang, targetLang, glossaryBaseEnabled, projectRow)
+	//
+	// 未指定执行计划（ExecutionPlanID <= 0）时走默认快照：默认可用 AI 后端 +
+	// 内置翻译提示词模板 + 内置执行策略，只跑一轮 translate。这样「暂无可用执行
+	// 计划」不再阻断即时翻译，授权语义与计划路径保持一致。
+	var snapshot *JobExecutionSnapshot
+	var release func()
+	var err error
+	if in.ExecutionPlanID > 0 {
+		snapshot, release, err = s.jobs.prepareExecutionSnapshotForActor(runCtx, in.ActorUserID, in.ExecutionPlanID, "", sourceLang, targetLang, glossaryBaseEnabled, projectRow)
+	} else {
+		snapshot, release, err = s.jobs.prepareDefaultExecutionSnapshotForActor(runCtx, in.ActorUserID, sourceLang, targetLang, glossaryBaseEnabled, projectRow)
+	}
 	if err != nil {
 		return nil, err
 	}
 	defer release()
+
+	// 5.1 应用场景/语气意图：追加到翻译轮次的系统提示词末尾。快照是纯内存的，
+	// 不会污染用户保存的提示词模板。
+	applyQuickTranslateInstructions(snapshot, in.Instructions)
 
 	// 6. Reject plans without a translate round.
 	hasTranslate := false
@@ -343,6 +365,9 @@ func (s *QuickTranslateService) Translate(ctx context.Context, in QuickTranslate
 
 	if s.audit != nil {
 		metadata := map[string]any{"execution_plan_id": in.ExecutionPlanID}
+		if in.ExecutionPlanID <= 0 {
+			metadata["execution_plan_id"] = "default"
+		}
 		var projectIDPtr *int
 		if in.ProjectID != nil {
 			p := *in.ProjectID
@@ -355,7 +380,7 @@ func (s *QuickTranslateService) Translate(ctx context.Context, in QuickTranslate
 			ProjectID:       projectIDPtr,
 			Action:          "quick_translate",
 			ResourceType:    "quick_translate",
-			Message:         fmt.Sprintf("Instant translate (plan=%d)", in.ExecutionPlanID),
+			Message:         fmt.Sprintf("Instant translate (plan=%s)", quickTranslatePlanLabel(in.ExecutionPlanID)),
 			Metadata:        metadata,
 		}
 		if projectRow != nil {
@@ -404,7 +429,7 @@ func (s *QuickTranslateService) recordQuickUsage(ctx context.Context, in QuickTr
 		SetAPICalls(clampInt64ToInt(metrics.APICalls)).
 		SetInputTokens(clampInt64ToInt(metrics.InputTokens)).
 		SetOutputTokens(clampInt64ToInt(metrics.OutputTokens)).
-		SetNote(fmt.Sprintf("quick_translate:plan=%d", in.ExecutionPlanID))
+		SetNote(fmt.Sprintf("quick_translate:plan=%s", quickTranslatePlanLabel(in.ExecutionPlanID)))
 	if in.ActorUserID > 0 {
 		usage.SetUserID(in.ActorUserID)
 	}

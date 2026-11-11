@@ -115,13 +115,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/bootstrap-prompt-templates': RouteRecordInfo<
-      '/bootstrap-prompt-templates',
-      '/bootstrap-prompt-templates',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/changelog': RouteRecordInfo<
       '/changelog',
       '/changelog',
@@ -129,16 +122,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/execution-plan-templates': RouteRecordInfo<
-      '/execution-plan-templates',
-      '/execution-plan-templates',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/execution-profiles': RouteRecordInfo<
-      '/execution-profiles',
-      '/execution-profiles',
+    '/execution-config': RouteRecordInfo<
+      '/execution-config',
+      '/execution-config',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -181,13 +167,6 @@ declare module 'vue-router/auto-routes' {
     '/prompt-templates': RouteRecordInfo<
       '/prompt-templates',
       '/prompt-templates',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/prune-prompt-templates': RouteRecordInfo<
-      '/prune-prompt-templates',
-      '/prune-prompt-templates',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -263,13 +242,6 @@ declare module 'vue-router/auto-routes' {
     '/settings/team': RouteRecordInfo<
       '/settings/team',
       '/settings/team',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/stats': RouteRecordInfo<
-      '/stats',
-      '/stats',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -390,14 +362,6 @@ declare module 'vue-router/auto-routes' {
       pathParamNames:
         | never
     }
-    'src/pages/bootstrap-prompt-templates.vue': {
-      routes:
-        | '/bootstrap-prompt-templates'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
     'src/pages/changelog.vue': {
       routes:
         | '/changelog'
@@ -406,17 +370,9 @@ declare module 'vue-router/auto-routes' {
       pathParamNames:
         | never
     }
-    'src/pages/execution-plan-templates.vue': {
+    'src/pages/execution-config.vue': {
       routes:
-        | '/execution-plan-templates'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/execution-profiles.vue': {
-      routes:
-        | '/execution-profiles'
+        | '/execution-config'
       views:
         | never
       pathParamNames:
@@ -466,14 +422,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/prompt-templates.vue': {
       routes:
         | '/prompt-templates'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/prune-prompt-templates.vue': {
-      routes:
-        | '/prune-prompt-templates'
       views:
         | never
       pathParamNames:
@@ -560,14 +508,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/settings/team.vue': {
       routes:
         | '/settings/team'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/stats.vue': {
-      routes:
-        | '/stats'
       views:
         | never
       pathParamNames:
